@@ -13,15 +13,24 @@
 body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;color:#fff;background:linear-gradient(180deg,#ffb9df 0%,#f58ec8 26%,#ffd9a2 67%,#fff0a5 100%);display:flex;justify-content:center;padding:10px 5px 26px;overflow-x:hidden;position:relative}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.23;background-image:radial-gradient(circle at 10% 18%,#fff 0 3px,transparent 4px),radial-gradient(circle at 85% 26%,#fff 0 4px,transparent 5px),radial-gradient(circle at 18% 68%,#fff 0 3px,transparent 4px),radial-gradient(circle at 91% 76%,#fff 0 5px,transparent 6px);background-size:170px 190px}
 main{width:min(100%,600px);position:relative}main.game-hidden{display:none}
-.home-screen{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 50% 20%,#fff0a8 0 8%,transparent 32%),linear-gradient(155deg,#ff9bd1,#f052a2 48%,#8157c8);overflow:auto}
-.home-card{width:min(100%,460px);padding:30px 22px 26px;text-align:center;border:4px solid #fff;border-radius:32px;background:linear-gradient(180deg,#ffdcf0,#ff9fce 52%,#d96ab1);box-shadow:0 10px 0 #a93480,0 22px 45px #55204c70,inset 0 3px 8px #fff}
-.home-logo{font-size:clamp(72px,20vw,112px);line-height:1.2;filter:drop-shadow(0 8px 3px #9d3e7960);margin:4px 0 12px}
-.home-card h1{font-size:clamp(34px,9vw,48px);margin:0;color:#fff;text-shadow:0 4px 0 #a52d75,0 7px 10px #8b347d70}
-.home-subtitle{margin:10px 0 22px;color:#9d3475;font-weight:1000;letter-spacing:2px;font-size:12px}
-.home-play{width:100%;border:3px solid #fff;border-radius:20px;padding:18px 12px;font-size:25px;font-weight:1000;color:#91456e;background:linear-gradient(180deg,#fff39c,#ffb83f);box-shadow:0 7px 0 #bd7c36,0 10px 18px #81407840,inset 0 3px #fff;cursor:pointer}
-.home-play:active{transform:translateY(5px);box-shadow:0 2px 0 #bd7c36}
-.home-best{margin-top:20px;color:#8d2869;font-weight:1000;font-size:15px}
-.home-note{margin:10px 0 0;color:#8d2869;font-size:12px;font-weight:800}
+.home-screen{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:18px;overflow:auto;background:radial-gradient(ellipse at 50% 0%,#fff6bd 0,transparent 42%),radial-gradient(circle at 8% 82%,#ffda79 0 4%,transparent 4.5%),radial-gradient(circle at 92% 22%,#b8f6ff 0 5%,transparent 5.5%),linear-gradient(145deg,#7137b8 0%,#d946a1 48%,#ff9d7b 100%)}
+.home-screen:before,.home-screen:after{content:"🍬";position:fixed;font-size:clamp(42px,12vw,76px);opacity:.65;filter:drop-shadow(0 8px 5px #4b1b5a55);animation:homeFloat 4s ease-in-out infinite}
+.home-screen:before{left:5%;top:12%;transform:rotate(-18deg)}
+.home-screen:after{content:"🍭";right:5%;bottom:13%;animation-delay:-2s}
+@keyframes homeFloat{50%{translate:0 -13px;rotate:9deg}}
+.home-card{position:relative;width:min(100%,440px);padding:25px 22px 23px;text-align:center;border:3px solid #fff;border-radius:34px;background:linear-gradient(160deg,#fff4fa 0%,#ffd2e9 48%,#ffabd5 100%);box-shadow:0 9px 0 #8b287b,0 22px 55px #35104780,inset 0 3px 10px #fff;overflow:hidden}
+.home-card:before{content:"";position:absolute;inset:0 0 auto;height:9px;background:linear-gradient(90deg,#62e8dc,#fff18c,#ff8ac4,#a78bff)}
+.home-logo{font-size:clamp(72px,19vw,104px);line-height:1.15;filter:drop-shadow(0 9px 4px #923a7a55);margin:8px 0 5px;letter-spacing:-10px}
+.home-card h1{font-size:clamp(35px,9vw,48px);line-height:1.05;margin:0;color:#fff;text-shadow:0 4px 0 #b52e83,0 7px 12px #8b347d70}
+.home-subtitle{margin:12px 0 20px;color:#914077;font-weight:1000;letter-spacing:2px;font-size:11px}
+.home-level{display:inline-flex;align-items:center;gap:8px;margin:0 auto 18px;padding:8px 15px;border-radius:99px;background:#fff;border:2px solid #f7a7d1;color:#a3337c;font-size:13px;font-weight:1000;box-shadow:0 3px 0 #eaa0c9}
+.home-play{width:100%;border:3px solid #fff;border-radius:20px;padding:17px 12px;font-size:25px;font-weight:1000;letter-spacing:1px;color:#75400c;background:linear-gradient(180deg,#fff59e 0%,#ffd44f 55%,#ffb52e 100%);box-shadow:0 7px 0 #bd7c25,0 11px 18px #81407835,inset 0 3px #fff;cursor:pointer;text-shadow:0 1px #fff}
+.home-play:active{transform:translateY(5px);box-shadow:0 2px 0 #bd7c25}
+.home-best{margin-top:18px;color:#8d2869;font-weight:1000;font-size:14px}
+.home-features{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.home-feature{padding:10px 4px;border-radius:14px;background:#fff9;border:1px solid #fff;color:#8d3977;font-size:11px;font-weight:900}
+.home-feature b{display:block;font-size:23px;margin-bottom:3px}
+.home-note{margin:14px 0 0;color:#914077;font-size:11px;font-weight:800}
 header{text-align:center;margin:0 0 11px;padding:9px 12px 10px;border-radius:20px;background:linear-gradient(180deg,#ff9fd0,#ed4d9f);border:2px solid #fff;box-shadow:0 5px 0 #b93481,0 8px 14px #8b347d35,inset 0 2px #fff}
 h1{font-size:clamp(27px,7.5vw,36px);line-height:1.08;margin:0;color:#fff;text-shadow:0 3px 0 #a52d75,0 5px 8px #8b347d80}
 header p{margin:6px 0 0;color:#fff;font-size:10px;font-weight:1000;letter-spacing:2px;text-transform:uppercase}
@@ -56,7 +65,7 @@ footer strong{color:#a83277;font-size:14px}
 </style>
 </head>
 <body>
-<section class="home-screen" id="homeScreen"><div class="home-card"><div class="home-logo">🍭🍬🍓</div><h1>Candy Match 3</h1><p class="home-subtitle">⭐ SWEET PUZZLE ADVENTURE ⭐</p><button class="home-play" id="startGame">▶ PLAY NOW</button><div class="home-best">🏆 Best Score: <span id="homeBest">0</span></div><p class="home-note">Match 3 or more candies • Beat every level!</p></div></section>
+<section class="home-screen" id="homeScreen"><div class="home-card"><div class="home-logo">🍭🍬🍓</div><h1>Candy Match 3</h1><p class="home-subtitle">A SWEET & COLORFUL PUZZLE ADVENTURE</p><div class="home-level">⭐ YOUR ADVENTURE <span>•</span> LEVEL <span id="homeLevel">1</span></div><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-best">🏆 Best Score: <span id="homeBest">0</span></div><div class="home-features"><div class="home-feature"><b>🍓</b>Match candies</div><div class="home-feature"><b>💥</b>Sweet combos</div><div class="home-feature"><b>🏆</b>Beat levels</div></div><p class="home-note">Swap • Match • Win!</p></div></section>
 <main class="game-hidden" id="gameScreen">
 <header><h1>🍬 Candy Match 3</h1><p>⭐ Sweet Puzzle Adventure ⭐</p></header>
 <section class="stats" aria-label="Game status">
@@ -83,7 +92,7 @@ function rand(){return Math.floor(Math.random()*TYPES.length)}
 function hasMatchAt(b,r,c){const v=b[r*N+c];if(v<0)return false;let n=1;for(let x=c-1;x>=0&&b[r*N+x]===v;x--)n++;for(let x=c+1;x<N&&b[r*N+x]===v;x++)n++;if(n>=3)return true;n=1;for(let y=r-1;y>=0&&b[y*N+c]===v;y--)n++;for(let y=r+1;y<N&&b[y*N+c]===v;y++)n++;return n>=3}
 function makeBoard(){do{board=Array.from({length:N*N},rand)}while(findMatches().length)}
 function findMatches(){const set=new Set();for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=board[r*N+c];if(v<0)continue;let run=[r*N+c];for(let x=c+1;x<N&&board[r*N+x]===v;x++)run.push(r*N+x);if(run.length>=3)run.forEach(i=>set.add(i));run=[r*N+c];for(let y=r+1;y<N&&board[y*N+c]===v;y++)run.push(y*N+c);if(run.length>=3)run.forEach(i=>set.add(i))}return [...set]}
-function render(){boardEl.innerHTML='';board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v<0?'':TYPES[v];b.setAttribute('aria-label',v<0?'Empty':TYPES[v]);b.disabled=locked||v<0;b.addEventListener('click',()=>tap(i));boardEl.appendChild(b)});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('progress').style.width=Math.min(100,score/targetScore()*100)+'%'}
+function render(){boardEl.innerHTML='';board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v<0?'':TYPES[v];b.setAttribute('aria-label',v<0?'Empty':TYPES[v]);b.disabled=locked||v<0;b.addEventListener('click',()=>tap(i));boardEl.appendChild(b)});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeLevel').textContent=level;el('progress').style.width=Math.min(100,score/targetScore()*100)+'%'}
 function tap(i){if(suppressClick){suppressClick=false;return}if(locked||moves<=0)return;hintPair=[];if(selected<0){selected=i;render();return}if(selected===i){selected=-1;render();return}const a=selected,b=i;selected=-1;if(Math.abs(a-b)===N||Math.floor(a/N)===Math.floor(b/N)&&Math.abs(a-b)===1){swap(a,b)}else{selected=i;render()}}
 function swap(a,b){hintPair=[];[board[a],board[b]]=[board[b],board[a]];const m=findMatches();if(!m.length){[board[a],board[b]]=[board[b],board[a]];render();return}moves--;locked=true;render();resolve()}
 function resolve(){let matches=findMatches();if(!matches.length){locked=false;render();checkEnd();if(moves>0&&!findMove())reshuffle();return}score+=matches.length*10;if(score>bestScore){bestScore=score;try{localStorage.setItem('candyBestScore',String(bestScore))}catch(e){}}matches.forEach(i=>board[i]=-1);render();setTimeout(()=>{for(let c=0;c<N;c++){let vals=[];for(let r=N-1;r>=0;r--){const v=board[r*N+c];if(v>=0)vals.push(v)}for(let r=N-1;r>=0;r--)board[r*N+c]=vals[N-1-r]??rand()}render();setTimeout(resolve,130)},150)}
@@ -96,7 +105,7 @@ function startLevel(){score=0;moves=START_MOVES;selected=-1;locked=false;hintPai
 function newGame(){level=1;startLevel()}
 function continueGame(){const won=score>=targetScore();if(won){level=level+1;}startLevel();if(won){el('helpText').textContent='🌟 Welcome to Level '+level+'! Target: '+targetScore()+' points. Good luck!'}else{el('helpText').textContent='New try! Match 3 or more candies to reach the target.'}}
 el('startGame').addEventListener('click',()=>{el('homeScreen').style.display='none';el('gameScreen').classList.remove('game-hidden')});
-el('homeButton').addEventListener('click',()=>{locked=true;el('gameScreen').classList.add('game-hidden');el('homeScreen').style.display='grid';el('homeBest').textContent=bestScore});
+el('homeButton').addEventListener('click',()=>{locked=true;el('gameScreen').classList.add('game-hidden');el('homeScreen').style.display='grid';el('homeBest').textContent=bestScore;el('homeLevel').textContent=level});
 el('hint').addEventListener('click',hint);
 boardEl.addEventListener('pointerdown',e=>{const cell=e.target.closest('.cell');if(!cell||locked)return;touchStart={index:[...boardEl.children].indexOf(cell),x:e.clientX,y:e.clientY};});
 boardEl.addEventListener('pointerup',e=>{if(!touchStart)return;const start=touchStart;touchStart=null;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;const dest=Math.abs(dx)>Math.abs(dy)?start.index+(dx>0?1:-1):start.index+(dy>0?N:-N);if(dest<0||dest>=N*N||Math.floor(dest/N)!==Math.floor(start.index/N)&&Math.abs(dest-start.index)===1)return;suppressClick=true;selected=-1;swap(start.index,dest);});
