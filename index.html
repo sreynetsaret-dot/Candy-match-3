@@ -13,24 +13,45 @@
 body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;color:#fff;background:radial-gradient(ellipse at 50% 0%,#477ed1 0%,transparent 48%),linear-gradient(180deg,#171b58 0%,#342276 48%,#6b328b 100%);display:flex;justify-content:center;padding:10px 5px 26px;overflow-x:hidden;position:relative}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.24;background-image:radial-gradient(circle at 10% 18%,#fff 0 3px,transparent 4px),radial-gradient(circle at 85% 26%,#8ff9ff 0 4px,transparent 5px),radial-gradient(circle at 18% 68%,#fff 0 3px,transparent 4px),radial-gradient(circle at 91% 76%,#ffb9ef 0 5px,transparent 6px);background-size:170px 190px}
 main{width:min(100%,520px);position:relative;padding:3px 2px 12px}main.game-hidden{display:none}
-.home-screen{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:18px;overflow:auto;background:radial-gradient(ellipse at 50% 0%,#fff6bd 0,transparent 42%),radial-gradient(circle at 8% 82%,#ffda79 0 4%,transparent 4.5%),radial-gradient(circle at 92% 22%,#b8f6ff 0 5%,transparent 5.5%),linear-gradient(145deg,#7137b8 0%,#d946a1 48%,#ff9d7b 100%)}
-.home-screen:before,.home-screen:after{content:"🍬";position:fixed;font-size:clamp(42px,12vw,76px);opacity:.65;filter:drop-shadow(0 8px 5px #4b1b5a55);animation:homeFloat 4s ease-in-out infinite}
-.home-screen:before{left:5%;top:12%;transform:rotate(-18deg)}
-.home-screen:after{content:"🍭";right:5%;bottom:13%;animation-delay:-2s}
-@keyframes homeFloat{50%{translate:0 -13px;rotate:9deg}}
-.home-card{position:relative;width:min(100%,440px);padding:25px 22px 23px;text-align:center;border:3px solid #fff;border-radius:34px;background:linear-gradient(160deg,#fff4fa 0%,#ffd2e9 48%,#ffabd5 100%);box-shadow:0 9px 0 #8b287b,0 22px 55px #35104780,inset 0 3px 10px #fff;overflow:hidden}
-.home-card:before{content:"";position:absolute;inset:0 0 auto;height:9px;background:linear-gradient(90deg,#62e8dc,#fff18c,#ff8ac4,#a78bff)}
-.home-logo{font-size:clamp(72px,19vw,104px);line-height:1.15;filter:drop-shadow(0 9px 4px #923a7a55);margin:8px 0 5px;letter-spacing:-10px}
-.home-card h1{font-size:clamp(35px,9vw,48px);line-height:1.05;margin:0;color:#fff;text-shadow:0 4px 0 #b52e83,0 7px 12px #8b347d70}
-.home-subtitle{margin:12px 0 20px;color:#914077;font-weight:1000;letter-spacing:2px;font-size:11px}
-.home-level{display:inline-flex;align-items:center;gap:8px;margin:0 auto 18px;padding:8px 15px;border-radius:99px;background:#fff;border:2px solid #f7a7d1;color:#a3337c;font-size:13px;font-weight:1000;box-shadow:0 3px 0 #eaa0c9}
-.home-play{width:100%;border:3px solid #fff;border-radius:20px;padding:17px 12px;font-size:25px;font-weight:1000;letter-spacing:1px;color:#75400c;background:linear-gradient(180deg,#fff59e 0%,#ffd44f 55%,#ffb52e 100%);box-shadow:0 7px 0 #bd7c25,0 11px 18px #81407835,inset 0 3px #fff;cursor:pointer;text-shadow:0 1px #fff}
-.home-play:active{transform:translateY(5px);box-shadow:0 2px 0 #bd7c25}
-.home-best{margin-top:18px;color:#8d2869;font-weight:1000;font-size:14px}
-.home-features{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
-.home-feature{padding:10px 4px;border-radius:14px;background:#fff9;border:1px solid #fff;color:#8d3977;font-size:11px;font-weight:900}
-.home-feature b{display:block;font-size:23px;margin-bottom:3px}
-.home-note{margin:14px 0 0;color:#914077;font-size:11px;font-weight:800}
+.home-screen{position:fixed;inset:0;z-index:10;overflow-y:auto;overscroll-behavior:contain;padding:0 0 94px;background:radial-gradient(ellipse at 80% 0%,#533bb0 0,transparent 38%),radial-gradient(ellipse at 0% 42%,#183d83 0,transparent 42%),linear-gradient(180deg,#101638 0%,#171c49 52%,#101631 100%);color:#fff}
+.home-screen:before,.home-screen:after{content:"";position:fixed;pointer-events:none;border-radius:50%;filter:blur(1px);opacity:.22}
+.home-screen:before{width:210px;height:210px;right:-100px;top:24%;background:#fa55ae}
+.home-screen:after{width:180px;height:180px;left:-100px;bottom:8%;background:#21c7e5}
+.home-shell{width:min(100%,520px);margin:auto;padding:15px 16px 24px;position:relative;z-index:1}
+.home-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.home-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:1000;letter-spacing:-.4px}
+.home-brand-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#ff9cce,#ed4d9f);font-size:25px;box-shadow:0 5px 0 #92366f}
+.home-wallet-chip{display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid #ffffff28;border-radius:15px;background:#ffffff12;color:#fff}
+.home-wallet-chip b{display:block;font-size:13px;line-height:1.1}.home-wallet-chip small{display:block;color:#aebbe5;font-size:9px;font-weight:800;letter-spacing:.6px}
+.home-coin{font-size:22px}
+.home-hero{position:relative;overflow:hidden;padding:22px 20px 20px;border:1px solid #ffffff35;border-radius:27px;background:radial-gradient(circle at 83% 35%,#a76dff 0,transparent 31%),linear-gradient(130deg,#3848a8 0%,#6536a5 55%,#a33d91 100%);box-shadow:0 12px 28px #050a2580}
+.home-hero:after{content:"🍬";position:absolute;right:8px;top:22px;font-size:clamp(76px,20vw,112px);filter:drop-shadow(0 9px 8px #120b3b88);transform:rotate(14deg)}
+.home-hero-kicker{position:relative;z-index:1;color:#c9eaff;font-size:10px;font-weight:1000;letter-spacing:2px;text-transform:uppercase}
+.home-hero h2{position:relative;z-index:1;max-width:245px;margin:9px 0 7px;font-size:clamp(30px,8vw,39px);line-height:1.02;letter-spacing:-1.2px;text-shadow:0 3px 12px #17104480}
+.home-hero p{position:relative;z-index:1;max-width:230px;margin:0 0 18px;color:#e4e6ff;font-size:12px;line-height:1.5;font-weight:650}
+.home-play{position:relative;z-index:1;width:min(100%,230px);border:0;border-radius:15px;padding:15px 13px;font-size:17px;font-weight:1000;letter-spacing:.4px;color:#4d286a;background:linear-gradient(180deg,#fff18b,#ffc84a);box-shadow:0 5px 0 #bd842b,0 9px 18px #150c3e55;cursor:pointer}
+.home-play:active{transform:translateY(3px);box-shadow:0 2px 0 #bd842b}
+.home-level{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;margin-top:15px;padding:7px 10px;border-radius:99px;background:#161b4b88;border:1px solid #ffffff30;color:#fff;font-size:11px;font-weight:900}
+.home-section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 11px}
+.home-section-head h3{margin:0;font-size:16px;font-weight:1000;letter-spacing:.1px}
+.home-section-head span{font-size:10px;color:#aebbe5;font-weight:800}
+.home-daily{display:flex;align-items:center;gap:13px;padding:14px;border-radius:19px;border:1px solid #ffffff24;background:linear-gradient(110deg,#222d63,#25245d);box-shadow:0 7px 18px #050a2850}
+.home-daily-icon{flex:0 0 49px;width:49px;height:49px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(145deg,#ffcf69,#ff8e59);font-size:27px}
+.home-daily-copy{min-width:0;flex:1}.home-daily-copy b{display:block;font-size:13px}.home-daily-copy small{display:block;margin-top:4px;color:#aebbe5;font-size:10px;line-height:1.35}
+.home-soon{padding:7px 9px;border:1px solid #f4ca6b55;border-radius:10px;background:#f4ca6b18;color:#ffdc87;font-size:9px;font-weight:1000;white-space:nowrap}
+.home-shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.home-shortcut{min-width:0;padding:13px 7px 12px;text-align:center;border-radius:17px;border:1px solid #ffffff20;background:linear-gradient(160deg,#242e68,#1c234f);box-shadow:0 6px 14px #050a2840}
+.home-shortcut i{display:block;font-style:normal;font-size:25px;margin-bottom:6px}.home-shortcut b{display:block;font-size:11px}.home-shortcut small{display:block;margin-top:4px;color:#aebbe5;font-size:9px}
+.home-rewards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.home-reward{min-width:0;padding:13px 8px;border:1px solid #ffffff24;border-radius:17px;background:linear-gradient(160deg,#252f68,#1a214d);text-align:center}
+.home-reward-icon{display:grid;place-items:center;width:43px;height:43px;margin:0 auto 8px;border-radius:14px;background:#ffffff13;font-size:24px}
+.home-reward b{display:block;font-size:11px}.home-reward small{display:block;margin-top:5px;color:#aebbe5;font-size:9px;line-height:1.3}
+.home-best{margin:17px 0 0;text-align:center;color:#aebbe5;font-size:10px;font-weight:800}
+.home-bottom-nav{position:fixed;z-index:3;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,520px);display:grid;grid-template-columns:repeat(4,1fr);padding:9px 10px calc(9px + env(safe-area-inset-bottom));border-top:1px solid #ffffff20;background:#111735f2;backdrop-filter:blur(16px)}
+.home-nav-item{border:0;background:none;color:#9ba9d3;font-size:9px;font-weight:900;padding:3px;cursor:pointer}
+.home-nav-item span{display:block;font-size:19px;margin-bottom:3px}
+.home-nav-item.active{color:#ffcf68}
+@media(max-width:360px){.home-shell{padding-left:12px;padding-right:12px}.home-hero{padding:19px 16px}.home-hero:after{right:-5px}.home-shortcuts,.home-rewards{gap:7px}.home-shortcut,.home-reward{padding-left:5px;padding-right:5px}}
 header{text-align:center;margin:0 0 12px;padding:13px 12px 14px;border-radius:24px;background:linear-gradient(145deg,#42d8e8 0%,#2389cf 48%,#6252d8 100%);border:3px solid #bafaff;box-shadow:0 6px 0 #174c91,0 12px 24px #080d3d80,inset 0 3px 8px #fff9}
 h1{font-size:clamp(27px,7.5vw,36px);line-height:1.08;margin:0;color:#fff;text-shadow:0 3px 0 #2254a0,0 5px 8px #101b5680}
 header p{margin:7px 0 0;color:#eaffff;font-size:10px;font-weight:1000;letter-spacing:2px;text-transform:uppercase}
@@ -65,7 +86,14 @@ footer strong{color:#fff39a;font-size:15px}
 </style>
 </head>
 <body>
-<section class="home-screen" id="homeScreen"><div class="home-card"><div class="home-logo">🍭🍬🍓</div><h1>Candy Match 3</h1><p class="home-subtitle">A SWEET & COLORFUL PUZZLE ADVENTURE</p><div class="home-level">⭐ YOUR ADVENTURE <span>•</span> LEVEL <span id="homeLevel">1</span></div><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-best">🏆 Best Score: <span id="homeBest">0</span></div><div class="home-features"><div class="home-feature"><b>🍓</b>Match candies</div><div class="home-feature"><b>💥</b>Sweet combos</div><div class="home-feature"><b>🏆</b>Beat levels</div></div><p class="home-note">Swap • Match • Win!</p></div></section>
+<section class="home-screen" id="homeScreen"><div class="home-shell">
+<div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>COIN WALLET</small><b>Coming soon</b></div></div></div>
+<div class="home-hero"><div class="home-hero-kicker">✨ Welcome to the sweet club</div><h2>Play. Match.<br>Shine!</h2><p>Match colorful candies, beat new levels and get ready for rewards.</p><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-level">⭐ YOUR LEVEL <span id="homeLevel">1</span> &nbsp;•&nbsp; 🏆 <span id="homeBest">0</span> BEST</div></div>
+<div class="home-section-head"><h3>🎁 Daily Bonus</h3><span>Every day</span></div><div class="home-daily"><div class="home-daily-icon">🎁</div><div class="home-daily-copy"><b>Daily reward is coming!</b><small>Come back every day to collect bonus coins when rewards launch.</small></div><span class="home-soon">SOON</span></div>
+<div class="home-section-head"><h3>⚡ Quick Access</h3><span>Jump right in</span></div><div class="home-shortcuts"><div class="home-shortcut"><i>🍬</i><b>Play Game</b><small>Match & win</small></div><div class="home-shortcut"><i>🪙</i><b>My Wallet</b><small>Coming soon</small></div><div class="home-shortcut"><i>🏆</i><b>Leaderboard</b><small>Coming soon</small></div></div>
+<div class="home-section-head" id="homeRewards"><h3>💎 Rewards</h3><span>Coming soon</span></div><div class="home-rewards"><div class="home-reward"><div class="home-reward-icon">💙</div><b>PayPal</b><small>Cash rewards</small></div><div class="home-reward"><div class="home-reward-icon">💳</div><b>Payoneer</b><small>Cash rewards</small></div><div class="home-reward"><div class="home-reward-icon">🎮</div><b>Google Play</b><small>Gift cards</small></div></div>
+<p class="home-best">Your best score: <strong id="homeBestFoot">0</strong> &nbsp;•&nbsp; More sweet levels ahead!</p>
+</div><nav class="home-bottom-nav"><button class="home-nav-item active" id="navHome"><span>⌂</span>HOME</button><button class="home-nav-item" id="navPlay"><span>🎮</span>PLAY</button><button class="home-nav-item" id="navRewards"><span>🎁</span>REWARDS</button><button class="home-nav-item" id="navWallet"><span>🪙</span>WALLET</button></nav></section>
 <main class="game-hidden" id="gameScreen">
 <header><h1>🍬 Candy Match 3</h1><p>⭐ Sweet Puzzle Adventure ⭐</p></header>
 <section class="stats" aria-label="Game status">
@@ -93,7 +121,7 @@ function rand(){return Math.floor(Math.random()*TYPES.length)}
 function hasMatchAt(b,r,c){const v=b[r*N+c];if(v<0)return false;let n=1;for(let x=c-1;x>=0&&b[r*N+x]===v;x--)n++;for(let x=c+1;x<N&&b[r*N+x]===v;x++)n++;if(n>=3)return true;n=1;for(let y=r-1;y>=0&&b[y*N+c]===v;y--)n++;for(let y=r+1;y<N&&b[y*N+c]===v;y++)n++;return n>=3}
 function makeBoard(){do{board=Array.from({length:N*N},rand)}while(findMatches().length)}
 function findMatches(){const set=new Set();for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=board[r*N+c];if(v<0)continue;let run=[r*N+c];for(let x=c+1;x<N&&board[r*N+x]===v;x++)run.push(r*N+x);if(run.length>=3)run.forEach(i=>set.add(i));run=[r*N+c];for(let y=r+1;y<N&&board[y*N+c]===v;y++)run.push(y*N+c);if(run.length>=3)run.forEach(i=>set.add(i))}return [...set]}
-function render(){boardEl.innerHTML='';board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v<0?'':TYPES[v];b.setAttribute('aria-label',v<0?'Empty':TYPES[v]);b.disabled=locked||v<0;b.addEventListener('click',()=>tap(i));boardEl.appendChild(b)});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeLevel').textContent=level;el('progress').style.width=Math.min(100,score/targetScore()*100)+'%'}
+function render(){boardEl.innerHTML='';board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v<0?'':TYPES[v];b.setAttribute('aria-label',v<0?'Empty':TYPES[v]);b.disabled=locked||v<0;b.addEventListener('click',()=>tap(i));boardEl.appendChild(b)});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('homeLevel').textContent=level;el('progress').style.width=Math.min(100,score/targetScore()*100)+'%'}
 function tap(i){if(suppressClick){suppressClick=false;return}if(locked||moves<=0)return;hintPair=[];if(selected<0){selected=i;render();return}if(selected===i){selected=-1;render();return}const a=selected,b=i;selected=-1;if(Math.abs(a-b)===N||Math.floor(a/N)===Math.floor(b/N)&&Math.abs(a-b)===1){swap(a,b)}else{selected=i;render()}}
 function swap(a,b){hintPair=[];[board[a],board[b]]=[board[b],board[a]];const m=findMatches();if(!m.length){[board[a],board[b]]=[board[b],board[a]];render();return}moves--;locked=true;render();roundToken++;resolve(roundToken)}
 function resolve(token){if(token!==roundToken)return;let matches=findMatches();if(!matches.length){locked=false;render();checkEnd();if(moves>0&&!findMove())reshuffle();return}score+=matches.length*10;if(score>bestScore){bestScore=score;try{localStorage.setItem('candyBestScore',String(bestScore))}catch(e){}}matches.forEach(i=>board[i]=-1);render();setTimeout(()=>{if(token!==roundToken)return;for(let c=0;c<N;c++){let vals=[];for(let r=N-1;r>=0;r--){const v=board[r*N+c];if(v>=0)vals.push(v)}for(let r=N-1;r>=0;r--)board[r*N+c]=vals[N-1-r]??rand()}render();setTimeout(()=>resolve(token),130)},150)}
@@ -107,6 +135,10 @@ function newGame(){level=1;startLevel()}
 function continueGame(){const won=score>=targetScore();if(won){level=level+1;}startLevel();if(won){el('helpText').textContent='🌟 Welcome to Level '+level+'! Target: '+targetScore()+' points. Good luck!'}else{el('helpText').textContent='New try! Match 3 or more candies to reach the target.'}}
 el('startGame').addEventListener('click',()=>{locked=false;el('homeScreen').style.display='none';el('gameScreen').classList.remove('game-hidden');render()});
 el('homeButton').addEventListener('click',()=>{roundToken++;locked=true;el('gameScreen').classList.add('game-hidden');el('homeScreen').style.display='grid';el('homeBest').textContent=bestScore;el('homeLevel').textContent=level});
+el('navHome').addEventListener('click',()=>{document.getElementById('homeScreen').scrollTo({top:0,behavior:'smooth'});});
+el('navPlay').addEventListener('click',()=>el('startGame').click());
+el('navRewards').addEventListener('click',()=>document.getElementById('homeRewards').scrollIntoView({behavior:'smooth',block:'center'}));
+el('navWallet').addEventListener('click',()=>document.getElementById('homeRewards').scrollIntoView({behavior:'smooth',block:'center'}));
 el('hint').addEventListener('click',hint);
 boardEl.addEventListener('pointerdown',e=>{const cell=e.target.closest('.cell');if(!cell||locked)return;touchStart={index:[...boardEl.children].indexOf(cell),x:e.clientX,y:e.clientY};});
 boardEl.addEventListener('pointerup',e=>{if(!touchStart)return;const start=touchStart;touchStart=null;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;const dest=Math.abs(dx)>Math.abs(dy)?start.index+(dx>0?1:-1):start.index+(dy>0?N:-N);if(dest<0||dest>=N*N||Math.floor(dest/N)!==Math.floor(start.index/N)&&Math.abs(dest-start.index)===1)return;suppressClick=true;selected=-1;swap(start.index,dest);});
