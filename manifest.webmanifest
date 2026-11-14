@@ -1,0 +1,9 @@
+{
+  "name": "Candy Match 3",
+  "short_name": "Candy Match 3",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#170d32",
+  "theme_color": "#24134b",
+  "description": "A colorful match-3 candy puzzle game."
+}
