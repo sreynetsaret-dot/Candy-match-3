@@ -128,13 +128,21 @@ function playSound(kind){
   if(!audioCtx)audioCtx=new AudioAPI();
   if(audioCtx.state==='suspended')audioCtx.resume();
   const now=audioCtx.currentTime;
-  const notes=kind==='match'?[660,880,1046]:kind==='win'?[523,659,784,1046]:kind==='lose'?[330,247]:[520];
-  notes.forEach((freq,i)=>{
-   const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
-   const start=now+i*(kind==='win'?.11:.045),duration=kind==='win'?.16:.09;
-   osc.type='triangle';osc.frequency.setValueAtTime(freq,start);
-   gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.045,start+.012);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
-   osc.connect(gain);gain.connect(audioCtx.destination);osc.start(start);osc.stop(start+duration+.02);
+  const patterns={
+   swap:[[440,0,.075,'sine',.035],[660,.035,.09,'triangle',.025]],
+   match:[[660,0,.12,'triangle',.04],[880,.055,.14,'sine',.035],[1108,.11,.18,'triangle',.03],[1320,.16,.2,'sine',.022]],
+   win:[[523,0,.22,'triangle',.04],[659,.12,.22,'triangle',.04],[784,.24,.25,'sine',.04],[1046,.38,.38,'triangle',.045],[1318,.52,.45,'sine',.025]],
+   lose:[[392,0,.18,'triangle',.035],[311,.13,.22,'sine',.03],[233,.28,.34,'triangle',.035]]
+  };
+  (patterns[kind]||patterns.swap).forEach(([freq,delay,duration,wave,volume],i)=>{
+   const start=now+delay,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+   osc.type=wave;osc.frequency.setValueAtTime(freq,start);
+   if(kind==='swap'&&i===1)osc.frequency.exponentialRampToValueAtTime(740,start+duration);
+   gain.gain.setValueAtTime(.0001,start);
+   gain.gain.exponentialRampToValueAtTime(volume,start+.018);
+   gain.gain.setValueAtTime(volume*.72,start+duration*.55);
+   gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+   osc.connect(gain);gain.connect(audioCtx.destination);osc.start(start);osc.stop(start+duration+.025);
   });
  }catch(e){}
 }
