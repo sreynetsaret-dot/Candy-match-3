@@ -86,6 +86,34 @@ footer strong{color:#fff39a;font-size:15px}
 .cell.hint-cell{animation:pulse .55s ease-in-out infinite alternate}
 .actions button:hover,.home-reward:hover{filter:brightness(1.12);transform:translateY(-2px)}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Premium polish: richer candy shine, responsive spacing and satisfying match bursts */
+.home-shell{padding-top:clamp(22px,5vh,42px)}
+.home-brand{font-size:17px;letter-spacing:.55px}
+.home-brand-icon{width:48px;height:48px;border-radius:16px;font-size:27px;box-shadow:0 5px 0 #a33b78,0 9px 20px #050a2866;animation:brandBounce 3s ease-in-out infinite}
+.home-hero{min-height:330px;padding:30px 23px 25px;border:1px solid #ffffff48;box-shadow:0 18px 38px #050a2877,inset 0 1px #ffffff30}
+.home-hero:before{content:"🍓";position:absolute;right:30px;bottom:22px;font-size:clamp(42px,12vw,64px);filter:drop-shadow(0 8px 8px #100b3d77);transform:rotate(-14deg);animation:candyFloat 3.8s ease-in-out infinite}
+.home-hero:after{right:13px;top:43px;font-size:clamp(100px,27vw,145px);text-shadow:0 8px 18px #100b3d77}
+.home-hero h2{font-size:clamp(35px,9.5vw,48px);text-shadow:0 3px 0 #33246f66}
+.home-play{border-radius:17px;padding:16px 15px;font-size:17px;box-shadow:0 6px 0 #b77b2d,0 12px 22px #100b3e66,inset 0 1px #fff}
+.home-reward{background:linear-gradient(155deg,#ffffff18,#ffffff08);border-color:#ffffff2c;box-shadow:inset 0 1px #ffffff18;transition:transform .2s,background .2s}
+.home-reward-icon{width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,#ffffff28,#ffffff0c);box-shadow:inset 0 1px #fff4}
+.home-section-head h3{font-size:17px}
+.home-bottom-nav{box-shadow:0 -8px 28px #050a2855}
+header{padding:17px 12px 18px;border-radius:25px}
+.stats{gap:8px;padding:9px}
+.stat{padding:9px 2px;border-radius:15px}
+.board{gap:5px;padding:9px;border-radius:24px;box-shadow:0 8px 0 #123d83,0 18px 32px #070d3dbb,inset 0 3px 8px #fff}
+.cell{border-radius:13px;filter:drop-shadow(0 2px 1px #16407844);transition:transform .16s,filter .16s,opacity .16s}
+.cell.matched{animation:candyBurst .19s ease-in forwards;z-index:2}
+@keyframes candyBurst{0%{transform:scale(1);opacity:1;filter:brightness(1)}45%{transform:scale(1.3) rotate(12deg);opacity:1;filter:brightness(1.8)}100%{transform:scale(.05) rotate(-18deg);opacity:0;filter:brightness(2)}}
+@keyframes brandBounce{0%,80%,100%{transform:translateY(0)}88%{transform:translateY(-5px)}}
+@keyframes candyFloat{0%,100%{transform:translateY(0) rotate(-14deg)}50%{transform:translateY(-9px) rotate(-5deg)}}
+.goal-banner{padding:13px 11px;font-size:13px}
+.actions button{padding:14px 4px;border-radius:15px}
+.ad-slot{border-style:solid;border-color:#ffffff20;background:linear-gradient(135deg,#ffffff10,#ffffff05);box-shadow:inset 0 1px #ffffff0c}
+@media(max-width:390px){.home-hero{min-height:315px}.home-shell{padding-left:15px;padding-right:15px}.board{gap:4px;padding:7px}.cell{border-radius:10px}}
+
 </style>
 </head>
 <body>
@@ -151,9 +179,10 @@ function hasMatchAt(b,r,c){const v=b[r*N+c];if(v<0)return false;let n=1;for(let 
 function makeBoard(){do{board=Array.from({length:N*N},rand)}while(findMatches().length)}
 function findMatches(){const set=new Set();for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=board[r*N+c];if(v<0)continue;let run=[r*N+c];for(let x=c+1;x<N&&board[r*N+x]===v;x++)run.push(r*N+x);if(run.length>=3)run.forEach(i=>set.add(i));run=[r*N+c];for(let y=r+1;y<N&&board[y*N+c]===v;y++)run.push(y*N+c);if(run.length>=3)run.forEach(i=>set.add(i))}return [...set]}
 function render(){boardEl.innerHTML='';board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.style.setProperty('--i',i%8);b.textContent=v<0?'':TYPES[v];b.setAttribute('aria-label',v<0?'Empty':TYPES[v]);b.disabled=locked||v<0;b.addEventListener('click',()=>tap(i));boardEl.appendChild(b)});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;const g=levelGoal();el('goalBanner').innerHTML=g.label+'<small>'+(g.mode==='collect'?'Collect '+TYPES[g.candy]+' · '+goalProgress+' / '+g.target:g.mode==='combo'?'Big matches · '+goalProgress+' / '+g.target:g.detail)+'</small>';el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('homeLevel').textContent=level;el('progress').style.width=Math.min(100,(g.mode==='score'?score:goalProgress)/targetScore()*100)+'%'}
+function renderMatchScore(){el('score').textContent=score;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;const g=levelGoal();el('goalBanner').innerHTML=g.label+'<small>'+(g.mode==='collect'?'Collect '+TYPES[g.candy]+' · '+goalProgress+' / '+g.target:g.mode==='combo'?'Big matches · '+goalProgress+' / '+g.target:g.detail)+'</small>';el('progress').style.width=Math.min(100,(g.mode==='score'?score:goalProgress)/g.target*100)+'%'}
 function tap(i){if(suppressClick){suppressClick=false;return}if(locked||moves<=0)return;hintPair=[];if(selected<0){selected=i;render();return}if(selected===i){selected=-1;render();return}const a=selected,b=i;selected=-1;if(Math.abs(a-b)===N||Math.floor(a/N)===Math.floor(b/N)&&Math.abs(a-b)===1){swap(a,b)}else{selected=i;render()}}
 function swap(a,b){hintPair=[];[board[a],board[b]]=[board[b],board[a]];const m=findMatches();if(!m.length){[board[a],board[b]]=[board[b],board[a]];render();return}moves--;locked=true;playSound('swap');render();roundToken++;resolve(roundToken)}
-function resolve(token){if(token!==roundToken)return;let matches=findMatches();if(!matches.length){locked=false;render();checkEnd();if(moves>0&&!findMove())reshuffle();return}const g=levelGoal();if(g.mode==='collect')goalProgress+=matches.filter(i=>board[i]===g.candy).length;if(g.mode==='combo'&&matches.length>=4)goalProgress++;playSound('match');score+=matches.length*10;if(score>bestScore){bestScore=score;try{localStorage.setItem('candyBestScore',String(bestScore))}catch(e){}}matches.forEach(i=>board[i]=-1);render();setTimeout(()=>{if(token!==roundToken)return;for(let c=0;c<N;c++){let vals=[];for(let r=N-1;r>=0;r--){const v=board[r*N+c];if(v>=0)vals.push(v)}for(let r=N-1;r>=0;r--)board[r*N+c]=vals[N-1-r]??rand()}render();setTimeout(()=>resolve(token),130)},150)}
+function resolve(token){if(token!==roundToken)return;let matches=findMatches();if(!matches.length){locked=false;render();checkEnd();if(moves>0&&!findMove())reshuffle();return}const g=levelGoal();if(g.mode==='collect')goalProgress+=matches.filter(i=>board[i]===g.candy).length;if(g.mode==='combo'&&matches.length>=4)goalProgress++;playSound('match');score+=matches.length*10;if(score>bestScore){bestScore=score;try{localStorage.setItem('candyBestScore',String(bestScore))}catch(e){}}matches.forEach(i=>{const cell=boardEl.children[i];if(cell)cell.classList.add('matched')});renderMatchScore();setTimeout(()=>{if(token!==roundToken)return;matches.forEach(i=>board[i]=-1);for(let c=0;c<N;c++){let vals=[];for(let r=N-1;r>=0;r--){const v=board[r*N+c];if(v>=0)vals.push(v)}for(let r=N-1;r>=0;r--)board[r*N+c]=vals[N-1-r]??rand()}render();setTimeout(()=>resolve(token),150)},190)}
 function checkEnd(){const g=levelGoal(),won=g.mode==='score'?score>=g.target:goalProgress>=g.target;if(won){playSound('win');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 Level '+level+' complete!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('overlay').classList.add('show')}else if(moves<=0){playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
 function hint(){if(locked||moves<=0)return;const pair=findMove();if(!pair){reshuffle();return}hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
