@@ -374,16 +374,20 @@ function resolve(token){
  if(token!==roundToken)return;
  let matches=[...new Set([...findMatches(),...forcedClear])];forcedClear=[];
  if(!matches.length){locked=false;render();checkEnd();if(moves>0&&!findMove())reshuffle();return}
+ // Track the actual match size before special-candy blasts expand the clear area.
+ const baseMatchSize=matches.length;
  // A striped candy clears its complete row and column when matched or swapped.
  const expanded=new Set(matches);
  matches.forEach(i=>{if(powers[i]){const r=Math.floor(i/N),c=i%N;for(let x=0;x<N;x++)expanded.add(r*N+x);for(let y=0;y<N;y++)expanded.add(y*N+c)}});
  matches=[...expanded];
  const g=levelGoal();
  if(g.mode==='collect')goalProgress+=matches.filter(i=>board[i]===g.candy).length;
- if(g.mode==='combo'&&matches.length>=4)goalProgress++;
+ if(g.mode==='double')goalProgress+=matches.filter(i=>board[i]===g.candy||board[i]===g.other).length;
+ if(g.mode==='combo'&&baseMatchSize>=4)goalProgress++;
+ if(g.mode==='bigclear'&&baseMatchSize>=5)goalProgress++;
  // Four-candy matches create a striped candy that can clear a row and column later.
  let keep=-1;
- if(matches.length>=4&&!forcedClear.length){keep=matches.find(i=>!powers[i])??-1;if(keep>=0){powers[keep]=1;if(g.mode==='striped')goalProgress++;}}
+ if(baseMatchSize>=4&&!forcedClear.length){keep=matches.find(i=>!powers[i])??-1;if(keep>=0){powers[keep]=1;if(g.mode==='striped')goalProgress++;}}
  const cleared=matches.filter(i=>i!==keep);
  playSound('match');if(cleared.length>=4)sayCheer('Sweet!');score+=cleared.length*10;
  if(score>bestScore){bestScore=score;try{localStorage.setItem('candyBestScore',String(bestScore))}catch(e){}}
