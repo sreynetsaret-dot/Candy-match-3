@@ -305,6 +305,39 @@ footer{margin-top:10px}
 @media(max-width:370px){.arcade-layout{grid-template-columns:58px minmax(0,1fr) 42px;gap:5px;padding:6px}.right-rail{gap:8px}.gear-button,.locked-booster{width:32px;height:32px}.moves-medal strong{font-size:24px}.center-play .cell{font-size:clamp(22px,6.5vw,31px)}.mini-boosters span{width:27px;height:27px;font-size:15px}}
 @media(prefers-reduced-motion:no-preference){.moves-medal{animation:medalPulse 3s ease-in-out infinite}.right-rail .locked-booster{animation:railGlow 3.5s ease-in-out infinite alternate}@keyframes medalPulse{50%{filter:brightness(1.13)}}@keyframes railGlow{to{box-shadow:0 3px 0 #24133f,0 0 12px #d9aaff88}}}
 
+
+/* Mobile readability fix: give the 6x6 playfield the full phone width */
+@media(max-width:600px){
+  body{padding:5px 4px calc(12px + env(safe-area-inset-bottom))}
+  main{width:100%;max-width:520px;padding:2px 1px 10px}
+  header{margin-bottom:8px;padding:12px 8px}
+  h1{font-size:clamp(25px,7vw,32px)}
+  .arcade-layout{display:grid;grid-template-columns:68px minmax(0,1fr);gap:7px;padding:8px;border-radius:19px}
+  .left-rail{display:contents}
+  .moves-medal{grid-column:1;grid-row:1;align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:5px 2px}
+  .moves-medal strong{font-size:clamp(25px,7vw,31px)}
+  .left-rail .stats{grid-column:2;grid-row:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;min-width:0}
+  .left-rail .stat{display:flex;flex-direction:column;justify-content:center;padding:5px 1px;min-width:0}
+  .left-rail .stat small{font-size:8px}
+  .left-rail .stat strong{font-size:clamp(16px,4.8vw,21px)}
+  .left-rail .progress-wrap{grid-column:1/-1;grid-row:2;height:10px;margin:0 2px}
+  .side-goal,.mini-boosters,.right-rail{display:none!important}
+  .center-play{grid-column:1/-1;grid-row:3;width:100%;min-width:0}
+  .center-play .board{width:100%;max-width:none;aspect-ratio:1/1;gap:clamp(3px,1vw,5px);padding:clamp(5px,1.4vw,8px);border-width:3px;border-radius:17px}
+  .center-play .cell{font-size:clamp(35px,11.7vw,57px);border-radius:clamp(7px,2vw,12px);min-width:0}
+  .goal-banner-mobile{display:block;margin:7px 0 0;padding:8px 5px;font-size:10px}
+  .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:8px 0 2px}
+  .actions button{min-height:44px;padding:9px 4px;font-size:13px}
+  .game-ad{margin:9px 0 4px;min-height:55px}
+  .hint{margin:8px 0;padding:9px;font-size:11px}
+  footer{margin-top:8px;font-size:10px}
+}
+@media(max-width:360px){
+  .arcade-layout{grid-template-columns:60px minmax(0,1fr);gap:5px;padding:6px}
+  .center-play .cell{font-size:clamp(32px,11vw,43px)}
+  .actions button{font-size:12px;min-height:42px}
+}
+
 </style>
 </head>
 <body>
