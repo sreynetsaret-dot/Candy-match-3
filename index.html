@@ -311,14 +311,14 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 }
 
 
-/* 5x5 tropical fruit board */
-.board{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-rows:1fr;aspect-ratio:1/1;width:100%;max-width:560px;margin-inline:auto;gap:clamp(5px,1.5vw,9px);padding:clamp(7px,1.8vw,11px)}
-.cell{font-size:clamp(48px,13vw,68px)!important;border-radius:15px!important}
+/* Correct 6x6 tropical fruit board: exactly 36 cells in six columns */
+.board{grid-template-columns:repeat(6,minmax(0,1fr))!important;grid-auto-rows:1fr;aspect-ratio:1/1;width:100%;max-width:560px;margin-inline:auto;gap:clamp(4px,1.1vw,7px);padding:clamp(6px,1.5vw,9px)}
+.cell{font-size:clamp(30px,9.5vw,49px)!important;border-radius:12px!important;min-width:0!important;min-height:0!important}
 .candy-type-0{background:linear-gradient(145deg,#e4ffb8,#79d84e 55%,#329d42)!important}
 .candy-type-1{background:linear-gradient(145deg,#fff0ad,#ffad36 55%,#f07820)!important}
 .candy-type-2{background:linear-gradient(145deg,#fff7a8,#ffe04b 55%,#e9ae20)!important}
 .candy-type-3{background:linear-gradient(145deg,#ffe0a8,#ffae55 52%,#e87536)!important}
-@media(max-width:600px){.board{gap:5px!important;padding:7px!important}.cell{font-size:clamp(45px,12.5vw,61px)!important;min-height:0!important}}
+@media(max-width:600px){.board{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:4px!important;padding:6px!important}.cell{font-size:clamp(29px,8.8vw,39px)!important;min-height:0!important}}
 
 </style>
 </head>
