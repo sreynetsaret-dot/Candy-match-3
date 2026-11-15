@@ -320,6 +320,76 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 .candy-type-3{background:linear-gradient(145deg,#ffe0a8,#ffae55 52%,#e87536)!important}
 @media(max-width:600px){.board{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:4px!important;padding:6px!important}.cell{font-size:clamp(29px,8.8vw,39px)!important;min-height:0!important}}
 
+
+/* Sweet Kingdom premium visual pass — presentation only, gameplay untouched */
+body{
+ background:
+ radial-gradient(ellipse at 12% 5%,#fff8c9 0,transparent 25%),
+ radial-gradient(ellipse at 92% 18%,#ffc4e9 0,transparent 28%),
+ radial-gradient(ellipse at 50% 100%,#8cebd0 0,transparent 42%),
+ linear-gradient(180deg,#8bdcf5 0%,#91bff4 42%,#c9a5ed 100%)!important;
+}
+.home-screen{
+ background:
+ radial-gradient(ellipse at 50% -5%,#fff4b8 0,transparent 35%),
+ radial-gradient(circle at 5% 38%,#ffb9dc 0,transparent 28%),
+ linear-gradient(180deg,#4b8bd4 0%,#6255b7 55%,#9a4e9d 100%)!important;
+}
+.home-top{margin-bottom:20px}
+.home-brand{font-size:18px!important;text-shadow:0 2px 5px #17265a55}
+.home-brand-icon{border:2px solid #fff;box-shadow:0 5px 0 #a33b78,0 8px 18px #14265c66!important}
+.home-wallet-chip{background:linear-gradient(145deg,#ffffff35,#ffffff12)!important;border:1px solid #ffffff65!important;box-shadow:inset 0 1px #fff8,0 5px 15px #14265c33}
+.home-hero{
+ border:2px solid #fff9!important;
+ background:radial-gradient(circle at 88% 18%,#fff7 0 2px,transparent 3px),radial-gradient(circle at 76% 78%,#fff5 0 3px,transparent 4px),linear-gradient(145deg,#ff8fc5 0%,#b65bc4 48%,#596ed0 100%)!important;
+ box-shadow:0 8px 0 #69428f,0 18px 34px #17265c66,inset 0 2px 0 #fff!important;
+}
+.home-hero h2{color:#fff;text-shadow:0 3px 0 #86448e,0 6px 12px #42215c88!important}
+.home-play{border:2px solid #fff!important;background:linear-gradient(180deg,#fff7b2 0%,#ffd45a 55%,#ffad39 100%)!important;box-shadow:0 6px 0 #bd7730,0 11px 18px #44204f66,inset 0 2px 0 #fff!important}
+.home-reward{border:1px solid #fff7!important;background:linear-gradient(145deg,#ffffff30,#ffffff0c)!important;box-shadow:inset 0 1px #fff6,0 6px 15px #17265c33!important}
+.home-reward-icon{border:1px solid #fff8!important;background:linear-gradient(145deg,#fff7,#ffffff18)!important;box-shadow:0 4px 0 #543e8c55,inset 0 2px #fff!important}
+.home-bottom-nav{background:linear-gradient(180deg,#253d83f2,#18265cf7)!important;border-top:1px solid #ffffff55!important}
+header{
+ background:linear-gradient(145deg,#55dff0 0%,#369cde 48%,#7865df 100%)!important;
+ border:3px solid #fff!important;box-shadow:0 7px 0 #285a9a,0 13px 25px #263d8066,inset 0 3px 0 #fff!important;
+}
+.stats{background:linear-gradient(145deg,#2869ae,#344d9b)!important;border:2px solid #e7ffff!important;box-shadow:0 6px 0 #24477e,0 11px 20px #263d8055,inset 0 2px 0 #fff8!important}
+.stat{background:linear-gradient(180deg,#fff 0%,#d7f5ff 55%,#a8def6 100%)!important;border:1px solid #fff!important;box-shadow:inset 0 -4px 0 #79b9df66,0 3px 5px #204b8055!important}
+.stat strong{color:#24559a!important}
+.progress-wrap{height:19px!important;background:#27447f!important;border:2px solid #fff!important;box-shadow:0 4px 0 #284d8a,0 6px 12px #1e397455!important}
+.progress{background:linear-gradient(90deg,#48e8ef,#5ef0a5 48%,#fff17a)!important;box-shadow:0 0 14px #d9ffff!important}
+.goal-banner{border:2px solid #fff!important;background:linear-gradient(110deg,#fff6a8,#ffca65 48%,#ff9cc4)!important;color:#754078!important;box-shadow:0 5px 0 #b36b87,0 9px 16px #263d8055,inset 0 2px #fff!important}
+.actions button{border:2px solid #fff!important;box-shadow:0 5px 0 #a9387c,0 8px 13px #263d8055,inset 0 2px #fff9!important}
+.actions button.secondary{box-shadow:0 5px 0 #117e5b,0 8px 13px #263d8055,inset 0 2px #fff9!important}
+.board{
+ background:linear-gradient(145deg,#fff0a9 0%,#ffbd69 38%,#ef83b7 100%)!important;
+ border:3px solid #fff!important;border-radius:23px!important;
+ box-shadow:0 8px 0 #b56a91,0 15px 25px #263d8066,inset 0 3px 0 #fff!important;
+}
+.cell{
+ border:2px solid #ffffff!important;
+ box-shadow:inset 0 3px 6px #fff, inset 0 -5px 7px #4b659944,0 4px 5px #34517b66!important;
+ text-shadow:0 2px 2px #243e5b55!important;
+ transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .16s,box-shadow .16s!important;
+}
+.cell:not(:disabled){cursor:grab}
+.cell:active{transform:scale(.88)!important;filter:brightness(1.12)!important}
+.cell.selected{outline:3px solid #fff36b!important;box-shadow:0 0 0 4px #ff85c977,0 0 18px #fff36b,inset 0 2px 6px #fff!important}
+.cell.hint-cell{outline:3px solid #9affd7!important;box-shadow:0 0 0 4px #35d6b577,0 0 20px #8affdc!important}
+.cell.obstacle{border:2px solid #fff!important;box-shadow:inset 0 3px 7px #fff,0 4px 6px #37638b88!important}
+.hint{border:2px solid #fff!important;background:linear-gradient(110deg,#397fd3,#765bd1 58%,#bd65b2)!important;box-shadow:0 5px 0 #51449c,0 9px 16px #263d8055,inset 0 2px #fff8!important}
+.modal{border:3px solid #fff!important;box-shadow:0 8px 0 #8f3f83,0 22px 55px #21113c99,inset 0 2px #fff!important}
+@media(max-width:600px){
+ .home-shell{padding-top:calc(18px + env(safe-area-inset-top))}
+ .board{gap:4px!important;padding:6px!important}
+ .cell{font-size:clamp(29px,8.8vw,39px)!important;border-radius:11px!important}
+}
+@media(prefers-reduced-motion:no-preference){
+ .home-play{animation:buttonShine 3.8s ease-in-out infinite}
+ .stat{transition:transform .18s}
+ .cell.matched{animation:candyBurst .32s ease-in forwards!important}
+}
+
 </style>
 </head>
 <body>
