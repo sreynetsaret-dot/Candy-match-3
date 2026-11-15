@@ -426,7 +426,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <section class="home-feature" aria-label="Daily rewards">
 <div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 FREE SPIN TODAY</span></div>
 <div class="wheel-card">
-<div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc" aria-label="Lucky wheel with eight prize sections"><span class="wheel-label" style="--a:29.94deg">10<br>COINS</span><span class="wheel-label" style="--a:89.82deg">10<br>COINS</span><span class="wheel-label" style="--a:149.70deg">10<br>COINS</span><span class="wheel-label" style="--a:202.14deg">50<br>COINS</span><span class="wheel-label" style="--a:247.14deg">50<br>COINS</span><span class="wheel-label" style="--a:292.14deg">150<br>COINS</span><span class="wheel-label" style="--a:336.96deg">THANK<br>YOU</span><div class="wheel-center">🍬</div></div>
+<div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc" aria-label="Lucky wheel with eight prize sections"><span class="wheel-label" style="--a:30deg">10<br>COINS</span><span class="wheel-label" style="--a:90deg">10<br>COINS</span><span class="wheel-label" style="--a:150deg">10<br>COINS</span><span class="wheel-label" style="--a:202.5deg">50<br>COINS</span><span class="wheel-label" style="--a:247.5deg">50<br>COINS</span><span class="wheel-label" style="--a:288deg">150<br>COINS</span><span class="wheel-label" style="--a:332.82deg">THANK<br>YOU</span><div class="wheel-center">🍬</div></div>
 <div class="wheel-actions"><button class="wheel-spin" id="freeSpin">🎡 FREE SPIN</button><button class="wheel-ad" id="adSpin">▶ WATCH AD · +1 SPIN</button></div>
 <p class="wheel-note" id="wheelNote">💎 RARE $1 JACKPOT · 10 / 50 / 150 COINS · THANK YOU</p>
 <p class="wheel-note">EXTRA SPINS REQUIRE A VERIFIED REWARDED AD. CASH PRIZES REQUIRE ELIGIBILITY AND PAYOUT VERIFICATION.</p>
@@ -612,14 +612,14 @@ function spinWheel(isAd=false){
  if(dailyState.freeUsed){alert("You have already used today's free spin.");return}
  dailyState.freeUsed=true;saveDaily();refreshHomeFeatures();
  const roll=Math.random()*1000;let prize,midAngle;
- if(roll<166.3333333){prize={label:'10 COINS',coins:10};midAngle=29.94}
- else if(roll<332.6666667){prize={label:'10 COINS',coins:10};midAngle=89.82}
- else if(roll<499){prize={label:'10 COINS',coins:10};midAngle=149.70}
- else if(roll<624.5){prize={label:'50 COINS',coins:50};midAngle=202.14}
- else if(roll<750){prize={label:'50 COINS',coins:50};midAngle=247.14}
- else if(roll<875){prize={label:'150 COINS',coins:150};midAngle=292.14}
- else if(roll<999){prize={label:'THANK YOU',coins:0};midAngle=336.96}
- else{prize={label:'$1 JACKPOT (PENDING VERIFICATION)',cash:true};midAngle=359.64}
+ if(roll<166.6666667){prize={label:'10 COINS',coins:10};midAngle=29.94}
+ else if(roll<333.3333333){prize={label:'10 COINS',coins:10};midAngle=89.82}
+ else if(roll<500){prize={label:'10 COINS',coins:10};midAngle=150}
+ else if(roll<625){prize={label:'50 COINS',coins:50};midAngle=202.5}
+ else if(roll<750){prize={label:'50 COINS',coins:50};midAngle=247.5}
+ else if(roll<850){prize={label:'150 COINS',coins:150};midAngle=288}
+ else if(roll<999){prize={label:'THANK YOU',coins:0};midAngle=332.82}
+ else{prize={label:'$1 JACKPOT (PENDING VERIFICATION)',cash:true};midAngle=359.82}
  const disc=el('wheelDisc'),current=((wheelRotation%360)+360)%360;
  const delta=(360-midAngle-current+360)%360;
  wheelRotation+=1800+delta;disc.style.transform='rotate('+wheelRotation+'deg)';
@@ -827,7 +827,7 @@ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addE
 <style id="lucky-wheel-final-v23">
 .wheel-card{display:flex;flex-direction:column;align-items:center;gap:10px}
 .wheel-disc{width:min(78vw,292px);aspect-ratio:1;position:relative;display:block;overflow:visible;
- background:conic-gradient(from 0deg,#ffca55 0deg 59.88deg,#ff8fbd 59.88deg 119.76deg,#ffca55 119.76deg 179.64deg,#62c9f2 179.64deg 224.64deg,#a88bea 224.64deg 269.64deg,#65d5b2 269.64deg 314.64deg,#ff9d63 314.64deg 359.28deg,#ffe86a 359.28deg 360deg)!important;
+ background:conic-gradient(from 0deg,#ffca55 0deg 60deg,#ff8fbd 60deg 120deg,#ffca55 120deg 180deg,#62c9f2 180deg 225deg,#a88bea 225deg 270deg,#65d5b2 270deg 306deg,#ff9d63 306deg 359.64deg,#ffe86a 359.64deg 360deg)!important;
  border:9px solid #fff!important;border-radius:50%;box-shadow:0 7px 0 #a84d91,0 14px 24px #60317a66,inset 0 0 0 3px #fff9!important;transition:transform 3.6s cubic-bezier(.12,.72,.12,1)}
 .wheel-disc:before{content:none!important;display:none!important}
 .wheel-disc:after{content:"";position:absolute;inset:5px;border:2px solid #ffffffbd;border-radius:50%;pointer-events:none}
