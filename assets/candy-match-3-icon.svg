@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#13b9ff"/><stop offset="1" stop-color="#3522a3"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fff56a"/><stop offset=".55" stop-color="#ffb900"/><stop offset="1" stop-color="#ff7200"/></linearGradient>
+ <linearGradient id="white" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#8de8ff"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="8"/><feOffset dy="9"/><feComponentTransfer><feFuncA type="linear" slope=".55"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect x="8" y="8" width="496" height="496" rx="100" fill="url(#bg)" stroke="#ffd83d" stroke-width="15"/>
+<g opacity=".9" filter="url(#shadow)">
+ <path d="M85 132 C42 80 119 37 156 90 C195 33 270 88 222 145 L154 210Z" fill="#ff315c" stroke="#fff" stroke-width="8"/>
+ <circle cx="377" cy="135" r="62" fill="#db36ff" stroke="#ffb5ff" stroke-width="8"/>
+ <path d="M377 83v104m-52-52h104m-89-37 74 74m0-74-74 74" stroke="#ff9aff" stroke-width="13" stroke-linecap="round"/>
+ <circle cx="87" cy="358" r="52" fill="#ffb31c" stroke="#fff0a6" stroke-width="8"/>
+ <path d="M87 314v88m-44-44h88m-75-31 62 62m0-62-62 62" stroke="#fff0a6" stroke-width="9"/>
+ <circle cx="421" cy="360" r="47" fill="#2ce5d1" stroke="#aafff4" stroke-width="8"/>
+</g>
+<g filter="url(#shadow)" text-anchor="middle" font-family="Arial Rounded MT Bold,Arial,sans-serif" font-weight="1000" stroke="#4b168c" stroke-width="22" stroke-linejoin="round" paint-order="stroke">
+ <text x="256" y="246" font-size="94" fill="url(#gold)">CANDY</text>
+ <text x="256" y="337" font-size="82" fill="url(#white)">MATCH</text>
+ <text x="256" y="455" font-size="116" fill="url(#gold)">3</text>
+</g>
+<path d="M192 72l13 27 29 4-21 20 5 29-26-14-26 14 5-29-21-20 29-4z" fill="#fff06a" stroke="#fff" stroke-width="5"/>
+<path d="M330 392l10 20 22 3-16 15 4 22-20-11-20 11 4-22-16-15 22-3z" fill="#fff06a" stroke="#fff" stroke-width="4"/>
+</svg>
