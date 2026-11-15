@@ -1,0 +1,12 @@
+{
+  "appId": "com.sreynetsaret.candymatch3",
+  "appName": "Candy Match 3",
+  "webDir": "www",
+  "server": {
+    "url": "https://candy-match-3.pages.dev",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
