@@ -3,7 +3,7 @@ import { fail, json, originAllowed, readJson, requireSession } from "./_lib/supa
 async function requestProgress(accessToken, userId, method, payload) {
   const url = "https://dowxgetlaaxfywwxguee.supabase.co/rest/v1/player_progress";
   const query = method === "GET"
-    ? "?select=coins,level,game_state&user_id=eq." + encodeURIComponent(userId) + "&limit=1"
+    ? "?select=coins,level,game_state,updated_at&user_id=eq." + encodeURIComponent(userId) + "&limit=1"
     : "?on_conflict=user_id";
   const response = await fetch(url + query, {
     method,
