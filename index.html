@@ -423,6 +423,25 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <section class="home-screen" id="homeScreen"><div class="home-shell">
 <div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div></div>
 <div class="home-hero"><div class="home-hero-kicker">✨ A little fun. A lot of sweetness.</div><h2>Match candies.<br>Reach new levels.</h2><p>Swap, match and beat the target in this colorful candy puzzle.</p><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-level">⭐ LEVEL <span id="homeLevel">1</span> <span>•</span> 🏆 BEST <span id="homeBest">0</span></div></div>
+<section class="home-feature" aria-label="Daily rewards">
+<div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 free spin today</span></div>
+<div class="wheel-card">
+<div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc"><div class="wheel-center">🍬</div></div>
+<div class="wheel-actions"><button class="wheel-spin" id="freeSpin">🎡 FREE SPIN</button><button class="wheel-ad" id="adSpin">▶ Watch Ad · +1 spin</button></div>
+<p class="wheel-note" id="wheelNote">10 coins 50% · 50 coins 25% · 150 coins 10% · $1 0.1% · Thanks You 14.9%</p>
+<p class="wheel-note">Ad spins unlock only after a real, completed Rewarded Ad is verified. Cash prizes require eligibility and payout verification.</p>
+</div>
+<div class="home-section-head"><h3>🎯 Daily Missions</h3><span id="missionDate">TODAY</span></div>
+<div class="mission-list" id="missionList">
+<div class="mission-row"><span>🏁 Complete 1 level</span><b id="missionOne">0/1 · +20 🪙</b></div>
+<div class="mission-row"><span>🏆 Complete 2 levels</span><b id="missionTwo">0/2 · +40 🪙</b></div>
+<div class="mission-row"><span>💡 Use a Hint</span><b id="missionHint">0/1 · +10 🪙</b></div>
+</div>
+<div class="home-section-head"><h3>🎁 Daily Login Gift</h3><span>Every day</span></div>
+<div class="daily-gift"><div><b>🎀 Today's gift</b><small>Claim 20 bonus coins once per day</small></div><button id="claimDaily">CLAIM +20</button></div>
+<div class="home-section-head"><h3>🏆 Achievements</h3><span>Keep playing!</span></div>
+<div class="achievement-grid"><div>🌟<b>Level 5</b><small>Reach level 5</small></div><div>💎<b>Level 10</b><small>Reach level 10</small></div><div>👑<b>Level 25</b><small>Reach level 25</small></div></div>
+</section>
 <div class="ad-slot"><span>ADVERTISEMENT</span><b>Sponsored space</b><small>Ad network placement — connect an approved ad code</small></div><div class="home-section-head" id="homeRewards"><h3>🎁 Redeem Rewards</h3><span>Coming soon</span></div>
 <div class="home-rewards"><div class="home-reward"><div class="home-reward-icon">💙</div><b>PayPal</b><small>Cash rewards</small></div><div class="home-reward"><div class="home-reward-icon">💳</div><b>Payoneer</b><small>Cash rewards</small></div><div class="home-reward"><div class="home-reward-icon">🎮</div><b>Google Play</b><small>Gift cards</small></div></div>
 <p class="home-best">Best score saved on this device: <strong id="homeBestFoot">0</strong></p>
@@ -564,10 +583,52 @@ function resolve(token){
   render();setTimeout(()=>resolve(token),65);
  },450);
 }
-function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 Level '+level+' complete!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('overlay').classList.add('show')}else if(moves<=0){playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
+function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 Level '+level+' complete!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('overlay').classList.add('show')}else if(moves<=0){playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){if(board[a]<0)continue;const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0||board[b]<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
+
+const todayKey=()=>new Date().toLocaleDateString('en-CA');
+let dailyState={date:todayKey(),wins:0,hints:0,freeUsed:false,adSpins:0,giftClaimed:false};
+try{const saved=JSON.parse(localStorage.getItem('candyDailyState')||'null');if(saved&&saved.date===todayKey())dailyState={...dailyState,...saved};}catch(e){}
+function saveDaily(){try{localStorage.setItem('candyDailyState',JSON.stringify(dailyState))}catch(e){}}
+function refreshHomeFeatures(){
+ const w=el('wheelStatus');if(w)w.textContent=dailyState.freeUsed?'Free spin used today':'1 free spin today';
+ if(el('freeSpin'))el('freeSpin').disabled=dailyState.freeUsed;
+ if(el('claimDaily')){el('claimDaily').disabled=dailyState.giftClaimed;el('claimDaily').textContent=dailyState.giftClaimed?'CLAIMED ✓':'CLAIM +20'}
+ if(el('missionOne'))el('missionOne').textContent=Math.min(1,dailyState.wins)+'/1 · '+(dailyState.wins>=1?'CLAIMED':' +20 🪙');
+ if(el('missionTwo'))el('missionTwo').textContent=Math.min(2,dailyState.wins)+'/2 · '+(dailyState.wins>=2?'CLAIMED':' +40 🪙');
+ if(el('missionHint'))el('missionHint').textContent=Math.min(1,dailyState.hints)+'/1 · '+(dailyState.hints>=1?'CLAIMED':' +10 🪙');
+}
+function grantMissionRewards(){
+ const claimed=JSON.parse(localStorage.getItem('candyMissionClaims')||'{}'),d=todayKey();
+ if(!claimed[d])claimed[d]={};
+ const tasks=[['one',dailyState.wins>=1,20],['two',dailyState.wins>=2,40],['hint',dailyState.hints>=1,10]];
+ tasks.forEach(([k,done,reward])=>{if(done&&!claimed[d][k]){coins+=reward;claimed[d][k]=true}});
+ try{localStorage.setItem('candyMissionClaims',JSON.stringify(claimed));localStorage.setItem('candyCoins',String(coins))}catch(e){}
+ el('homeCoins').textContent=coins;refreshHomeFeatures();
+}
+function spinWheel(isAd=false){
+ if(isAd){alert('Rewarded Ads មិនទាន់ភ្ជាប់ទេ។ មិនទាន់អាចបន្ថែមការបង្វិលពី Ads បានទេ។');return}
+ if(dailyState.freeUsed){alert('បងបានប្រើការបង្វិលឥតគិតថ្លៃថ្ងៃនេះរួចហើយ។');return}
+ dailyState.freeUsed=true;saveDaily();refreshHomeFeatures();
+ const roll=Math.random()*1000;let prize;
+ if(roll<500)prize={label:'10 កាក់',coins:10};
+ else if(roll<750)prize={label:'50 កាក់',coins:50};
+ else if(roll<850)prize={label:'150 កាក់',coins:150};
+ else if(roll<851)prize={label:'$1 (រង់ចាំផ្ទៀងផ្ទាត់)',cash:true};
+ else prize={label:'Thanks You',coins:0};
+ const disc=el('wheelDisc');const extra=1440+Math.floor(Math.random()*720);disc.style.transform='rotate('+extra+'deg)';
+ setTimeout(()=>{if(prize.coins){coins+=prize.coins;try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins}
+ if(prize.cash){try{localStorage.setItem('candyCashPrizePending',String(Date.now()))}catch(e){}alert('🎉 លទ្ធផល៖ $1! រង្វាន់នេះត្រូវរង់ចាំការផ្ទៀងផ្ទាត់ពី Server និងថវិកាទូទាត់ មុនអាចស្នើដកប្រាក់បាន។')}
+ else alert(prize.coins?'🎉 បងឈ្នះ '+prize.label+'!':'💬 '+prize.label+'! សូមសំណាងល្អលើកក្រោយ។');
+ },3650);
+}
+el('freeSpin').addEventListener('click',()=>spinWheel(false));
+el('adSpin').addEventListener('click',()=>spinWheel(true));
+el('claimDaily').addEventListener('click',()=>{if(dailyState.giftClaimed)return;dailyState.giftClaimed=true;coins+=20;saveDaily();try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins;refreshHomeFeatures();alert('🎁 បងទទួលបាន 20 កាក់!')});
+refreshHomeFeatures();
+
 function updateHintButton(){el('hint').textContent='💡 Hint ('+hintsLeft+')'}
-function hint(){if(locked||moves<=0)return;if(hintsLeft<=0){el('hintAdOverlay').classList.add('show');return}const pair=findMove();if(!pair){reshuffle();return}hintsLeft--;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft',String(hintsLeft))}catch(e){}updateHintButton();hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
+function hint(){if(locked||moves<=0)return;if(hintsLeft<=0){el('hintAdOverlay').classList.add('show');return}const pair=findMove();if(!pair){reshuffle();return}hintsLeft--;dailyState.hints++;saveDaily();grantMissionRewards();try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft',String(hintsLeft))}catch(e){}updateHintButton();hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
 function reshuffle(){do{board=Array.from({length:N*N},(_,i)=>obstacles.has(i)?-2:rand())}while(findMatches().length||!findMove());powers=Array(N*N).fill(0);hintPair=[];selected=-1;render();el('helpText').textContent='Board shuffled — keep matching!'}
 function showResult(t,p){el('resultTitle').textContent=t;el('resultText').textContent=p;el('overlay').classList.add('show')}
 function startLevel(){roundToken++;if(hintLevel!==level){hintLevel=level;hintsLeft=3;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','3')}catch(e){}}updateHintButton();TYPES=currentFruitWorld().fruits;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
@@ -605,4 +666,19 @@ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addE
 #board .cell.selected{background:#ffffff20!important;border-color:#fff36b!important;box-shadow:0 0 0 3px #ffdc6c66,0 0 14px #fff36b!important;}
 #board .cell.hint-cell{background:#ffffff18!important;border-color:#9affd7!important;box-shadow:0 0 0 3px #35d6b577,0 0 15px #8affdc!important;}
 #board .cell.obstacle{background:linear-gradient(145deg,#f3fdff,#9bd7ef 55%,#5c9dc7)!important;border:2px solid #fff!important;box-shadow:inset 0 3px 7px #fff,0 3px 5px #397ba855!important;}
+
+/* Daily home hub and prize wheel */
+.home-feature{margin-top:22px}.wheel-card{position:relative;padding:20px 14px 16px;border:2px solid #fff;border-radius:22px;background:linear-gradient(145deg,#fff9,#fff5);box-shadow:0 6px 0 #cf76a4;text-align:center}
+.wheel-disc{position:relative;width:min(70vw,248px);aspect-ratio:1;margin:4px auto 18px;border:8px solid #fff;border-radius:50%;background:conic-gradient(#ffcf58 0 50%,#ff8fbd 50% 75%,#8fdcfa 75% 85%,#b79af4 85% 85.1%,#d6f5a5 85.1% 100%);box-shadow:0 5px 0 #bd6a9d,0 10px 20px #8c356644;transition:transform 3.6s cubic-bezier(.12,.72,.12,1);display:grid;place-items:center}
+.wheel-disc:before{content:"10 🪙   50 🪙   150 💎   $1   Thanks You";position:absolute;inset:13%;border-radius:50%;display:grid;place-items:center;text-align:center;color:#78406a;font-size:12px;font-weight:1000;line-height:2;background:#ffffffa8;padding:12px}
+.wheel-center{position:relative;z-index:1;width:54px;height:54px;border:4px solid #fff;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#ffb4d8,#f4d45e);font-size:25px;box-shadow:0 3px 0 #b45d91}
+.wheel-pointer{position:absolute;z-index:2;left:50%;top:9px;transform:translateX(-50%);font-size:27px;color:#a63b78;text-shadow:0 2px #fff}
+.wheel-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.wheel-actions button,.daily-gift button{border:2px solid #fff;border-radius:13px;padding:12px 7px;font-size:11px;font-weight:1000;cursor:pointer;box-shadow:0 4px 0 #b85b91}
+.wheel-spin{background:linear-gradient(#fff3a2,#ffc64e);color:#87456b}.wheel-ad{background:linear-gradient(#a8edce,#47c990);color:#176e54}
+.wheel-actions button:disabled,.daily-gift button:disabled{opacity:.55;filter:grayscale(.5);cursor:not-allowed}
+.wheel-note{margin:10px 2px 0;color:#965078;font-size:9px;line-height:1.5}
+.mission-list{display:grid;gap:8px}.mission-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px;border:2px solid #fff;border-radius:14px;background:#fff9;color:#843d69;font-size:11px;font-weight:900;box-shadow:0 3px 0 #d17da9}.mission-row b{white-space:nowrap;color:#b23c7b;font-size:10px}
+.daily-gift{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;border:2px solid #fff;border-radius:16px;background:#fff9;color:#843d69;box-shadow:0 4px 0 #cf76a4}.daily-gift b,.daily-gift small{display:block}.daily-gift small{margin-top:4px;font-size:9px;color:#a45a80}.daily-gift button{background:linear-gradient(#fff3a2,#ffc64e);color:#87456b;white-space:nowrap}
+.achievement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.achievement-grid>div{display:grid;justify-items:center;gap:4px;padding:12px 5px;border:2px solid #fff;border-radius:15px;background:#fff9;color:#843d69;font-size:23px;box-shadow:0 4px 0 #cf76a4}.achievement-grid b{font-size:10px}.achievement-grid small{font-size:8px;color:#a45a80}
+@media(max-width:360px){.wheel-actions{grid-template-columns:1fr}.mission-row{font-size:10px;padding:11px}.mission-row b{font-size:9px}}
 </style>
