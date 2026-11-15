@@ -272,6 +272,18 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 @keyframes sparkleBurst{0%{opacity:0;transform:scale(.2) rotate(0)}35%{opacity:1;transform:scale(1.2) rotate(35deg)}100%{opacity:0;transform:scale(1.65) rotate(75deg)}}
 @media(prefers-reduced-motion:reduce){.cell,.cell.matched,.cell.matched:before{animation:none!important;transition:none!important}}
 
+
+/* Cute candy tiles: distinct pastel candy colors with a soft jelly finish */
+.cell{position:relative;border:2px solid #fff!important;border-radius:clamp(11px,2.8vw,17px)!important;background:linear-gradient(150deg,#fff 0%,#fce8f4 48%,#efb8d8 100%)!important;box-shadow:inset 0 3px 6px #fff, inset 0 -4px 7px #b36c9b55,0 4px 5px #8e4a7c55!important;font-size:clamp(37px,10.8vw,56px)!important;text-shadow:0 3px 2px #8e4a7c33!important}
+.cell:after{inset:3px 4px auto!important;height:27%!important;border-radius:50%!important;background:linear-gradient(#fff9,transparent)!important}
+.cell.candy-type-0{background:linear-gradient(145deg,#fff5a9,#ffbd55 52%,#ed8a45)!important}
+.cell.candy-type-1{background:linear-gradient(145deg,#ffe0f2,#ff91c9 54%,#df58a4)!important}
+.cell.candy-type-2{background:linear-gradient(145deg,#e6fff6,#91e8c8 54%,#45bd9a)!important}
+.cell.candy-type-3{background:linear-gradient(145deg,#f1e7ff,#b9a0ff 54%,#8064d9)!important}
+.cell.candy-type-4{background:linear-gradient(145deg,#fff0e2,#ffb1a0 54%,#eb7c77)!important}
+.cell.candy-type-5{background:linear-gradient(145deg,#e4f7ff,#91d9ff 54%,#579fe2)!important}
+.cell.selected{outline:3px solid #fff36b!important;filter:brightness(1.13) drop-shadow(0 0 8px #fff2a8)!important}
+@media(max-width:390px){.cell{font-size:clamp(34px,10.5vw,47px)!important}}
 </style>
 </head>
 <body>
@@ -308,7 +320,7 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 <div class="overlay" id="overlay"><div class="modal"><h2 id="resultTitle">Sweet!</h2><p id="resultText"></p><button id="playAgain">Play again</button></div></div>
 <script>
 (()=>{
-const N=6, TYPES=['🍓','🍒','🍑','🍡','🧁','🍭'], START_MOVES=25;
+const N=6, TYPES=['🍬','🍭','🍡','🍩','🍓','🧁'], START_MOVES=25;
 let level=1,bestScore=0,coins=0;try{bestScore=Number(localStorage.getItem('candyBestScore')||0);level=Math.max(1,Number(localStorage.getItem('candyLevel')||1));coins=Math.max(0,Number(localStorage.getItem('candyCoins')||0))}catch(e){}
 function levelGoal(){const cycle=Math.floor((level-1)/6),m=(level-1)%6;const candy=(level+1)%TYPES.length,other=(candy+2)%TYPES.length;if(m===0)return {mode:'score',target:900+cycle*250,moves:25,label:'SCORE RUSH',detail:'Reach the score target!'};if(m===1)return {mode:'collect',target:12+cycle*3,moves:24,candy,label:'CANDY HUNT',detail:'Collect the featured candy!'};if(m===2)return {mode:'combo',target:2+cycle,moves:22,label:'COMBO MASTER',detail:'Make matches of 4 or more!'};if(m===3)return {mode:'striped',target:2+cycle,moves:24,label:'STRIPED CANDY',detail:'Create striped special candies!'};if(m===4)return {mode:'double',target:14+cycle*3,moves:24,candy,other,label:'TWO-COLOR QUEST',detail:'Collect both featured candy colors!'};return {mode:'bigclear',target:2+Math.floor(cycle/2),moves:22,label:'BIG BLAST',detail:'Make matches of 5 or more candies!'};}const targetScore=()=>levelGoal().target;function goalStatus(g){if(g.mode==='score')return 'Reach '+g.target+' points · '+score+' / '+g.target;if(g.mode==='collect')return 'Collect '+TYPES[g.candy]+' · '+goalProgress+' / '+g.target;if(g.mode==='combo')return 'Make 4+ matches · '+goalProgress+' / '+g.target;if(g.mode==='striped')return 'Create 🍭 striped candies · '+goalProgress+' / '+g.target;if(g.mode==='double')return 'Collect '+TYPES[g.candy]+' + '+TYPES[g.other]+' · '+goalProgress+' / '+g.target;return 'Make 5+ candy blasts · '+goalProgress+' / '+g.target;}function goalValue(g){return g.mode==='score'?score:goalProgress;}
 let goalProgress=0,board=[],powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=false,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
@@ -325,24 +337,26 @@ function startMusic(){
  musicTimer=setInterval(()=>{if(!music||!audioCtx||audioCtx.state!=='running')return;try{const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime;o.type='sine';o.frequency.value=notes[n++%notes.length];g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.018,t+.04);g.gain.exponentialRampToValueAtTime(.0001,t+.42);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+.44)}catch(e){}},520);
 }
 function unlockAudio(){
- try{const AudioAPI=window.AudioContext||window.webkitAudioContext;if(!AudioAPI)return false;if(!audioCtx)audioCtx=new AudioAPI();if(audioCtx.state==='suspended')audioCtx.resume();return true}catch(e){return false}
+ try{const AudioAPI=window.AudioContext||window.webkitAudioContext;if(!AudioAPI)return false;if(!audioCtx)audioCtx=new AudioAPI();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});return true}catch(e){return false}
 }
-function playSound(kind){
+async function playSound(kind){
  if(!sound)return;
  try{
   if(!unlockAudio()||!audioCtx)return;
+  if(audioCtx.state!=='running')await audioCtx.resume();
+  if(audioCtx.state!=='running')return;
   const now=audioCtx.currentTime;
   const patterns={
-   swap:[[520,0,.08,'sine',.045],[780,.045,.11,'triangle',.035],[1040,.08,.08,'sine',.018]],
-   match:[[740,0,.12,'sine',.05],[988,.07,.14,'triangle',.045],[1175,.14,.16,'sine',.04],[1480,.22,.2,'triangle',.03],[1760,.28,.16,'sine',.018]],
-   win:[[659,0,.2,'sine',.045],[784,.12,.2,'triangle',.045],[988,.24,.24,'sine',.045],[1318,.38,.28,'triangle',.04],[1568,.55,.38,'sine',.03]],
-   lose:[[440,0,.16,'triangle',.035],[370,.14,.2,'sine',.03],[294,.3,.28,'triangle',.03]]
+   swap:[[520,0,.09,'sine',.055],[780,.055,.12,'triangle',.045],[1040,.11,.09,'sine',.025]],
+   match:[[740,0,.13,'sine',.06],[988,.075,.15,'triangle',.055],[1175,.15,.17,'sine',.05],[1480,.23,.21,'triangle',.04],[1760,.31,.17,'sine',.025]],
+   win:[[659,0,.21,'sine',.055],[784,.13,.21,'triangle',.055],[988,.26,.25,'sine',.055],[1318,.4,.29,'triangle',.05],[1568,.58,.4,'sine',.04]],
+   lose:[[440,0,.17,'triangle',.04],[370,.15,.21,'sine',.035],[294,.32,.29,'triangle',.035]]
   };
   (patterns[kind]||patterns.swap).forEach(([freq,delay,duration,wave,volume])=>{
    const t=now+delay,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
    osc.type=wave;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(.0001,t);
-   gain.gain.exponentialRampToValueAtTime(volume,t+.018);gain.gain.setValueAtTime(volume*.7,t+duration*.55);
-   gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t);osc.stop(t+duration+.03);
+   gain.gain.exponentialRampToValueAtTime(volume,t+.02);gain.gain.setValueAtTime(volume*.72,t+duration*.55);
+   gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t);osc.stop(t+duration+.04);
   });
  }catch(e){}
 }
@@ -352,7 +366,7 @@ function rand(){return Math.floor(Math.random()*TYPES.length)}
 function hasMatchAt(b,r,c){const v=b[r*N+c];if(v<0)return false;let n=1;for(let x=c-1;x>=0&&b[r*N+x]===v;x--)n++;for(let x=c+1;x<N&&b[r*N+x]===v;x++)n++;if(n>=3)return true;n=1;for(let y=r-1;y>=0&&b[y*N+c]===v;y--)n++;for(let y=r+1;y<N&&b[y*N+c]===v;y++)n++;return n>=3}
 function makeBoard(){do{board=Array.from({length:N*N},rand)}while(findMatches().length);powers=Array(N*N).fill(0);}
 function findMatches(){const set=new Set();for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=board[r*N+c];if(v<0)continue;let run=[r*N+c];for(let x=c+1;x<N&&board[r*N+x]===v;x++)run.push(r*N+x);if(run.length>=3)run.forEach(i=>set.add(i));run=[r*N+c];for(let y=r+1;y<N&&board[y*N+c]===v;y++)run.push(y*N+c);if(run.length>=3)run.forEach(i=>set.add(i))}return [...set]}
-function render(){document.body.dataset.stage=String((level-1)%6+1);if(boardEl.children.length!==N*N){boardEl.innerHTML='';const frag=document.createDocumentFragment();for(let i=0;i<N*N;i++){const b=document.createElement('button');b.className='cell';b.style.setProperty('--i',i%8);b.addEventListener('click',()=>tap(i));frag.appendChild(b)}boardEl.appendChild(frag)}board.forEach((v,i)=>{const b=boardEl.children[i];b.className='cell'+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v<0?'':(powers[i]===1?'🍭':TYPES[v]);b.setAttribute('aria-label',v<0?'Empty':powers[i]===1?'Striped candy':TYPES[v]);b.disabled=locked||v<0});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;const g=levelGoal();el('goalBanner').innerHTML=g.label+'<small>'+goalStatus(g)+'</small>';el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('homeLevel').textContent=level;el('homeCoins').textContent=coins;el('progress').style.width=Math.min(100,goalValue(g)/g.target*100)+'%'}
+function render(){document.body.dataset.stage=String((level-1)%6+1);if(boardEl.children.length!==N*N){boardEl.innerHTML='';const frag=document.createDocumentFragment();for(let i=0;i<N*N;i++){const b=document.createElement('button');b.className='cell';b.style.setProperty('--i',i%8);b.addEventListener('click',()=>tap(i));frag.appendChild(b)}boardEl.appendChild(frag)}board.forEach((v,i)=>{const b=boardEl.children[i];b.className='cell'+(v>=0?' candy-type-'+v:'')+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v<0?'':(powers[i]===1?'🍭':TYPES[v]);b.setAttribute('aria-label',v<0?'Empty':powers[i]===1?'Striped candy':TYPES[v]);b.disabled=locked||v<0});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;const g=levelGoal();el('goalBanner').innerHTML=g.label+'<small>'+goalStatus(g)+'</small>';el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('homeLevel').textContent=level;el('homeCoins').textContent=coins;el('progress').style.width=Math.min(100,goalValue(g)/g.target*100)+'%'}
 function renderMatchScore(){el('score').textContent=score;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;const g=levelGoal();el('goalBanner').innerHTML=g.label+'<small>'+goalStatus(g)+'</small>';el('progress').style.width=Math.min(100,(g.mode==='score'?score:goalProgress)/g.target*100)+'%'}
 function tap(i){if(suppressClick){suppressClick=false;return}if(locked||moves<=0)return;hintPair=[];if(selected<0){selected=i;render();return}if(selected===i){selected=-1;render();return}const a=selected,b=i;selected=-1;if(Math.abs(a-b)===N||Math.floor(a/N)===Math.floor(b/N)&&Math.abs(a-b)===1){swap(a,b)}else{selected=i;render()}}
 function swap(a,b){hintPair=[];[board[a],board[b]]=[board[b],board[a]];[powers[a],powers[b]]=[powers[b],powers[a]];const m=findMatches();if(!m.length&&!powers[a]&&!powers[b]){[board[a],board[b]]=[board[b],board[a]];[powers[a],powers[b]]=[powers[b],powers[a]];render();return}forcedClear=[];if(powers[a])forcedClear.push(a);if(powers[b])forcedClear.push(b);moves--;locked=true;playSound('swap');render();roundToken++;resolve(roundToken)}
