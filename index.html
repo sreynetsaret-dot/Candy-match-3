@@ -612,8 +612,8 @@ function spinWheel(isAd=false){
  if(dailyState.freeUsed){alert("You have already used today's free spin.");return}
  dailyState.freeUsed=true;saveDaily();refreshHomeFeatures();
  const roll=Math.random()*1000;let prize,midAngle;
- if(roll<166.6666667){prize={label:'10 COINS',coins:10};midAngle=29.94}
- else if(roll<333.3333333){prize={label:'10 COINS',coins:10};midAngle=89.82}
+ if(roll<166.6666667){prize={label:'10 COINS',coins:10};midAngle=30}
+ else if(roll<333.3333333){prize={label:'10 COINS',coins:10};midAngle=90}
  else if(roll<500){prize={label:'10 COINS',coins:10};midAngle=150}
  else if(roll<625){prize={label:'50 COINS',coins:50};midAngle=202.5}
  else if(roll<750){prize={label:'50 COINS',coins:50};midAngle=247.5}
