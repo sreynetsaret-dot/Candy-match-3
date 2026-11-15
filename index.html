@@ -418,6 +418,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 @media(prefers-reduced-motion:reduce){.home-hero:after,.home-hero:before,.home-brand-icon,.home-play{animation:none!important}}
 
 </style>
+<style id="win-reward-ui-v27">.win-reward{display:flex;flex-direction:column;align-items:center;gap:2px;margin:14px auto 8px;padding:12px 18px;max-width:220px;border:2px solid #fff6a8;border-radius:16px;background:linear-gradient(145deg,#fff2a0,#ffbd4c);color:#87451c;box-shadow:0 4px 0 #bb7734,0 7px 15px #6b285455}.win-reward strong{font-size:25px;font-weight:1000}.win-reward small{font-size:9px;font-weight:1000;letter-spacing:1px}.double-reward-ad{background:linear-gradient(180deg,#8df5c1,#22b77d)!important;color:#075c42!important;text-shadow:none!important;box-shadow:0 4px 0 #147d59!important;font-size:12px!important}.modal button[hidden],.win-reward[hidden]{display:none!important}</style>
 </head>
 <body>
 <section class="home-screen" id="homeScreen"><div class="home-shell">
@@ -469,7 +470,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <div class="menu-help">👆 Swipe a candy to swap it. Match 3 or more. Match 4 to make a striped candy. Use Hint if you get stuck.</div>
 <button id="resumeGame">▶ Continue playing</button><button id="quitHome" class="quit-button">🏠 Back to Home</button>
 </div></div>
-<div class="overlay" id="overlay"><div class="modal"><h2 id="resultTitle">Sweet!</h2><p id="resultText"></p><button id="playAgain">Play again</button></div></div>
+<div class="overlay" id="overlay"><div class="modal"><h2 id="resultTitle">Sweet!</h2><p id="resultText"></p><div id="winReward" class="win-reward" hidden>🪙 <strong>+20 COINS</strong><small>LEVEL REWARD EARNED</small></div><button id="doubleRewardAd" class="double-reward-ad" hidden>📺 WATCH AD TO DOUBLE (x2)</button><button id="playAgain">Play again</button></div></div>
 <div class="overlay" id="hintAdOverlay"><div class="modal"><h2>💡 Hint used up!</h2><p>You used all 3 free hints for this level. Rewarded Ads are not connected yet. Once an ad provider is connected, watch one completed ad to earn +1 hint.</p><button id="closeHintAd">OK</button></div></div>
 <script>
 (()=>{
@@ -583,7 +584,7 @@ function resolve(token){
   render();setTimeout(()=>resolve(token),65);
  },450);
 }
-function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 Level '+level+' complete!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('overlay').classList.add('show')}else if(moves<=0){playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
+function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 LEVEL '+level+' COMPLETE!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('winReward').hidden=false;el('doubleRewardAd').hidden=false;el('overlay').classList.add('show')}else if(moves<=0){el('winReward').hidden=true;el('doubleRewardAd').hidden=true;playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){if(board[a]<0)continue;const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0||board[b]<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
 
 const todayKey=()=>new Date().toLocaleDateString('en-CA');
@@ -661,7 +662,9 @@ el('navWallet').addEventListener('click',()=>document.getElementById('homeReward
 el('hint').addEventListener('click',hint);el('closeHintAd').addEventListener('click',()=>el('hintAdOverlay').classList.remove('show'));updateHintButton();
 boardEl.addEventListener('pointerdown',e=>{const cell=e.target.closest('.cell');if(!cell||locked)return;touchStart={index:[...boardEl.children].indexOf(cell),x:e.clientX,y:e.clientY};});
 boardEl.addEventListener('pointerup',e=>{if(!touchStart)return;const start=touchStart;touchStart=null;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;const dest=Math.abs(dx)>Math.abs(dy)?start.index+(dx>0?1:-1):start.index+(dy>0?N:-N);if(dest<0||dest>=N*N||Math.floor(dest/N)!==Math.floor(start.index/N)&&Math.abs(dest-start.index)===1)return;suppressClick=true;selected=-1;swap(start.index,dest);});
-el('newGame').addEventListener('click',newGame);el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound':'🔇 Sound';updateSettingButtons();if(sound)playSound('swap')});
+el('newGame').addEventListener('click',newGame);
+el('doubleRewardAd').addEventListener('click',()=>{alert('Rewarded Ads are not connected yet. Your +20 coin reward has already been credited. The x2 bonus will be available after ad verification is connected.')});
+el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound':'🔇 Sound';updateSettingButtons();if(sound)playSound('swap')});
 newGame();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
