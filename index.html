@@ -490,7 +490,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 </section>
 <div class="progress-wrap"><div class="progress" id="progress"></div></div>
 <div class="goal-banner" id="goalBanner">✨ MATCH • BLAST • SHINE ✨</div>
-<div class="actions"><button id="homeButton">🏠 Home</button><button id="hint">💡 Hint (3)</button><button id="newGame">↻ Restart</button><button class="secondary" id="sound">🔊 Sound</button></div>
+<div class="actions"><button id="homeButton">🏠 Home</button><button id="hint">💡 Hint (1)</button><button id="newGame">↻ Restart</button><button class="secondary" id="sound">🔊 Sound</button></div>
 <div class="board" id="board" aria-label="Candy game board"></div><div class="ad-slot game-ad"><span>ADVERTISEMENT</span><b>Sponsored space</b><small>Ad network placement — connect an approved ad code</small></div>
 <p class="hint" id="helpText">Swipe a candy up, down, left or right to swap. You can also tap two neighboring candies. Match 3 or more!</p>
 <footer>🏆 Best score: <strong id="bestScore">0</strong><br>Your best score is saved on this device.</footer>
@@ -617,7 +617,7 @@ function resolve(token){
   render();setTimeout(()=>resolve(token),65);
  },450);
 }
-function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 LEVEL '+level+' COMPLETE!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('winReward').hidden=false;el('doubleRewardAd').hidden=false;el('overlay').classList.add('show')}else if(moves<=0){el('winReward').hidden=true;el('doubleRewardAd').hidden=true;playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
+function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();queueProgressSave();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 LEVEL '+level+' COMPLETE!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('winReward').hidden=false;el('doubleRewardAd').hidden=false;el('overlay').classList.add('show')}else if(moves<=0){el('winReward').hidden=true;el('doubleRewardAd').hidden=true;playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){if(board[a]<0)continue;const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0||board[b]<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
 
 const todayKey=()=>new Date().toLocaleDateString('en-CA');
@@ -638,7 +638,7 @@ function grantMissionRewards(){
  const tasks=[['one',dailyState.wins>=1,20],['two',dailyState.wins>=2,40],['hint',dailyState.hints>=1,10]];
  tasks.forEach(([k,done,reward])=>{if(done&&!claimed[d][k]){coins+=reward;claimed[d][k]=true}});
  try{localStorage.setItem('candyMissionClaims',JSON.stringify(claimed));localStorage.setItem('candyCoins',String(coins))}catch(e){}
- el('homeCoins').textContent=coins;refreshHomeFeatures();
+ el('homeCoins').textContent=coins;refreshHomeFeatures();queueProgressSave();
 }
 let wheelRotation=0;
 function spinWheel(isAd=false){
@@ -653,7 +653,7 @@ function spinWheel(isAd=false){
  else if(roll<750){prize={label:'50 COINS',coins:50};midAngle=247.5}
  else if(roll<850){prize={label:'150 COINS',coins:150};midAngle=288}
  else if(roll<999){prize={label:'THANK YOU',coins:0};midAngle=332.82}
- else{prize={label:'$1 JACKPOT (PENDING VERIFICATION)',cash:true};midAngle=359.82}
+ else{prize={label:'THANK YOU',coins:0};midAngle=332.82}
  const disc=el('wheelDisc'),current=((wheelRotation%360)+360)%360;
  const delta=(360-midAngle-current+360)%360;
  wheelRotation+=1800+delta;disc.style.transform='rotate('+wheelRotation+'deg)';
@@ -666,7 +666,7 @@ function spinWheel(isAd=false){
 }
 el('freeSpin').addEventListener('click',()=>spinWheel(false));
 el('adSpin').addEventListener('click',()=>spinWheel(true));
-el('claimDaily').addEventListener('click',()=>{if(dailyState.giftClaimed)return;dailyState.giftClaimed=true;coins+=20;saveDaily();try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins;refreshHomeFeatures();alert('🎁 You received 20 coins!')});
+el('claimDaily').addEventListener('click',()=>{if(dailyState.giftClaimed)return;dailyState.giftClaimed=true;coins+=20;saveDaily();try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins;refreshHomeFeatures();queueProgressSave();alert('🎁 You received 20 coins!')});
 refreshHomeFeatures();
 
 function updateHintButton(){el('hint').textContent='💡 Hint ('+hintsLeft+')'}
@@ -696,7 +696,7 @@ el('hint').addEventListener('click',hint);el('closeHintAd').addEventListener('cl
 boardEl.addEventListener('pointerdown',e=>{const cell=e.target.closest('.cell');if(!cell||locked)return;touchStart={index:[...boardEl.children].indexOf(cell),x:e.clientX,y:e.clientY};});
 boardEl.addEventListener('pointerup',e=>{if(!touchStart)return;const start=touchStart;touchStart=null;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;const dest=Math.abs(dx)>Math.abs(dy)?start.index+(dx>0?1:-1):start.index+(dy>0?N:-N);if(dest<0||dest>=N*N||Math.floor(dest/N)!==Math.floor(start.index/N)&&Math.abs(dest-start.index)===1)return;suppressClick=true;selected=-1;swap(start.index,dest);});
 el('newGame').addEventListener('click',newGame);
-el('doubleRewardAd').addEventListener('click',()=>{alert('Rewarded Ads are not connected yet. Your +20 coin reward has already been credited. The x2 bonus will be available after ad verification is connected.')});
+el('doubleRewardAd').disabled=true;el('doubleRewardAd').textContent='📺 x2 BONUS · ADS COMING SOON';el('doubleRewardAd').setAttribute('aria-label','x2 bonus unavailable until rewarded ads are connected');
 el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound':'🔇 Sound';updateSettingButtons();if(sound)playSound('swap')});
 
 let accountMode='register',accountSignedIn=false,progressLoaded=false,progressSaveTimer=null;
