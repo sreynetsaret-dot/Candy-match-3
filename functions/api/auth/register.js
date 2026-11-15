@@ -6,7 +6,7 @@ export async function onRequest({ request }) {
   try { body = await readJson(request); } catch { return fail("invalid_request", 400); }
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   const password = typeof body.password === "string" ? body.password : "";
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || email.length > 254 || password.length < 10 || password.length > 128) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || password.length < 10 || password.length > 128) {
     return fail("invalid_email_or_password_length", 400);
   }
   try {
