@@ -428,7 +428,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <div class="wheel-card">
 <div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc"><div class="wheel-center">🍬</div></div>
 <div class="wheel-actions"><button class="wheel-spin" id="freeSpin">🎡 FREE SPIN</button><button class="wheel-ad" id="adSpin">▶ Watch Ad · +1 spin</button></div>
-<p class="wheel-note" id="wheelNote">10 coins 50% · 50 coins 25% · 150 coins 10% · $1 0.1% · Thanks You 14.9%</p>
+<p class="wheel-note" id="wheelNote">Possible rewards: 10 · 50 · 150 coins · $1 · Thanks You</p>
 <p class="wheel-note">Ad spins unlock only after a real, completed Rewarded Ad is verified. Cash prizes require eligibility and payout verification.</p>
 </div>
 <div class="home-section-head"><h3>🎯 Daily Missions</h3><span id="missionDate">TODAY</span></div>
@@ -658,6 +658,126 @@ newGame();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
 </script>
+
+<style id="candy-3d-home">
+/* Candy 3D home art direction — scoped to the home screen */
+.home-screen{
+ background:
+ radial-gradient(ellipse at 8% 9%,#fff7ad 0 5%,transparent 28%),
+ radial-gradient(ellipse at 95% 23%,#ff8fc9 0 6%,transparent 29%),
+ radial-gradient(ellipse at 12% 83%,#80f0d0 0 5%,transparent 26%),
+ linear-gradient(160deg,#5b8ff0 0%,#8d72e8 34%,#ee83c0 70%,#ffbd79 100%);
+ color:#fff;
+}
+.home-screen:before{
+ content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+ background-image:radial-gradient(circle,#fff 0 3px,transparent 4px),radial-gradient(circle,#fff4a8 0 5px,transparent 6px),radial-gradient(circle,#b7fff1 0 4px,transparent 5px);
+ background-size:83px 97px,137px 151px,191px 173px;background-position:4px 13px,37px 61px,89px 28px;
+}
+.home-shell{position:relative;z-index:1;width:min(100%,500px);padding: max(18px,env(safe-area-inset-top)) 17px 30px}
+.home-top{margin-bottom:17px}
+.home-brand{font-size:18px;letter-spacing:.8px;text-shadow:0 2px 0 #6047a7,0 4px 9px #513c9c66}
+.home-brand-icon{
+ width:52px;height:52px;border:3px solid #fff;border-radius:18px;
+ background:linear-gradient(145deg,#fff9b8 0%,#ff9bcf 58%,#c18aff 100%);
+ box-shadow:0 6px 0 #9b4da9,0 10px 18px #4d367766,inset 0 3px 5px #fff;
+ font-size:29px;animation:homeCandyBounce 2.8s ease-in-out infinite;
+}
+.home-wallet-chip{
+ padding:9px 13px;border:2px solid #fff;border-radius:17px;
+ background:linear-gradient(145deg,#fff9,#ffffffc9);color:#75428c;
+ box-shadow:0 5px 0 #a65aa8,0 8px 15px #513c9c44;
+}
+.home-wallet-chip small{color:#9865a9;font-size:8px}
+.home-wallet-chip b{font-size:14px;color:#67378a}
+.home-hero{
+ isolation:isolate;min-height:370px;padding:27px 22px 23px;
+ border:3px solid #fff;border-radius:30px;
+ background:
+ radial-gradient(circle at 78% 25%,#fff8 0 2%,transparent 27%),
+ radial-gradient(circle at 12% 100%,#ffdd7c88,transparent 40%),
+ linear-gradient(145deg,#ff9bc9 0%,#f15ca8 43%,#9d61d2 100%);
+ box-shadow:0 8px 0 #a448a1,0 17px 30px #55328b66,inset 0 3px 9px #fff9;
+}
+.home-hero:after{
+ content:"🍬";right:5px;top:52px;font-size:clamp(105px,30vw,154px);
+ filter:drop-shadow(0 12px 7px #56266c66);animation:homeCandyFloat 3.2s ease-in-out infinite;
+}
+.home-hero:before{
+ content:"🍭";position:absolute;z-index:0;right:29px;bottom:14px;
+ font-size:clamp(49px,14vw,70px);filter:drop-shadow(0 8px 6px #56266c66);
+ animation:homeCandyTilt 4s ease-in-out infinite;
+}
+.home-hero-kicker{font-size:10px;letter-spacing:1.3px;color:#fff6bd;text-shadow:0 2px 3px #8c397a}
+.home-hero h2{max-width:250px;margin:17px 0 11px;font-size:clamp(36px,10vw,49px);line-height:.99;letter-spacing:-1.6px;text-shadow:0 4px 0 #a63f8d,0 7px 12px #692d7b77}
+.home-hero p{max-width:230px;margin-bottom:23px;font-size:12px;color:#fff;line-height:1.65;text-shadow:0 2px 4px #7c347b66}
+.home-play{
+ width:min(100%,235px);padding:16px 14px;border:3px solid #fff;border-radius:18px;
+ color:#7b3e78;font-size:17px;font-weight:1000;
+ background:linear-gradient(180deg,#fff9b5 0%,#ffdb65 55%,#ffb943 100%);
+ box-shadow:0 7px 0 #b77a35,0 12px 19px #602a7355,inset 0 3px 4px #fff;
+}
+.home-play:active{transform:translateY(4px);box-shadow:0 3px 0 #b77a35}
+.home-level{margin-top:21px;gap:9px;color:#fff;font-size:11px;text-shadow:0 2px 3px #713078}
+.home-level span{color:#fff6a5}
+.home-section-head{margin:25px 3px 12px}
+.home-section-head h3{font-size:17px;color:#fff;text-shadow:0 3px 0 #75449e,0 4px 8px #58348b77}
+.home-section-head span{color:#fff8;font-weight:900}
+.wheel-card{
+ padding:19px 14px 16px;border:3px solid #fff;border-radius:25px;
+ background:linear-gradient(145deg,#fffde9ed,#ffe2f5ed);
+ box-shadow:0 7px 0 #b85d9d,0 12px 22px #663b9255,inset 0 2px #fff;
+}
+.wheel-disc{
+ border:9px solid #fff;box-shadow:0 7px 0 #b65d9b,0 13px 22px #76418b66,inset 0 2px 6px #fff9;
+}
+.wheel-disc:before{background:#fff4;border:2px solid #fff8;box-shadow:inset 0 2px 8px #fff9;color:#78406a}
+.wheel-center{width:59px;height:59px;border:4px solid #fff;background:linear-gradient(145deg,#fff5a6,#ff8fbd 65%,#ad83ed);box-shadow:0 5px 0 #a34c8c,0 8px 12px #663b9255,inset 0 2px #fff}
+.wheel-pointer{font-size:31px;color:#9a3982;text-shadow:0 3px #fff,0 5px 0 #b65d9b}
+.wheel-actions button,.daily-gift button{min-height:47px;border:2px solid #fff;border-radius:15px;font-size:11px;box-shadow:0 5px 0 #a95591,0 8px 13px #7c418c33,inset 0 2px #fff}
+.wheel-spin{background:linear-gradient(#fff6a7,#ffc64e);color:#84436c}
+.wheel-ad{background:linear-gradient(#b8f8d7,#4bd39a);color:#176e54}
+.wheel-note{color:#8c5683;font-size:10px}
+.mission-row,.daily-gift,.achievement-grid>div{
+ border:2px solid #fff;border-radius:17px;
+ background:linear-gradient(145deg,#fffef4f2,#ffe5f4ed);
+ box-shadow:0 5px 0 #b85e9e,0 8px 14px #653b8b33,inset 0 2px #fff;
+ color:#824477;
+}
+.mission-row{min-height:52px;padding:13px 14px;font-size:12px}
+.mission-row b{color:#cf438e;font-size:11px}
+.daily-gift{padding:15px}
+.daily-gift small,.achievement-grid small{color:#a46a9a}
+.daily-gift button{background:linear-gradient(#fff6a7,#ffc64e);color:#84436c}
+.achievement-grid>div{padding:14px 5px;font-size:26px}
+.achievement-grid b{color:#87447e}
+.ad-slot{border:2px dashed #fff9;background:#ffffff42;color:#fff}
+.ad-slot span,.ad-slot b,.ad-slot small{color:#fff}
+.home-reward{border:2px solid #fff;border-radius:19px;background:linear-gradient(145deg,#fffef4ed,#ffe2f3ed);box-shadow:0 5px 0 #b85e9e,0 8px 14px #653b8b33}
+.home-reward b{color:#85437d}.home-reward small{color:#a46a9a}
+.home-reward-icon{background:linear-gradient(145deg,#fff5a5,#ffb9dc);box-shadow:0 4px 0 #d67cae,inset 0 2px #fff}
+.home-best{color:#fff;text-shadow:0 2px 4px #5e348b}
+.home-bottom-nav{
+ background:#fffef4f2;border-top:3px solid #fff;box-shadow:0 -7px 24px #57348a55;
+ padding-top:10px;
+}
+.home-nav-item{color:#a45c9c;font-size:10px}
+.home-nav-item span{font-size:22px}
+.home-nav-item.active{color:#e13e91}
+@keyframes homeCandyBounce{0%,82%,100%{transform:translateY(0) rotate(0)}90%{transform:translateY(-6px) rotate(-7deg)}}
+@keyframes homeCandyFloat{0%,100%{transform:translateY(0) rotate(13deg)}50%{transform:translateY(-11px) rotate(20deg)}}
+@keyframes homeCandyTilt{0%,100%{transform:rotate(-14deg) translateY(0)}50%{transform:rotate(-3deg) translateY(-6px)}}
+@media(max-width:390px){
+ .home-shell{padding-left:14px;padding-right:14px}
+ .home-hero{min-height:350px;padding:24px 18px 21px}
+ .home-hero:after{right:-4px;top:56px;font-size:112px}
+ .home-hero:before{right:17px;font-size:52px}
+ .home-hero h2{max-width:225px;font-size:37px}
+ .wheel-card{padding:16px 11px}
+}
+@media(prefers-reduced-motion:reduce){.home-brand-icon,.home-hero:after,.home-hero:before{animation:none!important}}
+</style>
+
 </body></html>
 <style>
 /* Calm fruit presentation: remove tile color panels behind the fruit */
