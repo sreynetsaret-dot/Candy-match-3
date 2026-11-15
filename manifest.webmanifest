@@ -5,5 +5,13 @@
   "display": "standalone",
   "background_color": "#170d32",
   "theme_color": "#24134b",
-  "description": "A colorful match-3 candy puzzle game."
+  "description": "A colorful match-3 candy puzzle game.",
+  "icons": [
+    {
+      "src": "assets/candy-match-3-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
