@@ -740,14 +740,27 @@ function readSavedJson(key,fallback){try{return JSON.parse(localStorage.getItem(
 function playerGameState(){
  return {bestScore,hintsLeft:Number(localStorage.getItem('candyHintsLeft')??hintsLeft),hintLevel:Number(localStorage.getItem('candyHintsLevel')??hintLevel),dailyState,missionClaims:readSavedJson('candyMissionClaims',{}),cashPrizePending:localStorage.getItem('candyCashPrizePending')||null};
 }
+function pendingProgressSnapshot(){
+ return {coins,level,game_state:playerGameState(),saved_at:new Date().toISOString()};
+}
 async function savePlayerProgress(){
  if(!accountSignedIn||!progressLoaded)return;
+ const snapshot=pendingProgressSnapshot();
  try{
-  const response=await fetch('/api/progress',{method:'PUT',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({coins,level,game_state:playerGameState()})});
-  if(response.status===401)paintAccount(null);
+  const response=await fetch('/api/progress',{method:'PUT',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(snapshot),keepalive:true});
+  if(response.status===401){paintAccount(null);return}
+  if(!response.ok){console.warn('Candy progress sync deferred',response.status);return}
+  const pending=readSavedJson('candyPendingCloudProgress',null);
+  if(pending&&pending.saved_at===snapshot.saved_at)localStorage.removeItem('candyPendingCloudProgress');
  }catch(error){console.warn('Candy progress sync deferred',error)}
 }
 function queueProgressSave(){
+ try{
+  localStorage.setItem('candyCoins',String(coins));
+  localStorage.setItem('candyLevel',String(level));
+  localStorage.setItem('candyBestScore',String(bestScore));
+  localStorage.setItem('candyPendingCloudProgress',JSON.stringify(pendingProgressSnapshot()));
+ }catch(error){console.warn('Candy local progress backup unavailable',error)}
  if(!accountSignedIn||!progressLoaded)return;
  clearTimeout(progressSaveTimer);progressSaveTimer=setTimeout(savePlayerProgress,500);
 }
@@ -756,9 +769,12 @@ async function loadPlayerProgress(){
   const response=await fetch('/api/progress',{credentials:'same-origin',cache:'no-store'});
   if(!response.ok)return;
   const data=await response.json(),saved=data.progress;
-  if(saved){
-   coins=Math.max(0,Number(saved.coins)||0);level=Math.max(1,Number(saved.level)||1);
-   const state=saved.game_state&&typeof saved.game_state==='object'?saved.game_state:{};
+  const pending=readSavedJson('candyPendingCloudProgress',null);
+  const pendingIsNewer=!!(pending&&pending.saved_at&&(!saved||!saved.updated_at||Date.parse(pending.saved_at)>Date.parse(saved.updated_at)));
+  const source=pendingIsNewer?pending:saved;
+  if(source){
+   coins=Math.max(0,Number(source.coins)||0);level=Math.max(1,Number(source.level)||1);
+   const state=source.game_state&&typeof source.game_state==='object'?source.game_state:{};
    bestScore=Math.max(0,Number(state.bestScore)||0);
    if(state.dailyState&&state.dailyState.date===todayKey())dailyState={...dailyState,...state.dailyState};
    if(state.missionClaims&&typeof state.missionClaims==='object')localStorage.setItem('candyMissionClaims',JSON.stringify(state.missionClaims));
@@ -771,9 +787,10 @@ async function loadPlayerProgress(){
    updateHintButton();refreshHomeFeatures();
   }
   progressLoaded=true;
-  if(!saved)await savePlayerProgress();
+  if(pendingIsNewer||!saved)await savePlayerProgress();
  }catch(error){console.warn('Candy progress load deferred',error)}
 }
+window.addEventListener('pagehide',()=>{if(accountSignedIn&&progressLoaded)savePlayerProgress()});
 async function checkAccount(){
  try{
   const r=await fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'}),d=await r.json();
