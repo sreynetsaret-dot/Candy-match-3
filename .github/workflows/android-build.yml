@@ -52,11 +52,22 @@ jobs:
               fs.writeFileSync(path.join(dir,'ic_launcher.png'),png);
               fs.writeFileSync(path.join(dir,'ic_launcher_round.png'),png);
             }
+            // Android 8+ uses adaptive icon XML, so replace both adaptive layers too.
+            const drawable = path.join(root,'drawable-nodpi');
+            fs.mkdirSync(drawable, {recursive:true});
+            const foreground = await sharp({create:{width:432,height:432,channels:4,background:{r:0,g:0,b:0,alpha:0}}})
+              .composite([{input:await sharp(svg).resize(360,360).png().toBuffer(),left:36,top:36}])
+              .png().toBuffer();
+            fs.writeFileSync(path.join(drawable,'ic_launcher_foreground.png'),foreground);
             const anydpi = path.join(root,'mipmap-anydpi-v26');
-            if (fs.existsSync(anydpi)) {
-              const fg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="432" height="432"><rect width="432" height="432" fill="#3522a3"/><image href="candy-icon.png" width="432" height="432"/></svg>');
-              fs.writeFileSync(path.join(anydpi,'ic_launcher_foreground.png'), await sharp(svg).resize(432,432).png().toBuffer());
-            }
+            fs.mkdirSync(anydpi, {recursive:true});
+            const adaptive = `<?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background><color android:color="#3522a3"/></background>
+              <foreground><bitmap android:src="@drawable/ic_launcher_foreground" android:gravity="center"/></foreground>
+          </adaptive-icon>`;
+            fs.writeFileSync(path.join(anydpi,'ic_launcher.xml'),adaptive);
+            fs.writeFileSync(path.join(anydpi,'ic_launcher_round.xml'),adaptive);
           })().catch(e => { console.error(e); process.exit(1); });
           NODE
       - name: Build debug APK and release bundle
