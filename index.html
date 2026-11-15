@@ -424,12 +424,12 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div></div>
 <div class="home-hero"><div class="home-hero-kicker">✨ A little fun. A lot of sweetness.</div><h2>Match candies.<br>Reach new levels.</h2><p>Swap, match and beat the target in this colorful candy puzzle.</p><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-level">⭐ LEVEL <span id="homeLevel">1</span> <span>•</span> 🏆 BEST <span id="homeBest">0</span></div></div>
 <section class="home-feature" aria-label="Daily rewards">
-<div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 free spin today</span></div>
+<div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 FREE SPIN TODAY</span></div>
 <div class="wheel-card">
-<div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc" aria-label="Lucky wheel with five prize sections"><span class="wheel-label wheel-10">10<br>🪙</span><span class="wheel-label wheel-50">50<br>🪙</span><span class="wheel-label wheel-150">150<br>💎</span><span class="wheel-label wheel-thanks">THANKS<br>YOU</span><div class="wheel-center">🍬</div></div>
-<div class="wheel-actions"><button class="wheel-spin" id="freeSpin">🎡 FREE SPIN</button><button class="wheel-ad" id="adSpin">▶ Watch Ad · +1 spin</button></div>
-<p class="wheel-note" id="wheelNote">🏆 $1 is a rare prize · Other prizes: 10 / 50 / 150 coins or Thanks You</p>
-<p class="wheel-note">Ad spins unlock only after a real, completed Rewarded Ad is verified. Cash prizes require eligibility and payout verification.</p>
+<div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc" aria-label="Lucky wheel with eight prize sections"><span class="wheel-label" style="--a:29.94deg">10<br>COINS</span><span class="wheel-label" style="--a:89.82deg">10<br>COINS</span><span class="wheel-label" style="--a:149.70deg">10<br>COINS</span><span class="wheel-label" style="--a:202.14deg">50<br>COINS</span><span class="wheel-label" style="--a:247.14deg">50<br>COINS</span><span class="wheel-label" style="--a:292.14deg">150<br>COINS</span><span class="wheel-label" style="--a:336.96deg">THANK<br>YOU</span><div class="wheel-center">🍬</div></div>
+<div class="wheel-actions"><button class="wheel-spin" id="freeSpin">🎡 FREE SPIN</button><button class="wheel-ad" id="adSpin">▶ WATCH AD · +1 SPIN</button></div>
+<p class="wheel-note" id="wheelNote">💎 RARE $1 JACKPOT · 10 / 50 / 150 COINS · THANK YOU</p>
+<p class="wheel-note">EXTRA SPINS REQUIRE A VERIFIED REWARDED AD. CASH PRIZES REQUIRE ELIGIBILITY AND PAYOUT VERIFICATION.</p>
 </div>
 <div class="home-section-head"><h3>🎯 Daily Missions</h3><span id="missionDate">TODAY</span></div>
 <div class="mission-list" id="missionList">
@@ -608,23 +608,26 @@ function grantMissionRewards(){
 }
 let wheelRotation=0;
 function spinWheel(isAd=false){
- if(isAd){alert('Rewarded Ads មិនទាន់ភ្ជាប់ទេ។ មិនទាន់អាចបន្ថែមការបង្វិលពី Ads បានទេ។');return}
- if(dailyState.freeUsed){alert('បងបានប្រើការបង្វិលឥតគិតថ្លៃថ្ងៃនេះរួចហើយ។');return}
+ if(isAd){alert('Rewarded Ads are not connected yet. Extra spins are not available.');return}
+ if(dailyState.freeUsed){alert("You have already used today's free spin.");return}
  dailyState.freeUsed=true;saveDaily();refreshHomeFeatures();
  const roll=Math.random()*1000;let prize,midAngle;
- if(roll<500){prize={label:'10 កាក់',coins:10};midAngle=90}
- else if(roll<750){prize={label:'50 កាក់',coins:50};midAngle=225}
- else if(roll<850){prize={label:'150 កាក់',coins:150};midAngle=288}
- else if(roll<851){prize={label:'$1 (រង់ចាំផ្ទៀងផ្ទាត់)',cash:true};midAngle=306.18}
- else{prize={label:'Thanks You',coins:0};midAngle=333.18}
+ if(roll<166.3333333){prize={label:'10 COINS',coins:10};midAngle=29.94}
+ else if(roll<332.6666667){prize={label:'10 COINS',coins:10};midAngle=89.82}
+ else if(roll<499){prize={label:'10 COINS',coins:10};midAngle=149.70}
+ else if(roll<624.5){prize={label:'50 COINS',coins:50};midAngle=202.14}
+ else if(roll<750){prize={label:'50 COINS',coins:50};midAngle=247.14}
+ else if(roll<875){prize={label:'150 COINS',coins:150};midAngle=292.14}
+ else if(roll<999){prize={label:'THANK YOU',coins:0};midAngle=336.96}
+ else{prize={label:'$1 JACKPOT (PENDING VERIFICATION)',cash:true};midAngle=359.64}
  const disc=el('wheelDisc'),current=((wheelRotation%360)+360)%360;
  const delta=(360-midAngle-current+360)%360;
  wheelRotation+=1800+delta;disc.style.transform='rotate('+wheelRotation+'deg)';
  const spinButton=el('freeSpin');spinButton.disabled=true;
  setTimeout(()=>{spinButton.disabled=false;
   if(prize.coins){coins+=prize.coins;try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins}
-  if(prize.cash){try{localStorage.setItem('candyCashPrizePending',String(Date.now()))}catch(e){}alert('🎉 លទ្ធផល៖ $1! រង្វាន់នេះត្រូវរង់ចាំការផ្ទៀងផ្ទាត់ពី Server និងថវិកាទូទាត់ មុនអាចស្នើដកប្រាក់បាន។')}
-  else alert(prize.coins?'🎉 បងឈ្នះ '+prize.label+'!':'💬 '+prize.label+'! សូមសំណាងល្អលើកក្រោយ។');
+  if(prize.cash){try{localStorage.setItem('candyCashPrizePending',String(Date.now()))}catch(e){}alert('Congratulations! You landed on the $1 Jackpot. The prize is pending server verification and payout eligibility; it is not yet withdrawable.')}
+  else alert(prize.coins?'Congratulations! You won '+prize.label+'!':'THANK YOU! Better luck next time.');
  },3650);
 }
 el('freeSpin').addEventListener('click',()=>spinWheel(false));
@@ -819,4 +822,19 @@ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addE
 .daily-gift{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;border:2px solid #fff;border-radius:16px;background:#fff9;color:#843d69;box-shadow:0 4px 0 #cf76a4}.daily-gift b,.daily-gift small{display:block}.daily-gift small{margin-top:4px;font-size:9px;color:#a45a80}.daily-gift button{background:linear-gradient(#fff3a2,#ffc64e);color:#87456b;white-space:nowrap}
 .achievement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.achievement-grid>div{display:grid;justify-items:center;gap:4px;padding:12px 5px;border:2px solid #fff;border-radius:15px;background:#fff9;color:#843d69;font-size:23px;box-shadow:0 4px 0 #cf76a4}.achievement-grid b{font-size:10px}.achievement-grid small{font-size:8px;color:#a45a80}
 @media(max-width:360px){.wheel-actions{grid-template-columns:1fr}.mission-row{font-size:10px;padding:11px}.mission-row b{font-size:9px}}
+</style>
+
+<style id="lucky-wheel-final-v23">
+.wheel-card{display:flex;flex-direction:column;align-items:center;gap:10px}
+.wheel-disc{width:min(78vw,292px);aspect-ratio:1;position:relative;display:block;overflow:visible;
+ background:conic-gradient(from 0deg,#ffca55 0deg 59.88deg,#ff8fbd 59.88deg 119.76deg,#ffca55 119.76deg 179.64deg,#62c9f2 179.64deg 224.64deg,#a88bea 224.64deg 269.64deg,#65d5b2 269.64deg 314.64deg,#ff9d63 314.64deg 359.28deg,#ffe86a 359.28deg 360deg)!important;
+ border:9px solid #fff!important;border-radius:50%;box-shadow:0 7px 0 #a84d91,0 14px 24px #60317a66,inset 0 0 0 3px #fff9!important;transition:transform 3.6s cubic-bezier(.12,.72,.12,1)}
+.wheel-disc:before{content:none!important;display:none!important}
+.wheel-disc:after{content:"";position:absolute;inset:5px;border:2px solid #ffffffbd;border-radius:50%;pointer-events:none}
+.wheel-label{position:absolute!important;left:50%!important;top:50%!important;width:64px!important;margin:0!important;padding:4px 2px!important;border-radius:8px;background:#ffffffd9;color:#633b70!important;font-size:10px!important;font-weight:1000!important;line-height:1.12!important;text-align:center!important;text-shadow:none!important;filter:none!important;transform:translate(-50%,-50%) rotate(var(--a)) translateY(-83px) rotate(calc(-1 * var(--a)))!important;z-index:2}
+.wheel-center{position:absolute!important;z-index:4!important;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border:4px solid #fff;background:linear-gradient(145deg,#fff6a4,#ff91c8 62%,#a57ce9);box-shadow:0 5px 0 #98488d,0 8px 14px #59307877,inset 0 3px 6px #fff;font-size:26px}
+.wheel-pointer{position:relative!important;z-index:5!important;top:auto!important;left:auto!important;transform:none!important;margin:0 auto -18px!important;font-size:32px!important;line-height:1!important;color:#a83e83!important}
+.wheel-actions{width:100%;max-width:360px;gap:10px}
+.wheel-note{max-width:360px;text-align:center;font-size:10px;line-height:1.45}
+@media(max-width:380px){.wheel-disc{width:min(78vw,270px)}.wheel-label{width:58px!important;font-size:9px!important;transform:translate(-50%,-50%) rotate(var(--a)) translateY(-75px) rotate(calc(-1 * var(--a)))!important}.wheel-center{width:53px;height:53px}}
 </style>
