@@ -426,9 +426,9 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <section class="home-feature" aria-label="Daily rewards">
 <div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 free spin today</span></div>
 <div class="wheel-card">
-<div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc"><div class="wheel-center">🍬</div></div>
+<div class="wheel-pointer">▼</div><div class="wheel-disc" id="wheelDisc" aria-label="Lucky wheel with five prize sections"><span class="wheel-label wheel-10">10<br>🪙</span><span class="wheel-label wheel-50">50<br>🪙</span><span class="wheel-label wheel-150">150<br>💎</span><span class="wheel-label wheel-thanks">THANKS<br>YOU</span><div class="wheel-center">🍬</div></div>
 <div class="wheel-actions"><button class="wheel-spin" id="freeSpin">🎡 FREE SPIN</button><button class="wheel-ad" id="adSpin">▶ Watch Ad · +1 spin</button></div>
-<p class="wheel-note" id="wheelNote">Possible rewards: 10 · 50 · 150 coins · $1 · Thanks You</p>
+<p class="wheel-note" id="wheelNote">🏆 $1 is a rare prize · Other prizes: 10 / 50 / 150 coins or Thanks You</p>
 <p class="wheel-note">Ad spins unlock only after a real, completed Rewarded Ad is verified. Cash prizes require eligibility and payout verification.</p>
 </div>
 <div class="home-section-head"><h3>🎯 Daily Missions</h3><span id="missionDate">TODAY</span></div>
@@ -606,20 +606,25 @@ function grantMissionRewards(){
  try{localStorage.setItem('candyMissionClaims',JSON.stringify(claimed));localStorage.setItem('candyCoins',String(coins))}catch(e){}
  el('homeCoins').textContent=coins;refreshHomeFeatures();
 }
+let wheelRotation=0;
 function spinWheel(isAd=false){
  if(isAd){alert('Rewarded Ads មិនទាន់ភ្ជាប់ទេ។ មិនទាន់អាចបន្ថែមការបង្វិលពី Ads បានទេ។');return}
  if(dailyState.freeUsed){alert('បងបានប្រើការបង្វិលឥតគិតថ្លៃថ្ងៃនេះរួចហើយ។');return}
  dailyState.freeUsed=true;saveDaily();refreshHomeFeatures();
- const roll=Math.random()*1000;let prize;
- if(roll<500)prize={label:'10 កាក់',coins:10};
- else if(roll<750)prize={label:'50 កាក់',coins:50};
- else if(roll<850)prize={label:'150 កាក់',coins:150};
- else if(roll<851)prize={label:'$1 (រង់ចាំផ្ទៀងផ្ទាត់)',cash:true};
- else prize={label:'Thanks You',coins:0};
- const disc=el('wheelDisc');const extra=1440+Math.floor(Math.random()*720);disc.style.transform='rotate('+extra+'deg)';
- setTimeout(()=>{if(prize.coins){coins+=prize.coins;try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins}
- if(prize.cash){try{localStorage.setItem('candyCashPrizePending',String(Date.now()))}catch(e){}alert('🎉 លទ្ធផល៖ $1! រង្វាន់នេះត្រូវរង់ចាំការផ្ទៀងផ្ទាត់ពី Server និងថវិកាទូទាត់ មុនអាចស្នើដកប្រាក់បាន។')}
- else alert(prize.coins?'🎉 បងឈ្នះ '+prize.label+'!':'💬 '+prize.label+'! សូមសំណាងល្អលើកក្រោយ។');
+ const roll=Math.random()*1000;let prize,midAngle;
+ if(roll<500){prize={label:'10 កាក់',coins:10};midAngle=90}
+ else if(roll<750){prize={label:'50 កាក់',coins:50};midAngle=225}
+ else if(roll<850){prize={label:'150 កាក់',coins:150};midAngle=288}
+ else if(roll<851){prize={label:'$1 (រង់ចាំផ្ទៀងផ្ទាត់)',cash:true};midAngle=306.18}
+ else{prize={label:'Thanks You',coins:0};midAngle=333.18}
+ const disc=el('wheelDisc'),current=((wheelRotation%360)+360)%360;
+ const delta=(360-midAngle-current+360)%360;
+ wheelRotation+=1800+delta;disc.style.transform='rotate('+wheelRotation+'deg)';
+ const spinButton=el('freeSpin');spinButton.disabled=true;
+ setTimeout(()=>{spinButton.disabled=false;
+  if(prize.coins){coins+=prize.coins;try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins}
+  if(prize.cash){try{localStorage.setItem('candyCashPrizePending',String(Date.now()))}catch(e){}alert('🎉 លទ្ធផល៖ $1! រង្វាន់នេះត្រូវរង់ចាំការផ្ទៀងផ្ទាត់ពី Server និងថវិកាទូទាត់ មុនអាចស្នើដកប្រាក់បាន។')}
+  else alert(prize.coins?'🎉 បងឈ្នះ '+prize.label+'!':'💬 '+prize.label+'! សូមសំណាងល្អលើកក្រោយ។');
  },3650);
 }
 el('freeSpin').addEventListener('click',()=>spinWheel(false));
@@ -778,6 +783,19 @@ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addE
 @media(prefers-reduced-motion:reduce){.home-brand-icon,.home-hero:after,.home-hero:before{animation:none!important}}
 </style>
 
+
+<style id="lucky-wheel-redesign">
+.wheel-card{position:relative;overflow:hidden}
+.wheel-disc{width:min(76vw,278px);border:9px solid #fff;background:conic-gradient(from 0deg,#ffc94f 0deg 180deg,#ff82bd 180deg 270deg,#62c9f2 270deg 306deg,#a77be9 306deg 306.36deg,#a7e78b 306.36deg 360deg);box-shadow:0 7px 0 #a84d91,0 14px 24px #60317a66,inset 0 0 0 3px #fff8,inset 0 0 20px #6b367744}
+.wheel-disc:before{content:none!important;display:none!important}
+.wheel-disc:after{content:"";position:absolute;inset:9px;border-radius:50%;pointer-events:none;border:2px solid #ffffffb8;box-shadow:inset 0 0 0 1px #7c3e8b44}
+.wheel-label{position:absolute;z-index:1;left:50%;top:50%;width:58px;margin-left:-29px;margin-top:-13px;text-align:center;color:#71406d;font-size:13px;font-weight:1000;line-height:1.12;text-shadow:0 1px 0 #fff9;filter:drop-shadow(0 1px 1px #fff8);pointer-events:none}
+.wheel-10{transform:translateY(72px)}.wheel-50{transform:translate(49px,-49px)}.wheel-150{transform:translate(17px,-79px);font-size:11px}.wheel-thanks{transform:translate(-52px,-43px);font-size:10px}
+.wheel-center{width:62px;height:62px;border:5px solid #fff;background:radial-gradient(circle at 35% 25%,#fff8,#fff0 35%),linear-gradient(145deg,#fff6a4,#ff9acb 62%,#a57ce9);box-shadow:0 5px 0 #98488d,0 8px 14px #59307877,inset 0 3px 6px #fff;font-size:27px}
+.wheel-pointer{top:3px;font-size:33px;line-height:1;color:#a83e83;text-shadow:0 2px 0 #fff,0 4px 0 #8e3d83,0 6px 9px #53276b66}
+.wheel-note{font-weight:800}
+@media(max-width:360px){.wheel-disc{width:min(78vw,250px)}.wheel-10{transform:translateY(63px)}.wheel-50{transform:translate(43px,-43px)}.wheel-150{transform:translate(14px,-69px)}.wheel-thanks{transform:translate(-45px,-38px)}}
+</style>
 </body></html>
 <style>
 /* Calm fruit presentation: remove tile color panels behind the fruit */
