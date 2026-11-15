@@ -270,6 +270,22 @@ body.three-ready .candy3d-canvas{display:block}
 body.three-ready .center-play .board{position:relative;z-index:2;opacity:0;background:transparent!important;border:0!important;box-shadow:none!important}
 body.three-ready .center-play .board .cell{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;text-shadow:none!important}
 @media(max-width:600px){.center-play{width:100%}.center-play .board{width:100%;aspect-ratio:1/1}}
+
+/* Candy Saga-inspired polish: bright confectionery palette, framed 3D playfield and clearer controls. */
+body{background:radial-gradient(ellipse at 50% 0%,#ffe8a8 0%,transparent 36%),linear-gradient(180deg,#7c42bb 0%,#bd58a5 48%,#f28db3 100%)}
+header{background:linear-gradient(180deg,#f9a5cf,#d94f9d 65%,#a93683);border:3px solid #ffe8a8;box-shadow:0 6px 0 #85316d,0 12px 24px #57204b80,inset 0 3px 8px #fff9}
+.stats{background:linear-gradient(145deg,#8b3e93,#5a287d);border-color:#ffe8a8;box-shadow:0 5px 0 #51256c,0 9px 17px #3d174b80,inset 0 2px 5px #ffffff55}
+.stat{background:linear-gradient(180deg,#fff9d9,#ffd5ed);border-color:#fff;box-shadow:inset 0 -3px 5px #e6a4c8,0 2px 4px #4b1e5b55}
+.stat small{color:#87406e}.stat strong{color:#6d2c76}
+.progress-wrap{background:#54266e;border-color:#ffe8a8;box-shadow:0 3px 0 #3e1c59}
+.progress{background:linear-gradient(90deg,#54e7ed,#8cf08c,#ffe66c,#ff8fc6)}
+.goal-banner{border-color:#fff5c4;box-shadow:0 4px 0 #9b3d7d,0 8px 16px #3d174b70}
+.actions button{border-color:#fff2c9}
+.center-play{position:relative;width:100%;max-width:520px;margin:0 auto;padding:8px;border:4px solid #ffe9a6;border-radius:25px;background:linear-gradient(145deg,#b54891,#76318b 55%,#4d2b83);box-shadow:0 8px 0 #54256e,0 15px 28px #3b164c88,inset 0 2px 8px #fff8;isolation:isolate}
+.candy3d-canvas{inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);border-radius:15px}
+body.three-ready .center-play .board{margin:0;width:100%;aspect-ratio:1/1;opacity:0;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;gap:clamp(4px,1.1vw,7px)!important}
+body.three-ready .center-play .board .cell{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;text-shadow:none!important}
+@media(max-width:600px){.center-play{width:100%;padding:7px}.candy3d-canvas{inset:7px;width:calc(100% - 14px);height:calc(100% - 14px)}}
 </style>
 </head>
 <body>
@@ -308,25 +324,51 @@ body.three-ready .center-play .board .cell{background:transparent!important;bord
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
 (()=>{
  const canvas=document.getElementById('candy3d');if(!canvas)return;
- const scene=new THREE.Scene();scene.background=new THREE.Color(0x243c83);
- const camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(0,8.8,10.5);camera.lookAt(0,0,0);
- const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;
- scene.add(new THREE.HemisphereLight(0xd9f4ff,0x30205f,2));const key=new THREE.DirectionalLight(0xffffff,3);key.position.set(-4,9,6);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);const fill=new THREE.PointLight(0x65dcff,18,18);fill.position.set(4,4,-4);scene.add(fill);
- const base=new THREE.Mesh(new THREE.BoxGeometry(6.25,.38,6.25),new THREE.MeshStandardMaterial({color:0x188db9,metalness:.32,roughness:.28}));base.position.y=-.28;base.receiveShadow=true;scene.add(base);
- const tileGeo=new THREE.BoxGeometry(.94,.12,.94),candyGeo=new THREE.SphereGeometry(.34,24,18),iceGeo=new THREE.BoxGeometry(.68,.58,.68);
- const iceMat=new THREE.MeshPhysicalMaterial({color:0x9cecff,metalness:.15,roughness:.12,transparent:true,opacity:.9});
- const colors=[0xff477e,0xffd43b,0x9a5be8,0xff8d35,0x39c9e9,0x5b8bff],tiles=[],pieces=[],rings=[];
- for(let r=0;r<6;r++)for(let c=0;c<6;c++){const x=c-2.5,z=r-2.5;const tile=new THREE.Mesh(tileGeo,new THREE.MeshStandardMaterial({color:0x79c9f1,metalness:.18,roughness:.3}));tile.position.set(x,-.035,z);tile.receiveShadow=true;scene.add(tile);tiles.push(tile);
- const piece=new THREE.Mesh(candyGeo,new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.2,metalness:.06,clearcoat:1}));piece.position.set(x,.38,z);piece.castShadow=true;scene.add(piece);pieces.push(piece);
- const ring=new THREE.Mesh(new THREE.TorusGeometry(.42,.045,8,32),new THREE.MeshBasicMaterial({color:0x6effd0,transparent:true,opacity:0}));ring.rotation.x=Math.PI/2;ring.position.set(x,.16,z);scene.add(ring);rings.push(ring)}
- const plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),ray=new THREE.Raycaster(),pointer=new THREE.Vector2();function indexAt(e){const r=canvas.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height*2-1));ray.setFromCamera(pointer,camera);const hit=new THREE.Vector3();if(!ray.ray.intersectPlane(plane,hit))return -1;const c=Math.round(hit.x+2.5),row=Math.round(hit.z+2.5);return row>=0&&row<6&&c>=0&&c<6?row*6+c:-1}
- let down=null;canvas.addEventListener('pointerdown',e=>{down={i:indexAt(e),x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',e=>{if(!down)return;const d=down;down=null;const i=indexAt(e);if(d.i<0||i<0)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;if(Math.max(Math.abs(dx),Math.abs(dy))>18){let dest=Math.abs(dx)>Math.abs(dy)?d.i+(dx>0?1:-1):d.i+(dy>0?6:-6);if(dest>=0&&dest<36&&!(Math.abs(dest-d.i)===1&&Math.floor(dest/6)!==Math.floor(d.i/6)))window.candyGameSwap?.(d.i,dest)}else window.candyGameTap?.(d.i)});
- window.candy3dUpdate=(board,powers,selected,hints)=>{for(let i=0;i<36;i++){const v=board[i],p=pieces[i],ring=rings[i];if(v===-2){p.visible=true;p.geometry=iceGeo;p.material=iceMat;p.position.y=.32;p.scale.setScalar(1);tiles[i].material.color.setHex(0x347fae)}else if(v>=0){p.visible=true;p.geometry=candyGeo;p.material=new THREE.MeshPhysicalMaterial({color:powers[i]===2?0xffe45c:colors[v%6],roughness:.2,metalness:.06,clearcoat:1,emissive:powers[i]===2?0x7a3d00:0x000000,emissiveIntensity:.3});p.position.y=.38;p.scale.setScalar(powers[i]===1?1.08:powers[i]===2?1.16:1);tiles[i].material.color.setHex(0x79c9f1);ring.material.opacity=selected===i||hints.includes(i) ? .95 : 0}else{p.visible=false;ring.material.opacity=0}}};
+ const scene=new THREE.Scene();
+ const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,10.8,8.8);camera.lookAt(0,0,0);
+ const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0x000000,0);renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;
+ scene.add(new THREE.HemisphereLight(0xffffff,0x67416f,2.2));
+ const key=new THREE.DirectionalLight(0xffffff,3.2);key.position.set(-4,10,6);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
+ const fill=new THREE.PointLight(0xffb7e5,12,20);fill.position.set(4,5,-4);scene.add(fill);
+ const rim=new THREE.PointLight(0x8deeff,9,18);rim.position.set(-5,3,3);scene.add(rim);
+ const base=new THREE.Mesh(new THREE.BoxGeometry(6.55,.42,6.55),new THREE.MeshPhysicalMaterial({color:0xf06ab0,metalness:.22,roughness:.25,clearcoat:1}));
+ base.position.y=-.3;base.receiveShadow=true;scene.add(base);
+ const tileGeo=new THREE.BoxGeometry(.94,.13,.94),ballGeo=new THREE.SphereGeometry(.34,32,24),iceGeo=new THREE.BoxGeometry(.68,.58,.68);
+ const colors=[0xff477e,0xffd43b,0x9a5be8,0xff8d35,0x39c9e9,0x5b8bff];
+ const candyMats=colors.map(color=>new THREE.MeshPhysicalMaterial({color,roughness:.18,metalness:.02,clearcoat:1,clearcoatRoughness:.08}));
+ const powerMat=new THREE.MeshPhysicalMaterial({color:0xfff06a,roughness:.12,metalness:.08,clearcoat:1,emissive:0x8a4600,emissiveIntensity:.25});
+ const tileMat=new THREE.MeshPhysicalMaterial({color:0xffe8f5,roughness:.28,metalness:.05,clearcoat:.8});
+ const iceMat=new THREE.MeshPhysicalMaterial({color:0x9cecff,metalness:.12,roughness:.1,transparent:true,opacity:.88,clearcoat:1});
+ const tiles=[],pieces=[],rings=[],glints=[];
+ for(let r=0;r<6;r++)for(let c=0;c<6;c++){
+  const x=c-2.5,z=r-2.5;
+  const tile=new THREE.Mesh(tileGeo,tileMat.clone());tile.position.set(x,-.035,z);tile.receiveShadow=true;scene.add(tile);tiles.push(tile);
+  const piece=new THREE.Mesh(ballGeo,candyMats[0]);piece.position.set(x,.38,z);piece.castShadow=true;
+  const type=c%6;const shape=[[.91,1.08,.83],[.94,.92,.94],[.86,1.02,.86],[1.08,.82,.88],[.92,.96,1.02],[.88,1.05,.9]][type];piece.scale.set(...shape);
+  const shine=new THREE.Mesh(new THREE.SphereGeometry(.105,16,12),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.82}));shine.position.set(-.12,.19,.23);shine.scale.set(1,.45,.7);piece.add(shine);glints.push(shine);
+  const sparkle=new THREE.Mesh(new THREE.SphereGeometry(.045,12,10),new THREE.MeshBasicMaterial({color:0xffffff}));sparkle.position.set(.12,.26,.16);piece.add(sparkle);
+  scene.add(piece);pieces.push(piece);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.42,.035,8,32),new THREE.MeshBasicMaterial({color:0xfff29a,transparent:true,opacity:0}));ring.rotation.x=Math.PI/2;ring.position.set(x,.16,z);scene.add(ring);rings.push(ring);
+ }
+ window.candy3dUpdate=(board,powers,selected,hints)=>{
+  for(let i=0;i<36;i++){
+   const v=board[i],p=pieces[i],ring=rings[i],type=Math.max(0,v)%6;
+   if(v===-2){p.visible=true;p.geometry=iceGeo;p.material=iceMat;p.position.y=.32;p.scale.setScalar(1);tiles[i].material.color.setHex(0x91e7fa);ring.material.opacity=0}
+   else if(v>=0){
+    p.visible=true;p.geometry=ballGeo;p.material=powers[i]===2?powerMat:candyMats[type];p.position.y=.38;
+    const shapes=[[.91,1.08,.83],[.94,.92,.94],[.86,1.02,.86],[1.08,.82,.88],[.92,.96,1.02],[.88,1.05,.9]];
+    const k=powers[i]===1?1.08:powers[i]===2?1.15:1;p.scale.set(shapes[type][0]*k,shapes[type][1]*k,shapes[type][2]*k);
+    p.rotation.y=(type-2)*.13;tiles[i].material.color.setHex(0xffe8f5);
+    ring.material.opacity=selected===i||hints.includes(i)?.95:0;
+   }else{p.visible=false;ring.material.opacity=0}
+  }
+ };
  if(window.__candy3dState)window.candy3dUpdate(...window.__candy3dState);
- function resize(){const w=canvas.clientWidth||360,h=canvas.clientHeight||360;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(canvas);resize();document.body.classList.add('three-ready');
- let t=0;function frame(){requestAnimationFrame(frame);t+=.012;for(let i=0;i<36;i++)if(pieces[i].visible&&pieces[i].geometry===candyGeo)pieces[i].position.y=.38+Math.sin(t*2+i*.7)*.018;renderer.render(scene,camera)}frame();window.addEventListener('resize',resize);
-})();
-</script>
+ function resize(){const w=canvas.clientWidth||360,h=canvas.clientHeight||360;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+ new ResizeObserver(resize).observe(canvas);resize();document.body.classList.add('three-ready');
+ let t=0;function frame(){requestAnimationFrame(frame);t+=.012;for(let i=0;i<36;i++)if(pieces[i].visible&&pieces[i].geometry===ballGeo)pieces[i].position.y=.38+Math.sin(t*2+i*.7)*.025;renderer.render(scene,camera)}frame();window.addEventListener('resize',resize);
+})();</script>
 <script>
 (()=>{
 const N=6, TYPES=['🍓','🍋','🍇','🍬','🍊','🫐'], START_MOVES=25;
