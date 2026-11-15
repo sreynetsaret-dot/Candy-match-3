@@ -114,6 +114,54 @@ header{padding:17px 12px 18px;border-radius:25px}
 .ad-slot{border-style:solid;border-color:#ffffff20;background:linear-gradient(135deg,#ffffff10,#ffffff05);box-shadow:inset 0 1px #ffffff0c}
 @media(max-width:390px){.home-hero{min-height:315px}.home-shell{padding-left:15px;padding-right:15px}.board{gap:4px;padding:7px}.cell{border-radius:10px}}
 
+
+/* Candyland-inspired visual redesign: bright pastel world, glossy candies and playful HUD */
+:root{--pink:#f34c9a;--plum:#a52f79;--blue:#4b83c7}
+body{background:radial-gradient(ellipse at 12% 8%,#fff6b8 0,transparent 27%),radial-gradient(ellipse at 88% 18%,#ffc6e6 0,transparent 30%),linear-gradient(180deg,#ffb9dc 0%,#f9a8d4 34%,#9bdcf2 72%,#7bd7c4 100%);color:#71365f}
+body:before{opacity:.45;background-image:radial-gradient(circle at 10% 18%,#fff 0 4px,transparent 5px),radial-gradient(circle at 85% 26%,#fff 0 5px,transparent 6px),radial-gradient(circle at 18% 68%,#fff7b0 0 4px,transparent 5px),radial-gradient(circle at 91% 76%,#fff 0 6px,transparent 7px);background-size:145px 165px}
+.home-screen{background:radial-gradient(ellipse at 50% 0%,#fff1a9 0,transparent 34%),linear-gradient(180deg,#ffb5d9 0%,#f58fc4 48%,#80d9d0 100%);color:#71365f}
+.home-brand{color:#fff;text-shadow:0 2px 3px #9c3b7c}
+.home-brand-icon{background:linear-gradient(145deg,#fff4a8,#ff9fcb);box-shadow:0 5px 0 #c75b94,0 9px 20px #a13d8055}
+.home-wallet-chip{border:2px solid #fff9;background:#fff5;color:#79335e;box-shadow:0 4px 0 #d77baa}
+.home-wallet-chip small{color:#a34c7b}
+.home-hero{background:radial-gradient(circle at 82% 24%,#fff8 0 2%,transparent 27%),linear-gradient(145deg,#ff8fc5 0%,#f25eaa 52%,#a65bc4 100%);border:3px solid #fff;box-shadow:0 7px 0 #bd5c9b,0 16px 28px #9c3d7b55,inset 0 2px 8px #fff9}
+.home-hero-kicker{color:#fff8d9}
+.home-hero h2{color:#fff;text-shadow:0 3px 0 #b43c82,0 5px 10px #8c286755}
+.home-hero p{color:#fff8fb}
+.home-play{color:#8d3c67;background:linear-gradient(180deg,#fff9b6,#ffd44f);border:2px solid #fff;box-shadow:0 6px 0 #c78b2d,0 10px 17px #8b286955,inset 0 2px #fff}
+.home-section-head h3{color:#fff;text-shadow:0 2px 3px #9a3c7c}
+.home-section-head span{color:#fff8}
+.home-reward{background:#fff9;border:2px solid #fff;box-shadow:0 5px 0 #cf76a4}
+.home-reward b{color:#863b68}.home-reward small{color:#a65a82}
+.home-reward-icon{background:linear-gradient(145deg,#fff2a8,#ffc4df);box-shadow:inset 0 2px #fff}
+.home-best{color:#fff;text-shadow:0 1px 2px #8c2867}
+.home-bottom-nav{background:#fffF;border-top:2px solid #fff;box-shadow:0 -6px 22px #a3427955}
+.home-nav-item{color:#bd6c98}.home-nav-item.active{color:#e43e91}
+header{background:linear-gradient(180deg,#ffacd2 0%,#f36cae 58%,#e94f9d 100%);border:3px solid #fff;box-shadow:0 6px 0 #b83f82,0 11px 22px #9a397955,inset 0 3px 9px #fff}
+h1{color:#fff;text-shadow:0 3px 0 #a93579,0 5px 8px #9d2f7055}
+header p{color:#fff8df}
+.stats{background:linear-gradient(145deg,#fff1f8,#ffd1e7);border:2px solid #fff;box-shadow:0 5px 0 #c65b96,0 9px 17px #9a397944,inset 0 2px 5px #fff}
+.stat{background:linear-gradient(180deg,#fff,#ffe0ef);border:1px solid #fff;box-shadow:inset 0 -3px 5px #ef9fc6,0 2px 4px #a8447b33}
+.stat small{color:#a34d7c}.stat strong{color:#c73582;text-shadow:0 1px #fff}
+.progress-wrap{background:#fff;border:2px solid #fff;box-shadow:0 3px 0 #c45a96}
+.progress{background:linear-gradient(90deg,#ff8fc5,#ffcf55,#80e7a9);box-shadow:0 0 12px #fff}
+.goal-banner{color:#8f3d68;background:linear-gradient(110deg,#fff4a6,#ffc0df,#fff0a2);border:2px solid #fff;box-shadow:0 4px 0 #c45b98,0 8px 16px #9a397744}
+.board{background:linear-gradient(145deg,#d8f8ff 0%,#9be2f5 50%,#8bc7ec 100%);border:3px solid #fff;box-shadow:0 7px 0 #5599c8,0 15px 28px #397ba855,inset 0 3px 8px #fff}
+.cell{background:linear-gradient(145deg,#f9ffff 0%,#c8f0ff 50%,#8fc8ed 100%);border:2px solid #fff;border-radius:14px;font-size:clamp(35px,11.4vw,52px);text-shadow:0 3px 3px #28669a55;box-shadow:inset 0 3px 7px #fff, inset 0 -4px 6px #5599c866,0 3px 4px #397ba855}
+.cell:after{height:34%;background:linear-gradient(#fff,transparent)}
+.cell.selected{background:linear-gradient(145deg,#fff0a8,#ff8ec5);outline:3px solid #fff36b;box-shadow:0 0 17px #ff8bcf,inset 0 2px 5px #fff}
+.cell.hint-cell{outline:3px solid #fff36b;filter:brightness(1.15);box-shadow:0 0 18px #fff36b}
+.actions button,.modal button{background:linear-gradient(180deg,#ffacd4,#ed559f);border:2px solid #fff;box-shadow:0 4px 0 #b53f80,0 7px 12px #963c7440,inset 0 2px #fff}
+.actions button.secondary{background:linear-gradient(180deg,#a2f2bd,#39c98d);box-shadow:0 4px 0 #238c62,0 7px 12px #427e6540,inset 0 2px #fff}
+.hint{color:#8b3b68;background:linear-gradient(120deg,#fff2a5,#ffc1df);border:2px solid #fff;text-shadow:none;box-shadow:0 4px 0 #c45b98,0 8px 15px #9a397744}
+footer{color:#fff;text-shadow:0 1px 2px #9a3977}footer strong{color:#fff36b}
+.overlay{background:#71305c99}
+.modal{background:linear-gradient(180deg,#ffcae4,#f276b7 60%,#bd70c8);border:3px solid #fff;box-shadow:0 8px 0 #a5458b,0 20px 50px #71305c77,inset 0 2px #fff}
+.modal h2{color:#fff;text-shadow:0 3px 0 #a83c82}.modal p{color:#fff}
+.ad-slot{border:2px dashed #fff9;background:#ffffff55;color:#9a4d79;box-shadow:inset 0 1px #fff}
+.ad-slot span{color:#a94c7d}.ad-slot b{color:#8c3c68}.ad-slot small{color:#a45a80}
+@media(max-width:390px){.board{gap:4px;padding:7px}.cell{border-radius:11px}}
+
 </style>
 </head>
 <body>
