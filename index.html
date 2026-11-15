@@ -529,6 +529,7 @@ function levelGoal(){const tier=Math.min(5,Math.floor((level-1)/6)),m=(level-1)%
 let goalProgress=0,board=[],obstacles=new Set(),powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=true,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
 const el=id=>document.getElementById(id), boardEl=el('board');
 let audioCtx=null;
+try{const savedMusic=localStorage.getItem('candyMusic');if(savedMusic!==null)music=savedMusic==='1'}catch(e){}
 function sayCheer(message){
  if(!voice||!('speechSynthesis'in window))return;
  try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(message);u.rate=1.08;u.pitch=1.2;u.volume=.75;window.speechSynthesis.speak(u)}catch(e){}
@@ -679,12 +680,12 @@ function continueGame(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){l
 el('startGame').addEventListener('click',()=>{roundToken++;el('overlay').classList.remove('show');el('menuOverlay').classList.remove('show');el('homeScreen').style.display='none';el('gameScreen').classList.remove('game-hidden');el('gameScreen').style.display='block';startLevel();window.scrollTo(0,0)});
 function openMenu(){if(locked&& !paused)return;paused=true;locked=true;stopMusic();el('menuOverlay').classList.add('show');}
 function closeMenu(){el('menuOverlay').classList.remove('show');paused=false;locked=false;if(music){if(!audioCtx){const A=window.AudioContext||window.webkitAudioContext;if(A)audioCtx=new A()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();startMusic()}if(findMatches().length||forcedClear.length)resolve(roundToken)}
-function goHome(){roundToken++;paused=false;locked=true;stopMusic();if('speechSynthesis'in window)window.speechSynthesis.cancel();el('menuOverlay').classList.remove('show');el('gameScreen').classList.add('game-hidden');el('homeScreen').style.display='grid';el('homeBest').textContent=bestScore;el('homeLevel').textContent=level;el('homeCoins').textContent=coins}
+function goHome(){roundToken++;paused=false;locked=true;stopMusic();if('speechSynthesis'in window)window.speechSynthesis.cancel();el('menuOverlay').classList.remove('show');el('gameScreen').classList.add('game-hidden');el('homeScreen').style.display='grid';el('homeBest').textContent=bestScore;el('homeLevel').textContent=level;el('homeCoins').textContent=coins;if(music){unlockAudio();startMusic()}}
 el('homeButton').addEventListener('click',openMenu);
 el('resumeGame').addEventListener('click',closeMenu);
 el('quitHome').addEventListener('click',goHome);
 function updateSettingButtons(){el('musicToggle').textContent=music?'ON':'OFF';el('soundToggle').textContent=sound?'ON':'OFF';el('voiceToggle').textContent=voice?'ON':'OFF';el('homeMusicToggle').textContent=music?'🎵 MUSIC ON':'🔇 MUSIC OFF';el('homeMusicToggle').setAttribute('aria-label',music?'Turn music off':'Turn music on')}
-function setMusicEnabled(enabled){music=enabled;if(music){unlockAudio();startMusic()}else stopMusic();updateSettingButtons()}
+function setMusicEnabled(enabled){music=enabled;try{localStorage.setItem('candyMusic',music?'1':'0')}catch(e){}if(music){unlockAudio();startMusic()}else stopMusic();updateSettingButtons()}
 el('musicToggle').addEventListener('click',()=>setMusicEnabled(!music));
 el('homeMusicToggle').addEventListener('click',()=>setMusicEnabled(!music));
 el('soundToggle').addEventListener('click',()=>{sound=!sound;updateSettingButtons();if(sound)playSound('swap');el('sound').textContent=sound?'🔊 Sound':'🔇 Sound'});
