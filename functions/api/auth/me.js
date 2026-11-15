@@ -1,2 +1,11 @@
-import {json,fail,cookieToken,sha256} from "../_lib/auth.js";
-export async function onRequest({request,env}){if(request.method!=="GET")return fail("method_not_allowed",405);try{const token=cookieToken(request);if(!token)return json({ok:false},401);const hash=await sha256(token);const user=await env.DB.prepare("SELECT u.id,u.status FROM auth_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND julianday(s.expires_at)>julianday('now') LIMIT 1").bind(hash).first();if(!user||user.status!=="active")return json({ok:false},401);await env.DB.prepare("UPDATE auth_sessions SET last_seen_at=datetime('now') WHERE token_hash=?").bind(hash).run();return json({ok:true,user:{id:user.id}})}catch(error){console.error("candy_me_failed",error);return fail("auth_service_unavailable",503)}}
+import { fail, json, requireSession } from "../_lib/supabase.js";
+export async function onRequestGet({ request }) {
+  try {
+    const session = await requireSession(request);
+    if (!session) return json({ ok: false }, 401);
+    return json({ ok: true, user: { id: session.user.id, email: session.user.email } }, 200, session.cookies);
+  } catch (error) {
+    console.error("candy_me_failed", error);
+    return fail("auth_service_unavailable", 503);
+  }
+}
