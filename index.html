@@ -419,10 +419,28 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 
 </style>
 <style id="win-reward-ui-v27">.win-reward{display:flex;flex-direction:column;align-items:center;gap:2px;margin:14px auto 8px;padding:12px 18px;max-width:220px;border:2px solid #fff6a8;border-radius:16px;background:linear-gradient(145deg,#fff2a0,#ffbd4c);color:#87451c;box-shadow:0 4px 0 #bb7734,0 7px 15px #6b285455}.win-reward strong{font-size:25px;font-weight:1000}.win-reward small{font-size:9px;font-weight:1000;letter-spacing:1px}.double-reward-ad{background:linear-gradient(180deg,#8df5c1,#22b77d)!important;color:#075c42!important;text-shadow:none!important;box-shadow:0 4px 0 #147d59!important;font-size:12px!important}.modal button[hidden],.win-reward[hidden]{display:none!important}</style>
+<style>
+/* Shared account access */
+.home-top{gap:8px;flex-wrap:wrap}
+.home-account-button{border:2px solid #fff;border-radius:14px;padding:9px 12px;background:linear-gradient(145deg,#fff7ad,#ff9bcf);color:#693a89;font-size:11px;font-weight:1000;box-shadow:0 4px 0 #a65aa8;white-space:nowrap}
+.account-overlay{position:fixed;inset:0;z-index:1000;display:none;place-items:center;padding:18px;background:#10122be8;backdrop-filter:blur(9px)}
+.account-overlay.show{display:grid}
+.account-card{width:min(100%,390px);padding:24px 20px;border:2px solid #fff;border-radius:24px;background:linear-gradient(155deg,#5549a5,#28245f 70%,#1b2049);box-shadow:0 18px 55px #080b2bbb;color:#fff}
+.account-card h2{margin:0 0 5px;font-size:25px}.account-card p{margin:0 0 18px;color:#d9dcff;font-size:12px}
+.account-card label{display:block;margin:12px 0 6px;font-size:11px;font-weight:900;color:#fff}
+.account-card input{width:100%;padding:13px;border:2px solid #ffffff55;border-radius:12px;background:#11183b;color:#fff;font-size:15px;outline:none}
+.account-card input:focus{border-color:#ffe28b}
+.account-actions{display:flex;gap:9px;margin-top:17px}
+.account-actions button{flex:1;border:0;border-radius:12px;padding:13px 8px;font-weight:1000;background:linear-gradient(180deg,#fff19b,#ffc64b);color:#57346e}
+.account-actions .account-secondary{background:#ffffff18;color:#fff;border:1px solid #ffffff55}
+.account-status{min-height:34px;margin-top:12px!important;color:#fff1a7!important;font-weight:800}
+.account-close{float:right;border:0;background:#ffffff18;color:#fff;border-radius:10px;padding:7px 10px}
+.account-user{display:none;color:#fff;font-size:10px;font-weight:900;max-width:115px;overflow-wrap:anywhere}
+</style>
 </head>
 <body>
 <section class="home-screen" id="homeScreen"><div class="home-shell">
-<div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div></div>
+<div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div><div class="account-user" id="accountUser"></div><button class="home-account-button" id="accountOpen">SIGN IN / SIGN UP</button></div>
 <div class="home-hero"><div class="home-hero-kicker">✨ A little fun. A lot of sweetness.</div><h2>Match candies.<br>Reach new levels.</h2><p>Swap, match and beat the target in this colorful candy puzzle.</p><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-level">⭐ LEVEL <span id="homeLevel">1</span> <span>•</span> 🏆 BEST <span id="homeBest">0</span></div></div>
 <section class="home-feature" aria-label="Daily rewards">
 <div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 FREE SPIN TODAY</span></div>
@@ -447,6 +465,20 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <div class="home-rewards"><div class="home-reward"><div class="home-reward-icon">💙</div><b>PayPal</b><small>Cash rewards</small></div><div class="home-reward"><div class="home-reward-icon">💳</div><b>Payoneer</b><small>Cash rewards</small></div><div class="home-reward"><div class="home-reward-icon">🎮</div><b>Google Play</b><small>Gift cards</small></div></div>
 <p class="home-best">Best score saved on this device: <strong id="homeBestFoot">0</strong></p>
 </div><nav class="home-bottom-nav"><button class="home-nav-item active" id="navHome"><span>⌂</span>HOME</button><button class="home-nav-item" id="navPlay"><span>🎮</span>PLAY</button><button class="home-nav-item" id="navRewards"><span>🎁</span>REWARDS</button><button class="home-nav-item" id="navWallet"><span>🪙</span>WALLET</button></nav></section>
+<div class="account-overlay" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+ <div class="account-card">
+  <button class="account-close" id="accountClose" type="button">✕</button>
+  <div style="font-size:34px;margin-bottom:5px">🍬</div>
+  <h2 id="accountTitle">Your Candy Account</h2>
+  <p id="accountSubtitle">Use the same email and password for Candy Match 3 and Germany Dating Pro.</p>
+  <form id="accountForm">
+   <label for="accountEmail">GMAIL / EMAIL</label><input id="accountEmail" type="email" autocomplete="email" maxlength="254" required placeholder="you@gmail.com">
+   <label for="accountPassword">PASSWORD (10+ CHARACTERS)</label><input id="accountPassword" type="password" autocomplete="new-password" minlength="10" maxlength="128" required placeholder="Enter your password">
+   <div class="account-actions"><button id="accountSubmit" type="submit">CREATE ACCOUNT</button><button class="account-secondary" id="accountSwitch" type="button">SIGN IN</button></div>
+  </form>
+  <p class="account-status" id="accountStatus" role="status"></p>
+ </div>
+</div>
 <main class="game-hidden" id="gameScreen">
 <header><h1>🍬 Candy Match 3</h1><p>⭐ Sweet Puzzle Adventure ⭐</p></header>
 <section class="stats" aria-label="Game status">
@@ -665,6 +697,52 @@ boardEl.addEventListener('pointerup',e=>{if(!touchStart)return;const start=touch
 el('newGame').addEventListener('click',newGame);
 el('doubleRewardAd').addEventListener('click',()=>{alert('Rewarded Ads are not connected yet. Your +20 coin reward has already been credited. The x2 bonus will be available after ad verification is connected.')});
 el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound':'🔇 Sound';updateSettingButtons();if(sound)playSound('swap')});
+
+let accountMode='register',accountSignedIn=false;
+function setAccountMode(mode){
+ accountMode=mode;
+ el('accountTitle').textContent=mode==='register'?'Create Your Account':'Welcome Back';
+ el('accountSubtitle').textContent='Use the same email and password for Candy Match 3 and Germany Dating Pro.';
+ el('accountSubmit').textContent=mode==='register'?'CREATE ACCOUNT':'SIGN IN';
+ el('accountSwitch').textContent=mode==='register'?'SIGN IN':'CREATE ACCOUNT';
+ el('accountPassword').setAttribute('autocomplete',mode==='register'?'new-password':'current-password');
+ el('accountStatus').textContent='';
+}
+function openAccount(mode='register'){setAccountMode(mode);el('accountModal').classList.add('show');}
+function closeAccount(){el('accountModal').classList.remove('show');}
+function paintAccount(user){
+ accountSignedIn=!!user;
+ el('accountUser').style.display=user?'block':'none';
+ el('accountUser').textContent=user?(user.email||'SIGNED IN'):'';
+ el('accountOpen').textContent=user?'ACCOUNT ✓':'SIGN IN / SIGN UP';
+}
+async function checkAccount(){
+ try{const r=await fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'});const d=await r.json();paintAccount(r.ok&&d.ok?d.user:null);}
+ catch(_){paintAccount(null)}
+}
+el('accountOpen').addEventListener('click',()=>openAccount(accountSignedIn?'login':'register'));
+el('accountClose').addEventListener('click',closeAccount);
+el('accountModal').addEventListener('click',e=>{if(e.target===el('accountModal'))closeAccount()});
+el('accountSwitch').addEventListener('click',()=>setAccountMode(accountMode==='register'?'login':'register'));
+el('accountForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const button=el('accountSubmit');button.disabled=true;el('accountStatus').textContent='Please wait…';
+ try{
+  const r=await fetch('/api/auth/'+accountMode,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({email:el('accountEmail').value,password:el('accountPassword').value})});
+  const d=await r.json();
+  if(!r.ok||!d.ok){
+   const messages={account_already_exists_use_login:'This email already has an account. Please sign in.',invalid_email_or_password:'Email or password is incorrect.',invalid_email_or_password_length:'Enter a valid email and a password of at least 10 characters.',too_many_attempts_try_later:'Too many attempts. Please try again later.'};
+   throw new Error(messages[d.error]||'Account service is temporarily unavailable. Please try again.');
+  }
+  paintAccount({email:el('accountEmail').value.trim().toLowerCase()});
+  el('accountPassword').value='';
+  el('accountStatus').textContent=accountMode==='register'?'Account created successfully!':'You are signed in!';
+  setTimeout(closeAccount,700);
+ }catch(err){el('accountStatus').textContent=err.message}
+ finally{button.disabled=false}
+});
+checkAccount();
+
 newGame();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
