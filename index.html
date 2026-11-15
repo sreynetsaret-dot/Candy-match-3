@@ -437,6 +437,14 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 .account-close{float:right;border:0;background:#ffffff18;color:#fff;border-radius:10px;padding:7px 10px}
 .account-user{display:none;color:#fff;font-size:10px;font-weight:900;max-width:115px;overflow-wrap:anywhere}
 </style>
+<style id="final-polish-v34">
+/* Clear win feedback; keep unavailable ad rewards hidden until a real SDK is integrated */
+.win-reward{animation:rewardPop .55s cubic-bezier(.2,.9,.25,1.25) both}
+@keyframes rewardPop{0%{opacity:0;transform:translateY(12px) scale(.72)}70%{opacity:1;transform:translateY(-3px) scale(1.06)}100%{opacity:1;transform:translateY(0) scale(1)}}
+#overlay.show .modal{animation:modalEnter .24s ease-out both}
+@keyframes modalEnter{from{opacity:.65;transform:translateY(12px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.win-reward,#overlay.show .modal{animation:none!important}}
+</style>
 </head>
 <body>
 <section class="home-screen" id="homeScreen"><div class="home-shell">
@@ -618,7 +626,7 @@ function resolve(token){
   render();setTimeout(()=>resolve(token),65);
  },450);
 }
-function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();queueProgressSave();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 LEVEL '+level+' COMPLETE!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('winReward').hidden=false;el('doubleRewardAd').hidden=false;el('overlay').classList.add('show')}else if(moves<=0){el('winReward').hidden=true;el('doubleRewardAd').hidden=true;playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
+function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();queueProgressSave();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 LEVEL '+level+' COMPLETE!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('winReward').hidden=false;el('doubleRewardAd').hidden=true;el('overlay').classList.add('show')}else if(moves<=0){el('winReward').hidden=true;el('doubleRewardAd').hidden=true;playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){if(board[a]<0)continue;const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0||board[b]<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
 
 const todayKey=()=>new Date().toLocaleDateString('en-CA');
@@ -674,7 +682,7 @@ function updateHintButton(){el('hint').textContent='💡 Hint ('+hintsLeft+')'}
 function hint(){if(locked||moves<=0)return;if(hintsLeft<=0){el('hintAdOverlay').classList.add('show');return}const pair=findMove();if(!pair){reshuffle();return}hintsLeft--;dailyState.hints++;saveDaily();grantMissionRewards();try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft',String(hintsLeft))}catch(e){}updateHintButton();hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
 function reshuffle(){do{board=Array.from({length:N*N},(_,i)=>obstacles.has(i)?-2:rand())}while(findMatches().length||!findMove());powers=Array(N*N).fill(0);hintPair=[];selected=-1;render();el('helpText').textContent='Board shuffled — keep matching!'}
 function showResult(t,p){el('resultTitle').textContent=t;el('resultText').textContent=p;el('overlay').classList.add('show')}
-function startLevel(){roundToken++;if(hintLevel!==level){hintLevel=level;hintsLeft=1;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','1')}catch(e){}}updateHintButton();TYPES=currentFruitWorld().fruits;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=Math.max(20,31-level);selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
+function startLevel(){roundToken++;if(hintLevel!==level){hintLevel=level;hintsLeft=1;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','1')}catch(e){}}updateHintButton();TYPES=currentFruitWorld().fruits;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
 function newGame(){level=1;hintLevel=1;hintsLeft=1;try{localStorage.setItem('candyHintsLevel','1');localStorage.setItem('candyHintsLeft','1')}catch(e){}startLevel()}
 function continueGame(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){level=level+1;try{localStorage.setItem('candyLevel',String(level))}catch(e){}}startLevel();if(won){el('helpText').textContent='🌟 Welcome to Level '+level+'! Target: '+targetScore()+' points. Good luck!'}else{el('helpText').textContent='New try! Match 3 or more candies to reach the target.'}}
 el('startGame').addEventListener('click',()=>{roundToken++;el('overlay').classList.remove('show');el('menuOverlay').classList.remove('show');el('homeScreen').style.display='none';el('gameScreen').classList.remove('game-hidden');el('gameScreen').style.display='block';startLevel();window.scrollTo(0,0)});
