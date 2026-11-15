@@ -445,6 +445,33 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 @keyframes modalEnter{from{opacity:.65;transform:translateY(12px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){.win-reward,#overlay.show .modal{animation:none!important}}
 </style>
+
+<style id="android-performance-pass-v1">
+/* Lightweight effects for Android WebView: preserve the candy art, reduce per-frame GPU work. */
+@media (max-width: 700px) {
+  .cell {
+    filter: none !important;
+    will-change: auto !important;
+    transition: transform .12s ease !important;
+    box-shadow: inset 0 2px 3px #ffffffaa, 0 1px 2px #34517b44 !important;
+  }
+  .cell.selected { animation: none !important; filter: none !important; }
+  .cell.matched { animation: androidCandyPop .16s ease-out forwards !important; }
+  .cell.matched:before { display: none !important; animation: none !important; }
+  @keyframes androidCandyPop {
+    0% { transform: scale(1); opacity: 1; }
+    55% { transform: scale(1.16); opacity: 1; }
+    100% { transform: scale(.35); opacity: 0; }
+  }
+  .board { box-shadow: 0 5px 0 #5599c8, inset 0 2px 4px #ffffffaa !important; }
+  .overlay, .account-overlay { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .home-bottom-nav { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .home-brand-icon, .home-hero:before, .home-hero:after, .home-play { animation: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cell.matched { animation: none !important; opacity: .35; }
+}
+</style>
 </head>
 <body>
 <section class="home-screen" id="homeScreen"><div class="home-shell">
@@ -622,8 +649,8 @@ function resolve(token){
     for(;y>=top;y--){const i=y*N+c;board[i]=rand();powers[i]=0}
    }
   }
-  render();setTimeout(()=>resolve(token),65);
- },450);
+  render();setTimeout(()=>resolve(token),32);
+ },210);
 }
 function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){dailyState.wins++;saveDaily();coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;grantMissionRewards();queueProgressSave();playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 LEVEL '+level+' COMPLETE!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('winReward').hidden=false;el('doubleRewardAd').hidden=true;el('overlay').classList.add('show')}else if(moves<=0){el('winReward').hidden=true;el('doubleRewardAd').hidden=true;playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){if(board[a]<0)continue;const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0||board[b]<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
