@@ -1005,6 +1005,22 @@ body[data-stage="4"] #board{background:linear-gradient(145deg,#ffe9a8,#ffc47b 55
 body[data-stage="5"] #board{background:linear-gradient(145deg,#d9d0ff,#a99bed 55%,#7d91df)}
 body[data-stage="6"] #board{background:linear-gradient(145deg,#c6e7ff,#8fc4f0 55%,#8b9de8)}
 </style>
+
+<style id="android-smoothness-pass-v2">
+/* Touch-device performance: keep the candy look, reduce expensive per-tile GPU work. */
+@media (max-width:700px) and (hover:none) and (pointer:coarse){
+  #board{will-change:auto!important;box-shadow:0 5px 0 #5599c8,0 8px 14px #397ba833,inset 0 2px 5px #fff!important}
+  #board .cell{will-change:auto!important;transform:translateZ(0);filter:none!important;transition:none!important;text-shadow:0 1px 1px #173d7a44!important}
+  #board .cell.selected{animation:none!important;transform:scale(.94)!important;filter:none!important;box-shadow:0 0 0 3px #ffdc6c99!important}
+  #board .cell.hint-cell{animation:none!important;filter:none!important;box-shadow:0 0 0 3px #35d6b599!important}
+  #board .cell.matched{animation:androidCandyPop .17s ease-out forwards!important;filter:none!important}
+  #board .cell.matched:before{display:none!important;animation:none!important}
+  .goal-banner,.home-hero:before,.home-hero:after,.home-brand-icon,.home-play,.board:before{animation:none!important}
+  .home-bottom-nav,.overlay,.account-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+@keyframes androidCandyPop{0%{transform:scale(1);opacity:1}55%{transform:scale(1.16);opacity:.9}100%{transform:scale(.72);opacity:0}}
+@media(prefers-reduced-motion:reduce){#board .cell.matched{animation:none!important}}
+</style>
 </body></html>
 <style>
 /* Calm fruit presentation: remove tile color panels behind the fruit */
