@@ -511,7 +511,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 <button id="resumeGame">▶ Continue playing</button><button id="quitHome" class="quit-button">🏠 Back to Home</button>
 </div></div>
 <div class="overlay" id="overlay"><div class="modal"><h2 id="resultTitle">Sweet!</h2><p id="resultText"></p><div id="winReward" class="win-reward" hidden>🪙 <strong>+20 COINS</strong><small>LEVEL REWARD EARNED</small></div><button id="doubleRewardAd" class="double-reward-ad" hidden>📺 WATCH AD TO DOUBLE (x2)</button><button id="playAgain">Play again</button></div></div>
-<div class="overlay" id="hintAdOverlay"><div class="modal"><h2>💡 Hint used up!</h2><p>You used your free hint for this level. Rewarded Ads are not connected yet. Once an ad provider is connected, watch one completed ad to earn +1 hint.</p><button id="closeHintAd">OK</button></div></div>
+<div class="overlay" id="hintAdOverlay"><div class="modal"><h2>💡 Hint used up!</h2><p>You have used all 3 free hints for this level. You will get 3 new free hints when the next level begins.</p><button id="closeHintAd">OK</button></div></div>
 <script>
 (()=>{
 const N=5, FRUIT_SETS=[
@@ -531,7 +531,7 @@ const N=5, FRUIT_SETS=[
 let TYPES=FRUIT_SETS[0].fruits;
 function currentFruitWorld(){return FRUIT_SETS[(level-1)%FRUIT_SETS.length]}
 let level=1,bestScore=0,coins=0;try{bestScore=Number(localStorage.getItem('candyBestScore')||0);level=Math.max(1,Number(localStorage.getItem('candyLevel')||1));coins=Math.max(0,Number(localStorage.getItem('candyCoins')||0))}catch(e){}
-let hintsLeft=1,hintLevel=level;try{if(Number(localStorage.getItem('candyHintsLevel'))===level)hintsLeft=Math.max(0,Math.min(1,Number(localStorage.getItem('candyHintsLeft')??1)));else{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','1')}}catch(e){}
+let hintsLeft=3,hintLevel=level;try{if(Number(localStorage.getItem('candyHintsLevel'))===level&&localStorage.getItem('candyHintsQuotaVersion')==='3')hintsLeft=Math.max(0,Math.min(3,Number(localStorage.getItem('candyHintsLeft')??3)));else{hintsLeft=3;localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','3');localStorage.setItem('candyHintsQuotaVersion','3')}}catch(e){}
 function levelGoal(){const tier=Math.min(5,Math.floor((level-1)/6)),m=(level-1)%6;const candy=(level+1)%TYPES.length,other=(candy+2)%TYPES.length;if(m===0)return {mode:'score',target:1200+tier*250,moves:level===1?30:18-tier,label:'SCORE RUSH',detail:'Reach the score target!'};if(m===1)return {mode:'collect',target:13+tier*3,moves:17-tier,candy,label:'CANDY HUNT',detail:'Collect the featured candy!'};if(m===2)return {mode:'combo',target:3+tier,moves:16-tier,label:'COMBO MASTER',detail:'Make matches of 4 or more!'};if(m===3)return {mode:'striped',target:3+tier,moves:17-tier,label:'STRIPED CANDY',detail:'Create striped special candies!'};if(m===4)return {mode:'double',target:17+tier*4,moves:17-tier,candy,other,label:'TWO-COLOR QUEST',detail:'Collect both featured candy colors!'};return {mode:'bigclear',target:3+Math.floor(tier/2),moves:16-tier,label:'BIG BLAST',detail:'Make matches of 5 or more candies!'}}const targetScore=()=>levelGoal().target;function goalStatus(g){if(g.mode==='score')return 'Reach '+g.target+' points · '+score+' / '+g.target;if(g.mode==='collect')return 'Collect '+TYPES[g.candy]+' · '+goalProgress+' / '+g.target;if(g.mode==='combo')return 'Make 4+ matches · '+goalProgress+' / '+g.target;if(g.mode==='striped')return 'Create 🍭 striped candies · '+goalProgress+' / '+g.target;if(g.mode==='double')return 'Collect '+TYPES[g.candy]+' + '+TYPES[g.other]+' · '+goalProgress+' / '+g.target;return 'Make 5+ candy blasts · '+goalProgress+' / '+g.target;}function goalValue(g){return g.mode==='score'?score:goalProgress;}
 let goalProgress=0,board=[],obstacles=new Set(),powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=true,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
 const el=id=>document.getElementById(id), boardEl=el('board');
@@ -681,12 +681,12 @@ el('adSpin').addEventListener('click',()=>spinWheel(true));
 el('claimDaily').addEventListener('click',()=>{if(dailyState.giftClaimed)return;dailyState.giftClaimed=true;coins+=20;saveDaily();try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins;refreshHomeFeatures();queueProgressSave();alert('🎁 You received 20 coins!')});
 refreshHomeFeatures();
 
-function updateHintButton(){el('hint').textContent='💡 Hint ('+hintsLeft+')'}
+function updateHintButton(){el('hint').textContent='💡 Hint ('+hintsLeft+'/3)'}
 function hint(){if(locked||moves<=0)return;if(hintsLeft<=0){el('hintAdOverlay').classList.add('show');return}const pair=findMove();if(!pair){reshuffle();return}hintsLeft--;dailyState.hints++;saveDaily();grantMissionRewards();try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft',String(hintsLeft))}catch(e){}updateHintButton();hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
 function reshuffle(){do{board=Array.from({length:N*N},(_,i)=>obstacles.has(i)?-2:rand())}while(findMatches().length||!findMove());powers=Array(N*N).fill(0);hintPair=[];selected=-1;render();el('helpText').textContent='Board shuffled — keep matching!'}
 function showResult(t,p){el('resultTitle').textContent=t;el('resultText').textContent=p;el('overlay').classList.add('show')}
-function startLevel(){roundToken++;if(hintLevel!==level){hintLevel=level;hintsLeft=1;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','1')}catch(e){}}updateHintButton();TYPES=currentFruitWorld().fruits;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
-function newGame(){level=1;hintLevel=1;hintsLeft=1;try{localStorage.setItem('candyHintsLevel','1');localStorage.setItem('candyHintsLeft','1')}catch(e){}startLevel()}
+function startLevel(){roundToken++;if(hintLevel!==level){hintLevel=level;hintsLeft=3;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','3');localStorage.setItem('candyHintsQuotaVersion','3')}catch(e){}}updateHintButton();TYPES=currentFruitWorld().fruits;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
+function newGame(){level=1;hintLevel=1;hintsLeft=3;try{localStorage.setItem('candyHintsLevel','1');localStorage.setItem('candyHintsLeft','3');localStorage.setItem('candyHintsQuotaVersion','3')}catch(e){}startLevel()}
 function continueGame(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){level=level+1;try{localStorage.setItem('candyLevel',String(level))}catch(e){}}startLevel();if(won){el('helpText').textContent='🌟 Welcome to Level '+level+'! Target: '+targetScore()+' points. Good luck!'}else{el('helpText').textContent='New try! Match 3 or more candies to reach the target.'}}
 el('startGame').addEventListener('click',()=>{roundToken++;el('overlay').classList.remove('show');el('menuOverlay').classList.remove('show');el('homeScreen').style.display='none';el('gameScreen').classList.remove('game-hidden');el('gameScreen').style.display='block';startLevel();window.scrollTo(0,0)});
 function openMenu(){if(locked&& !paused)return;paused=true;locked=true;stopMusic();el('menuOverlay').classList.add('show');}
@@ -738,7 +738,7 @@ function paintAccount(user){
 }
 function readSavedJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'null')??fallback}catch(_){return fallback}}
 function playerGameState(){
- return {bestScore,hintsLeft:Number(localStorage.getItem('candyHintsLeft')??hintsLeft),hintLevel:Number(localStorage.getItem('candyHintsLevel')??hintLevel),dailyState,missionClaims:readSavedJson('candyMissionClaims',{}),cashPrizePending:localStorage.getItem('candyCashPrizePending')||null};
+ return {bestScore,hintsLeft:Number(localStorage.getItem('candyHintsLeft')??hintsLeft),hintLevel:Number(localStorage.getItem('candyHintsLevel')??hintLevel),hintQuotaVersion:'3',dailyState,missionClaims:readSavedJson('candyMissionClaims',{}),cashPrizePending:localStorage.getItem('candyCashPrizePending')||null};
 }
 function pendingProgressSnapshot(){
  return {coins,level,game_state:playerGameState(),saved_at:new Date().toISOString()};
@@ -778,10 +778,10 @@ async function loadPlayerProgress(){
    bestScore=Math.max(0,Number(state.bestScore)||0);
    if(state.dailyState&&state.dailyState.date===todayKey())dailyState={...dailyState,...state.dailyState};
    if(state.missionClaims&&typeof state.missionClaims==='object')localStorage.setItem('candyMissionClaims',JSON.stringify(state.missionClaims));
-   if(Number.isFinite(Number(state.hintsLeft)))hintsLeft=Math.max(0,Math.min(1,Number(state.hintsLeft)));
+   if(state.hintQuotaVersion==='3'&&Number.isFinite(Number(state.hintsLeft)))hintsLeft=Math.max(0,Math.min(3,Number(state.hintsLeft)));
    if(Number.isFinite(Number(state.hintLevel)))hintLevel=Math.max(1,Number(state.hintLevel));
    localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level));localStorage.setItem('candyBestScore',String(bestScore));
-   localStorage.setItem('candyHintsLeft',String(hintsLeft));localStorage.setItem('candyHintsLevel',String(hintLevel));localStorage.setItem('candyDailyState',JSON.stringify(dailyState));
+   localStorage.setItem('candyHintsLeft',String(hintsLeft));localStorage.setItem('candyHintsLevel',String(hintLevel));localStorage.setItem('candyHintsQuotaVersion','3');localStorage.setItem('candyDailyState',JSON.stringify(dailyState));
    if(state.cashPrizePending)localStorage.setItem('candyCashPrizePending',state.cashPrizePending);
    el('homeCoins').textContent=coins;el('homeLevel').textContent=level;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('bestScore').textContent=bestScore;
    updateHintButton();refreshHomeFeatures();
