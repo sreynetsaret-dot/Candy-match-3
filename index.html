@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#24134b">
 <meta name="description" content="A colorful match-3 candy puzzle game. Swap candies, make matches and beat the target.">
+<link rel="icon" type="image/svg+xml" href="assets/candy-match-3-icon.svg">
+<link rel="apple-touch-icon" href="assets/candy-match-3-icon.svg">
 <link rel="manifest" href="manifest.webmanifest">
 <title>Candy Match 3</title>
 <style>
@@ -17,7 +19,7 @@ main{width:min(100%,520px);position:relative;padding:3px 2px 12px}main.game-hidd
 .home-shell{width:min(100%,480px);margin:auto;padding:20px 18px 26px}
 .home-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
 .home-brand{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:1000;letter-spacing:.2px}
-.home-brand-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#ffb4d8,#ed559f);font-size:24px;box-shadow:0 4px 0 #a33b78}
+.home-brand-icon{width:48px;height:48px;display:block;object-fit:cover;border-radius:14px;box-shadow:0 4px 0 #a33b78}
 .home-wallet-chip{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #ffffff25;border-radius:14px;background:#ffffff0d;color:#fff}
 .home-wallet-chip b{display:block;font-size:11px}.home-wallet-chip small{display:block;color:#aebbe5;font-size:8px;font-weight:900;letter-spacing:.6px}
 .home-coin{font-size:20px}
@@ -475,7 +477,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 </head>
 <body>
 <section class="home-screen" id="homeScreen"><div class="home-shell">
-<div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div><button id="homeMusicToggle" class="home-music-toggle" type="button" aria-label="Turn music off">🎵 MUSIC ON</button><div class="account-user" id="accountUser"></div><button class="home-account-button" id="accountOpen">SIGN IN / SIGN UP</button></div>
+<div class="home-top"><div class="home-brand"><img class="home-brand-icon" src="assets/candy-match-3-icon.svg" alt="Candy Match 3"><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div><button id="homeMusicToggle" class="home-music-toggle" type="button" aria-label="Turn music off">🎵 MUSIC ON</button><div class="account-user" id="accountUser"></div><button class="home-account-button" id="accountOpen">SIGN IN / SIGN UP</button></div>
 <div class="home-hero"><div class="home-hero-kicker">✨ A little fun. A lot of sweetness.</div><h2>Match candies.<br>Reach new levels.</h2><p>Swap, match and beat the target in this colorful candy puzzle.</p><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-level">⭐ LEVEL <span id="homeLevel">1</span> <span>•</span> 🏆 BEST <span id="homeBest">0</span></div></div>
 <section class="home-feature" aria-label="Daily rewards">
 <div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 FREE SPIN TODAY</span></div>
