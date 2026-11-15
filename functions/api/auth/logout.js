@@ -1,0 +1,2 @@
+import {json,fail,cookieToken,sha256,clearCookie} from "../_lib/auth.js";
+export async function onRequest({request,env}){if(request.method!=="POST")return fail("method_not_allowed",405);try{const token=cookieToken(request);if(token){const hash=await sha256(token);await env.DB.prepare("DELETE FROM auth_sessions WHERE token_hash=?").bind(hash).run()}return json({ok:true},200,{"set-cookie":clearCookie()})}catch(error){console.error("candy_logout_failed",error);return fail("auth_service_unavailable",503)}}
