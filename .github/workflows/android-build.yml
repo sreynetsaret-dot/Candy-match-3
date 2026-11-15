@@ -7,6 +7,7 @@ on:
       - "package.json"
       - "capacitor.config.json"
       - "www/**"
+      - "assets/**"
       - ".github/workflows/android-build.yml"
 
 permissions:
@@ -33,6 +34,31 @@ jobs:
         run: npx cap add android
       - name: Sync Capacitor
         run: npx cap sync android
+      - name: Apply Candy Match 3 Android launcher icon
+        run: |
+          npm install --no-save sharp
+          node <<'NODE'
+          const sharp = require('sharp');
+          const fs = require('fs');
+          const path = require('path');
+          const svg = fs.readFileSync('assets/candy-match-3-icon.svg');
+          const root = 'android/app/src/main/res';
+          const sizes = { mdpi:48, hdpi:72, xhdpi:96, xxhdpi:144, xxxhdpi:192 };
+          (async () => {
+            for (const [density,size] of Object.entries(sizes)) {
+              const dir = path.join(root, 'mipmap-' + density);
+              fs.mkdirSync(dir, {recursive:true});
+              const png = await sharp(svg).resize(size,size).png().toBuffer();
+              fs.writeFileSync(path.join(dir,'ic_launcher.png'),png);
+              fs.writeFileSync(path.join(dir,'ic_launcher_round.png'),png);
+            }
+            const anydpi = path.join(root,'mipmap-anydpi-v26');
+            if (fs.existsSync(anydpi)) {
+              const fg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="432" height="432"><rect width="432" height="432" fill="#3522a3"/><image href="candy-icon.png" width="432" height="432"/></svg>');
+              fs.writeFileSync(path.join(anydpi,'ic_launcher_foreground.png'), await sharp(svg).resize(432,432).png().toBuffer());
+            }
+          })().catch(e => { console.error(e); process.exit(1); });
+          NODE
       - name: Build debug APK and release bundle
         working-directory: android
         run: |
