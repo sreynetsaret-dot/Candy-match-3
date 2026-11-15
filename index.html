@@ -334,7 +334,7 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 </section>
 <div class="progress-wrap"><div class="progress" id="progress"></div></div>
 <div class="goal-banner" id="goalBanner">✨ MATCH • BLAST • SHINE ✨</div>
-<div class="actions"><button id="homeButton">🏠 Home</button><button id="hint">💡 Hint</button><button id="newGame">↻ Restart</button><button class="secondary" id="sound">🔊 Sound</button></div>
+<div class="actions"><button id="homeButton">🏠 Home</button><button id="hint">💡 Hint (3)</button><button id="newGame">↻ Restart</button><button class="secondary" id="sound">🔊 Sound</button></div>
 <div class="board" id="board" aria-label="Candy game board"></div><div class="ad-slot game-ad"><span>ADVERTISEMENT</span><b>Sponsored space</b><small>Ad network placement — connect an approved ad code</small></div>
 <p class="hint" id="helpText">Swipe a candy up, down, left or right to swap. You can also tap two neighboring candies. Match 3 or more!</p>
 <footer>🏆 Best score: <strong id="bestScore">0</strong><br>Your best score is saved on this device.</footer>
@@ -348,6 +348,7 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 <button id="resumeGame">▶ Continue playing</button><button id="quitHome" class="quit-button">🏠 Back to Home</button>
 </div></div>
 <div class="overlay" id="overlay"><div class="modal"><h2 id="resultTitle">Sweet!</h2><p id="resultText"></p><button id="playAgain">Play again</button></div></div>
+<div class="overlay" id="hintAdOverlay"><div class="modal"><h2>💡 Hint used up!</h2><p>You used all 3 free hints for this level. Rewarded Ads are not connected yet. Once an ad provider is connected, watch one completed ad to earn +1 hint.</p><button id="closeHintAd">OK</button></div></div>
 <script>
 (()=>{
 const N=5, FRUIT_SETS=[
@@ -367,6 +368,7 @@ const N=5, FRUIT_SETS=[
 let TYPES=FRUIT_SETS[0].fruits;
 function currentFruitWorld(){return FRUIT_SETS[(level-1)%FRUIT_SETS.length]}
 let level=1,bestScore=0,coins=0;try{bestScore=Number(localStorage.getItem('candyBestScore')||0);level=Math.max(1,Number(localStorage.getItem('candyLevel')||1));coins=Math.max(0,Number(localStorage.getItem('candyCoins')||0))}catch(e){}
+let hintsLeft=3,hintLevel=level;try{if(Number(localStorage.getItem('candyHintsLevel'))===level)hintsLeft=Math.max(0,Math.min(3,Number(localStorage.getItem('candyHintsLeft')??3)));else{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','3')}}catch(e){}
 function levelGoal(){const tier=Math.min(5,Math.floor((level-1)/6)),m=(level-1)%6;const candy=(level+1)%TYPES.length,other=(candy+2)%TYPES.length;if(m===0)return {mode:'score',target:1050+tier*250,moves:22-tier,label:'SCORE RUSH',detail:'Reach the score target!'};if(m===1)return {mode:'collect',target:14+tier*3,moves:21-tier,candy,label:'CANDY HUNT',detail:'Collect the featured candy!'};if(m===2)return {mode:'combo',target:2+tier,moves:20-tier,label:'COMBO MASTER',detail:'Make matches of 4 or more!'};if(m===3)return {mode:'striped',target:2+tier,moves:21-tier,label:'STRIPED CANDY',detail:'Create striped special candies!'};if(m===4)return {mode:'double',target:18+tier*4,moves:21-tier,candy,other,label:'TWO-COLOR QUEST',detail:'Collect both featured candy colors!'};return {mode:'bigclear',target:2+Math.floor(tier/2),moves:20-tier,label:'BIG BLAST',detail:'Make matches of 5 or more candies!'}}const targetScore=()=>levelGoal().target;function goalStatus(g){if(g.mode==='score')return 'Reach '+g.target+' points · '+score+' / '+g.target;if(g.mode==='collect')return 'Collect '+TYPES[g.candy]+' · '+goalProgress+' / '+g.target;if(g.mode==='combo')return 'Make 4+ matches · '+goalProgress+' / '+g.target;if(g.mode==='striped')return 'Create 🍭 striped candies · '+goalProgress+' / '+g.target;if(g.mode==='double')return 'Collect '+TYPES[g.candy]+' + '+TYPES[g.other]+' · '+goalProgress+' / '+g.target;return 'Make 5+ candy blasts · '+goalProgress+' / '+g.target;}function goalValue(g){return g.mode==='score'?score:goalProgress;}
 let goalProgress=0,board=[],powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=false,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
 const el=id=>document.getElementById(id), boardEl=el('board');
@@ -452,11 +454,12 @@ function resolve(token){
 }
 function checkEnd(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){coins+=20;try{localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level+1))}catch(e){}el('homeCoins').textContent=coins;playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 Level '+level+' complete!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('overlay').classList.add('show')}else if(moves<=0){playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
-function hint(){if(locked||moves<=0)return;const pair=findMove();if(!pair){reshuffle();return}hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
+function updateHintButton(){el('hint').textContent='💡 Hint ('+hintsLeft+')'}
+function hint(){if(locked||moves<=0)return;if(hintsLeft<=0){el('hintAdOverlay').classList.add('show');return}const pair=findMove();if(!pair){reshuffle();return}hintsLeft--;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft',String(hintsLeft))}catch(e){}updateHintButton();hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
 function reshuffle(){do{board=Array.from({length:N*N},rand)}while(findMatches().length||!findMove());powers=Array(N*N).fill(0);hintPair=[];selected=-1;render();el('helpText').textContent='Board shuffled — keep matching!'}
 function showResult(t,p){el('resultTitle').textContent=t;el('resultText').textContent=p;el('overlay').classList.add('show')}
-function startLevel(){roundToken++;TYPES=currentFruitWorld().fruits;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
-function newGame(){level=1;startLevel()}
+function startLevel(){roundToken++;if(hintLevel!==level){hintLevel=level;hintsLeft=3;try{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','3')}catch(e){}}updateHintButton();TYPES=currentFruitWorld().fruits;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
+function newGame(){level=1;hintLevel=1;hintsLeft=3;try{localStorage.setItem('candyHintsLevel','1');localStorage.setItem('candyHintsLeft','3')}catch(e){}startLevel()}
 function continueGame(){const g=levelGoal(),won=goalValue(g)>=g.target;if(won){level=level+1;try{localStorage.setItem('candyLevel',String(level))}catch(e){}}startLevel();if(won){el('helpText').textContent='🌟 Welcome to Level '+level+'! Target: '+targetScore()+' points. Good luck!'}else{el('helpText').textContent='New try! Match 3 or more candies to reach the target.'}}
 el('startGame').addEventListener('click',()=>{roundToken++;el('overlay').classList.remove('show');el('menuOverlay').classList.remove('show');el('homeScreen').style.display='none';el('gameScreen').classList.remove('game-hidden');el('gameScreen').style.display='block';startLevel();window.scrollTo(0,0)});
 function openMenu(){if(locked&& !paused)return;paused=true;locked=true;stopMusic();el('menuOverlay').classList.add('show');}
@@ -474,7 +477,7 @@ el('navHome').addEventListener('click',()=>{document.getElementById('homeScreen'
 el('navPlay').addEventListener('click',()=>el('startGame').click());
 el('navRewards').addEventListener('click',()=>document.getElementById('homeRewards').scrollIntoView({behavior:'smooth',block:'center'}));
 el('navWallet').addEventListener('click',()=>document.getElementById('homeRewards').scrollIntoView({behavior:'smooth',block:'center'}));
-el('hint').addEventListener('click',hint);
+el('hint').addEventListener('click',hint);el('closeHintAd').addEventListener('click',()=>el('hintAdOverlay').classList.remove('show'));updateHintButton();
 boardEl.addEventListener('pointerdown',e=>{const cell=e.target.closest('.cell');if(!cell||locked)return;touchStart={index:[...boardEl.children].indexOf(cell),x:e.clientX,y:e.clientY};});
 boardEl.addEventListener('pointerup',e=>{if(!touchStart)return;const start=touchStart;touchStart=null;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;const dest=Math.abs(dx)>Math.abs(dy)?start.index+(dx>0?1:-1):start.index+(dy>0?N:-N);if(dest<0||dest>=N*N||Math.floor(dest/N)!==Math.floor(start.index/N)&&Math.abs(dest-start.index)===1)return;suppressClick=true;selected=-1;swap(start.index,dest);});
 el('newGame').addEventListener('click',newGame);el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound':'🔇 Sound';updateSettingButtons();if(sound)playSound('swap')});
