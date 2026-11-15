@@ -632,7 +632,7 @@ function spinWheel(isAd=false){
 }
 el('freeSpin').addEventListener('click',()=>spinWheel(false));
 el('adSpin').addEventListener('click',()=>spinWheel(true));
-el('claimDaily').addEventListener('click',()=>{if(dailyState.giftClaimed)return;dailyState.giftClaimed=true;coins+=20;saveDaily();try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins;refreshHomeFeatures();alert('🎁 បងទទួលបាន 20 កាក់!')});
+el('claimDaily').addEventListener('click',()=>{if(dailyState.giftClaimed)return;dailyState.giftClaimed=true;coins+=20;saveDaily();try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins;refreshHomeFeatures();alert('🎁 You received 20 coins!')});
 refreshHomeFeatures();
 
 function updateHintButton(){el('hint').textContent='💡 Hint ('+hintsLeft+')'}
