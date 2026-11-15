@@ -204,6 +204,14 @@ footer{color:#fff;text-shadow:0 1px 2px #9a3977}footer strong{color:#fff36b}
 <p class="hint" id="helpText">Swipe a candy up, down, left or right to swap. You can also tap two neighboring candies. Match 3 or more!</p>
 <footer>🏆 Best score: <strong id="bestScore">0</strong><br>Your best score is saved on this device.</footer>
 </main>
+<div class="overlay" id="menuOverlay"><div class="modal settings-modal">
+<h2>🍬 Game Menu</h2><p>Take a break or adjust your game.</p>
+<div class="setting-row"><span>🎵 Background music</span><button id="musicToggle" class="setting-toggle">OFF</button></div>
+<div class="setting-row"><span>🔊 Game sounds</span><button id="soundToggle" class="setting-toggle">ON</button></div>
+<div class="setting-row"><span>🗣️ Voice cheers</span><button id="voiceToggle" class="setting-toggle">ON</button></div>
+<div class="menu-help">👆 Swipe a candy to swap it. Match 3 or more. Match 4 to make a striped candy. Use Hint if you get stuck.</div>
+<button id="resumeGame">▶ Continue playing</button><button id="quitHome" class="quit-button">🏠 Back to Home</button>
+</div></div>
 <div class="overlay" id="overlay"><div class="modal"><h2 id="resultTitle">Sweet!</h2><p id="resultText"></p><button id="playAgain">Play again</button></div></div>
 <script>
 (()=>{
