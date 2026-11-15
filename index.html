@@ -440,7 +440,7 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
 </head>
 <body>
 <section class="home-screen" id="homeScreen"><div class="home-shell">
-<div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div><div class="account-user" id="accountUser"></div><button class="home-account-button" id="accountOpen">SIGN IN / SIGN UP</button></div>
+<div class="home-top"><div class="home-brand"><div class="home-brand-icon">🍭</div><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div><button id="homeMusicToggle" class="home-music-toggle" type="button" aria-label="Turn music off">🎵 MUSIC ON</button><div class="account-user" id="accountUser"></div><button class="home-account-button" id="accountOpen">SIGN IN / SIGN UP</button></div>
 <div class="home-hero"><div class="home-hero-kicker">✨ A little fun. A lot of sweetness.</div><h2>Match candies.<br>Reach new levels.</h2><p>Swap, match and beat the target in this colorful candy puzzle.</p><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-level">⭐ LEVEL <span id="homeLevel">1</span> <span>•</span> 🏆 BEST <span id="homeBest">0</span></div></div>
 <section class="home-feature" aria-label="Daily rewards">
 <div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 FREE SPIN TODAY</span></div>
@@ -526,7 +526,7 @@ function currentFruitWorld(){return FRUIT_SETS[(level-1)%FRUIT_SETS.length]}
 let level=1,bestScore=0,coins=0;try{bestScore=Number(localStorage.getItem('candyBestScore')||0);level=Math.max(1,Number(localStorage.getItem('candyLevel')||1));coins=Math.max(0,Number(localStorage.getItem('candyCoins')||0))}catch(e){}
 let hintsLeft=1,hintLevel=level;try{if(Number(localStorage.getItem('candyHintsLevel'))===level)hintsLeft=Math.max(0,Math.min(1,Number(localStorage.getItem('candyHintsLeft')??1)));else{localStorage.setItem('candyHintsLevel',String(level));localStorage.setItem('candyHintsLeft','1')}}catch(e){}
 function levelGoal(){const tier=Math.min(5,Math.floor((level-1)/6)),m=(level-1)%6;const candy=(level+1)%TYPES.length,other=(candy+2)%TYPES.length;if(m===0)return {mode:'score',target:1200+tier*250,moves:level===1?30:18-tier,label:'SCORE RUSH',detail:'Reach the score target!'};if(m===1)return {mode:'collect',target:13+tier*3,moves:17-tier,candy,label:'CANDY HUNT',detail:'Collect the featured candy!'};if(m===2)return {mode:'combo',target:3+tier,moves:16-tier,label:'COMBO MASTER',detail:'Make matches of 4 or more!'};if(m===3)return {mode:'striped',target:3+tier,moves:17-tier,label:'STRIPED CANDY',detail:'Create striped special candies!'};if(m===4)return {mode:'double',target:17+tier*4,moves:17-tier,candy,other,label:'TWO-COLOR QUEST',detail:'Collect both featured candy colors!'};return {mode:'bigclear',target:3+Math.floor(tier/2),moves:16-tier,label:'BIG BLAST',detail:'Make matches of 5 or more candies!'}}const targetScore=()=>levelGoal().target;function goalStatus(g){if(g.mode==='score')return 'Reach '+g.target+' points · '+score+' / '+g.target;if(g.mode==='collect')return 'Collect '+TYPES[g.candy]+' · '+goalProgress+' / '+g.target;if(g.mode==='combo')return 'Make 4+ matches · '+goalProgress+' / '+g.target;if(g.mode==='striped')return 'Create 🍭 striped candies · '+goalProgress+' / '+g.target;if(g.mode==='double')return 'Collect '+TYPES[g.candy]+' + '+TYPES[g.other]+' · '+goalProgress+' / '+g.target;return 'Make 5+ candy blasts · '+goalProgress+' / '+g.target;}function goalValue(g){return g.mode==='score'?score:goalProgress;}
-let goalProgress=0,board=[],obstacles=new Set(),powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=false,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
+let goalProgress=0,board=[],obstacles=new Set(),powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=true,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
 const el=id=>document.getElementById(id), boardEl=el('board');
 let audioCtx=null;
 function sayCheer(message){
@@ -540,7 +540,7 @@ function startMusic(){
  musicTimer=setInterval(()=>{if(!music||!audioCtx||audioCtx.state!=='running')return;try{const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime;o.type='sine';o.frequency.value=notes[n++%notes.length];g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.018,t+.04);g.gain.exponentialRampToValueAtTime(.0001,t+.42);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+.44)}catch(e){}},520);
 }
 function unlockAudio(){
- try{const AudioAPI=window.AudioContext||window.webkitAudioContext;if(!AudioAPI)return false;if(!audioCtx)audioCtx=new AudioAPI();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});return true}catch(e){return false}
+ try{const AudioAPI=window.AudioContext||window.webkitAudioContext;if(!AudioAPI)return false;if(!audioCtx)audioCtx=new AudioAPI();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});if(music&&!musicTimer)startMusic();return true}catch(e){return false}
 }
 async function playSound(kind){
  if(!sound)return;
@@ -683,8 +683,10 @@ function goHome(){roundToken++;paused=false;locked=true;stopMusic();if('speechSy
 el('homeButton').addEventListener('click',openMenu);
 el('resumeGame').addEventListener('click',closeMenu);
 el('quitHome').addEventListener('click',goHome);
-function updateSettingButtons(){el('musicToggle').textContent=music?'ON':'OFF';el('soundToggle').textContent=sound?'ON':'OFF';el('voiceToggle').textContent=voice?'ON':'OFF'}
-el('musicToggle').addEventListener('click',()=>{music=!music;if(music){if(!audioCtx){const A=window.AudioContext||window.webkitAudioContext;if(A)audioCtx=new A()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();startMusic()}else stopMusic();updateSettingButtons()});
+function updateSettingButtons(){el('musicToggle').textContent=music?'ON':'OFF';el('soundToggle').textContent=sound?'ON':'OFF';el('voiceToggle').textContent=voice?'ON':'OFF';el('homeMusicToggle').textContent=music?'🎵 MUSIC ON':'🔇 MUSIC OFF';el('homeMusicToggle').setAttribute('aria-label',music?'Turn music off':'Turn music on')}
+function setMusicEnabled(enabled){music=enabled;if(music){unlockAudio();startMusic()}else stopMusic();updateSettingButtons()}
+el('musicToggle').addEventListener('click',()=>setMusicEnabled(!music));
+el('homeMusicToggle').addEventListener('click',()=>setMusicEnabled(!music));
 el('soundToggle').addEventListener('click',()=>{sound=!sound;updateSettingButtons();if(sound)playSound('swap');el('sound').textContent=sound?'🔊 Sound':'🔇 Sound'});
 el('voiceToggle').addEventListener('click',()=>{voice=!voice;updateSettingButtons();if(!voice&&'speechSynthesis'in window)window.speechSynthesis.cancel()});
 updateSettingButtons();
@@ -974,3 +976,5 @@ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addE
 .wheel-jackpot-tag{position:absolute;z-index:6;top:-13px;right:-19px;display:flex;flex-direction:column;align-items:center;justify-content:center;width:67px;height:43px;border:3px solid #fff;border-radius:13px;background:linear-gradient(145deg,#fff07b,#ffb52e 65%,#f58a32);color:#673b22;font-size:10px;font-weight:1000;line-height:1.05;text-align:center;box-shadow:0 3px 0 #b86a28,0 5px 12px #60317a55;transform:rotate(8deg);pointer-events:none}
 .wheel-jackpot-tag:after{content:"";position:absolute;width:12px;height:12px;left:-7px;bottom:-5px;background:#ffca55;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(35deg)}
 </style>
+
+<style id="home-music-control">.home-music-toggle{border:2px solid #fff;border-radius:13px;padding:9px 11px;background:linear-gradient(145deg,#fff7b1,#ffc5df);color:#813d79;font-size:10px;font-weight:1000;box-shadow:0 4px 0 #b75c9b;white-space:nowrap;cursor:pointer}.home-music-toggle:active{transform:translateY(2px);box-shadow:0 2px 0 #b75c9b}@media(max-width:390px){.home-music-toggle{padding:8px 9px;font-size:9px}}</style>
