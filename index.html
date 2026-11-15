@@ -168,6 +168,17 @@ footer{color:#fff;text-shadow:0 1px 2px #9a3977}footer strong{color:#fff36b}
 .cell.matched{animation:candyBurst .10s ease-in forwards}
 @keyframes candyBurst{0%{transform:scale(1);opacity:1;filter:brightness(1)}45%{transform:scale(1.22);opacity:1;filter:brightness(1.7)}100%{transform:scale(.08);opacity:0;filter:brightness(2)}}
 .board{will-change:contents}
+
+/* Friendly pause/settings panel and clear touch controls */
+.actions{gap:7px;margin-top:12px}
+.actions button{min-height:48px;padding:11px 5px;font-size:13px;touch-action:manipulation}
+#homeButton{background:linear-gradient(180deg,#ffe6a1,#ffb94e);color:#8b4c42;text-shadow:none;box-shadow:0 4px 0 #c58b3d,inset 0 2px #fff}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #ffffff66;color:#fff;font-weight:900;text-align:left}
+.setting-toggle{min-width:64px;border:2px solid #fff;border-radius:99px;padding:8px 12px;background:linear-gradient(#b8f4ce,#58d69a);color:#276348;font-weight:1000}
+.menu-help{margin:14px 0;padding:12px;border-radius:14px;background:#ffffff30;color:#fff;line-height:1.5;font-size:12px;text-align:left}
+.settings-modal button{margin-top:9px}
+.settings-modal .quit-button{background:linear-gradient(#fff,#ffdbe9);color:#a43d73;text-shadow:none;box-shadow:0 4px 0 #c45b98}
+@media(max-width:390px){.actions button{font-size:11px;min-height:46px}}
 </style>
 </head>
 <body>
@@ -189,7 +200,7 @@ footer{color:#fff;text-shadow:0 1px 2px #9a3977}footer strong{color:#fff36b}
 <div class="progress-wrap"><div class="progress" id="progress"></div></div>
 <div class="goal-banner" id="goalBanner">✨ MATCH • BLAST • SHINE ✨</div>
 <div class="board" id="board" aria-label="Candy game board"></div><div class="ad-slot game-ad"><span>ADVERTISEMENT</span><b>Sponsored space</b><small>Ad network placement — connect an approved ad code</small></div>
-<div class="actions"><button id="homeButton">🏠 Home</button><button id="hint">💡 Hint</button><button id="newGame">↻ New game</button><button class="secondary" id="sound">🔊 Sound</button></div>
+<div class="actions"><button id="homeButton">⚙ Menu</button><button id="hint">💡 Hint</button><button id="newGame">↻ Restart</button><button class="secondary" id="sound">🔊 Sound</button></div>
 <p class="hint" id="helpText">Swipe a candy up, down, left or right to swap. You can also tap two neighboring candies. Match 3 or more!</p>
 <footer>🏆 Best score: <strong id="bestScore">0</strong><br>Your best score is saved on this device.</footer>
 </main>
@@ -199,9 +210,19 @@ footer{color:#fff;text-shadow:0 1px 2px #9a3977}footer strong{color:#fff36b}
 const N=8, TYPES=['🍓','🍋','🍇','🍬','🍊','🫐'], START_MOVES=25;
 let level=1,bestScore=0;try{bestScore=Number(localStorage.getItem('candyBestScore')||0)}catch(e){}
 function levelGoal(){const m=(level-1)%3;if(m===0)return {mode:'score',target:1200+Math.floor((level-1)/3)*400,moves:25,label:'SCORE CHALLENGE',detail:'Reach the target score!'};if(m===1)return {mode:'collect',target:18+Math.floor((level-1)/3)*4,moves:24,candy:(level+1)%TYPES.length,label:'CANDY COLLECTION',detail:'Collect the featured candy!'};return {mode:'combo',target:3+Math.floor((level-1)/3),moves:22,label:'COMBO CHALLENGE',detail:'Make matches of 4 or more!'};}const targetScore=()=>levelGoal().target;
-let goalProgress=0,board=[],powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,sound=true,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
+let goalProgress=0,board=[],powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=false,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
 const el=id=>document.getElementById(id), boardEl=el('board');
 let audioCtx=null;
+function sayCheer(message){
+ if(!voice||!('speechSynthesis'in window))return;
+ try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(message);u.rate=1.08;u.pitch=1.2;u.volume=.75;window.speechSynthesis.speak(u)}catch(e){}
+}
+function stopMusic(){if(musicTimer){clearInterval(musicTimer);musicTimer=null}}
+function startMusic(){
+ stopMusic();if(!music)return;
+ const notes=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46];let n=0;
+ musicTimer=setInterval(()=>{if(!music||!audioCtx||audioCtx.state!=='running')return;try{const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime;o.type='sine';o.frequency.value=notes[n++%notes.length];g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.018,t+.04);g.gain.exponentialRampToValueAtTime(.0001,t+.42);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+.44)}catch(e){}},520);
+}
 function playSound(kind){
  if(!sound)return;
  try{
@@ -251,7 +272,7 @@ function resolve(token){
  let keep=-1;
  if(matches.length>=4&&!forcedClear.length){keep=matches.find(i=>!powers[i])??-1;if(keep>=0)powers[keep]=1;}
  const cleared=matches.filter(i=>i!==keep);
- playSound('match');score+=cleared.length*10;
+ playSound('match');if(cleared.length>=4)sayCheer('Sweet!');score+=cleared.length*10;
  if(score>bestScore){bestScore=score;try{localStorage.setItem('candyBestScore',String(bestScore))}catch(e){}}
  cleared.forEach(i=>{const cell=boardEl.children[i];if(cell)cell.classList.add('matched')});
  renderMatchScore();
@@ -267,16 +288,26 @@ function resolve(token){
   render();setTimeout(()=>resolve(token),65);
  },70);
 }
-function checkEnd(){const g=levelGoal(),won=g.mode==='score'?score>=g.target:goalProgress>=g.target;if(won){playSound('win');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 Level '+level+' complete!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('overlay').classList.add('show')}else if(moves<=0){playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
+function checkEnd(){const g=levelGoal(),won=g.mode==='score'?score>=g.target:goalProgress>=g.target;if(won){playSound('win');sayCheer('Level complete!');locked=true;el('playAgain').textContent='Next level ➜';el('resultTitle').textContent='🎉 Level '+level+' complete!';el('resultText').textContent='Fantastic! You completed '+g.label.toLowerCase()+'! Level '+(level+1)+' is ready!';el('overlay').classList.add('show')}else if(moves<=0){playSound('lose');locked=true;el('playAgain').textContent='Try again';showResult('Good try!','You scored '+score+'. '+g.detail+' Try again!')}}
 function findMove(){for(let a=0;a<N*N;a++){const r=Math.floor(a/N),c=a%N;for(const b of [c<N-1?a+1:-1,r<N-1?a+N:-1]){if(b<0)continue;[board[a],board[b]]=[board[b],board[a]];const ok=findMatches().length>0;[board[a],board[b]]=[board[b],board[a]];if(ok)return [a,b]}}return null}
 function hint(){if(locked||moves<=0)return;const pair=findMove();if(!pair){reshuffle();return}hintPair=pair;selected=-1;render();el('helpText').textContent='Try swapping the two glowing candies!'}
 function reshuffle(){do{board=Array.from({length:N*N},rand)}while(findMatches().length||!findMove());powers=Array(N*N).fill(0);hintPair=[];selected=-1;render();el('helpText').textContent='Board shuffled — keep matching!'}
 function showResult(t,p){el('resultTitle').textContent=t;el('resultText').textContent=p;el('overlay').classList.add('show')}
-function startLevel(){roundToken++;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
+function startLevel(){roundToken++;paused=false;score=0;goalProgress=0;forcedClear=[];powers=Array(N*N).fill(0);moves=levelGoal().moves;selected=-1;locked=false;hintPair=[];el('overlay').classList.remove('show');el('playAgain').textContent='Try again';makeBoard();render()}
 function newGame(){level=1;startLevel()}
 function continueGame(){const g=levelGoal(),won=g.mode==='score'?score>=g.target:goalProgress>=g.target;if(won){level=level+1;}startLevel();if(won){el('helpText').textContent='🌟 Welcome to Level '+level+'! Target: '+targetScore()+' points. Good luck!'}else{el('helpText').textContent='New try! Match 3 or more candies to reach the target.'}}
 el('startGame').addEventListener('click',()=>{locked=false;el('homeScreen').style.display='none';el('gameScreen').classList.remove('game-hidden');render()});
-el('homeButton').addEventListener('click',()=>{roundToken++;locked=true;el('gameScreen').classList.add('game-hidden');el('homeScreen').style.display='grid';el('homeBest').textContent=bestScore;el('homeLevel').textContent=level});
+function openMenu(){if(locked&& !paused)return;paused=true;locked=true;stopMusic();el('menuOverlay').classList.add('show');}
+function closeMenu(){el('menuOverlay').classList.remove('show');paused=false;locked=false;if(music){if(!audioCtx){const A=window.AudioContext||window.webkitAudioContext;if(A)audioCtx=new A()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();startMusic()}if(findMatches().length||forcedClear.length)resolve(roundToken)}
+function goHome(){roundToken++;paused=false;locked=true;stopMusic();if('speechSynthesis'in window)window.speechSynthesis.cancel();el('menuOverlay').classList.remove('show');el('gameScreen').classList.add('game-hidden');el('homeScreen').style.display='grid';el('homeBest').textContent=bestScore;el('homeLevel').textContent=level}
+el('homeButton').addEventListener('click',openMenu);
+el('resumeGame').addEventListener('click',closeMenu);
+el('quitHome').addEventListener('click',goHome);
+function updateSettingButtons(){el('musicToggle').textContent=music?'ON':'OFF';el('soundToggle').textContent=sound?'ON':'OFF';el('voiceToggle').textContent=voice?'ON':'OFF'}
+el('musicToggle').addEventListener('click',()=>{music=!music;if(music){if(!audioCtx){const A=window.AudioContext||window.webkitAudioContext;if(A)audioCtx=new A()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();startMusic()}else stopMusic();updateSettingButtons()});
+el('soundToggle').addEventListener('click',()=>{sound=!sound;updateSettingButtons();if(sound)playSound('swap');el('sound').textContent=sound?'🔊 Sound':'🔇 Sound'});
+el('voiceToggle').addEventListener('click',()=>{voice=!voice;updateSettingButtons();if(!voice&&'speechSynthesis'in window)window.speechSynthesis.cancel()});
+updateSettingButtons();
 el('navHome').addEventListener('click',()=>{document.getElementById('homeScreen').scrollTo({top:0,behavior:'smooth'});});
 el('navPlay').addEventListener('click',()=>el('startGame').click());
 el('navRewards').addEventListener('click',()=>document.getElementById('homeRewards').scrollIntoView({behavior:'smooth',block:'center'}));
@@ -284,7 +315,7 @@ el('navWallet').addEventListener('click',()=>document.getElementById('homeReward
 el('hint').addEventListener('click',hint);
 boardEl.addEventListener('pointerdown',e=>{const cell=e.target.closest('.cell');if(!cell||locked)return;touchStart={index:[...boardEl.children].indexOf(cell),x:e.clientX,y:e.clientY};});
 boardEl.addEventListener('pointerup',e=>{if(!touchStart)return;const start=touchStart;touchStart=null;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;const dest=Math.abs(dx)>Math.abs(dy)?start.index+(dx>0?1:-1):start.index+(dy>0?N:-N);if(dest<0||dest>=N*N||Math.floor(dest/N)!==Math.floor(start.index/N)&&Math.abs(dest-start.index)===1)return;suppressClick=true;selected=-1;swap(start.index,dest);});
-el('newGame').addEventListener('click',newGame);el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound on':'🔇 Sound off';if(sound)playSound('swap')});
+el('newGame').addEventListener('click',newGame);el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound':'🔇 Sound';updateSettingButtons();if(sound)playSound('swap')});
 newGame();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
