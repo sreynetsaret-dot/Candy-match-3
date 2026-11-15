@@ -284,6 +284,26 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 .cell.candy-type-5{background:linear-gradient(145deg,#e4f7ff,#91d9ff 54%,#579fe2)!important}
 .cell.selected{outline:3px solid #fff36b!important;filter:brightness(1.13) drop-shadow(0 0 8px #fff2a8)!important}
 @media(max-width:390px){.cell{font-size:clamp(34px,10.5vw,47px)!important}}
+
+/* Readability pass: larger candy pieces, clearer mission and controls on phones */
+@media(max-width:600px){
+  body{padding:4px 3px 12px!important}
+  main{width:100%!important;max-width:560px!important;padding:2px 3px 12px!important}
+  .stats{gap:7px!important;padding:7px!important;margin-bottom:8px!important}
+  .stat{padding:7px 3px!important}
+  .stat small{font-size:11px!important;letter-spacing:.2px!important}
+  .stat strong{font-size:clamp(22px,6vw,27px)!important;line-height:1.2!important}
+  .progress-wrap{height:14px!important;margin-bottom:9px!important}
+  .goal-banner{font-size:13px!important;padding:10px 9px!important;margin-bottom:9px!important;letter-spacing:.4px!important}
+  .goal-banner small{font-size:11px!important;margin-top:4px!important;line-height:1.35!important}
+  .actions{gap:6px!important;margin-bottom:9px!important}
+  .actions button{min-height:50px!important;font-size:13px!important;padding:8px 4px!important}
+  .board{width:100%!important;max-width:560px!important;gap:5px!important;padding:8px!important}
+  .cell{font-size:clamp(42px,11.8vw,58px)!important;min-height:0!important;border-radius:12px!important}
+  .hint{font-size:12px!important;line-height:1.5!important;padding:10px!important;margin-top:9px!important}
+  footer{font-size:11px!important;margin-top:9px!important}
+}
+
 </style>
 </head>
 <body>
