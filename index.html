@@ -360,7 +360,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.m
     const shapes=[[.91,1.08,.83],[.94,.92,.94],[.86,1.02,.86],[1.08,.82,.88],[.92,.96,1.02],[.88,1.05,.9]];
     const k=powers[i]===1?1.08:powers[i]===2?1.15:1;p.scale.set(shapes[type][0]*k,shapes[type][1]*k,shapes[type][2]*k);
     p.rotation.y=(type-2)*.13;tiles[i].material.color.setHex(0xffe8f5);
-    ring.material.opacity=selected===i||hints.includes(i)?.95:0;
+    ring.material.opacity=(selected===i||hints.includes(i))?0.95:0;
    }else{p.visible=false;ring.material.opacity=0}
   }
  };
