@@ -304,6 +304,16 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
   footer{font-size:11px!important;margin-top:9px!important}
 }
 
+
+/* 5x5 tropical fruit board */
+.board{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-rows:1fr;aspect-ratio:1/1;width:100%;max-width:560px;margin-inline:auto;gap:clamp(5px,1.5vw,9px);padding:clamp(7px,1.8vw,11px)}
+.cell{font-size:clamp(48px,13vw,68px)!important;border-radius:15px!important}
+.candy-type-0{background:linear-gradient(145deg,#e4ffb8,#79d84e 55%,#329d42)!important}
+.candy-type-1{background:linear-gradient(145deg,#fff0ad,#ffad36 55%,#f07820)!important}
+.candy-type-2{background:linear-gradient(145deg,#fff7a8,#ffe04b 55%,#e9ae20)!important}
+.candy-type-3{background:linear-gradient(145deg,#ffe0a8,#ffae55 52%,#e87536)!important}
+@media(max-width:600px){.board{gap:5px!important;padding:7px!important}.cell{font-size:clamp(45px,12.5vw,61px)!important;min-height:0!important}}
+
 </style>
 </head>
 <body>
@@ -340,7 +350,7 @@ body[data-stage] .home-wallet-chip{transition:transform .2s}
 <div class="overlay" id="overlay"><div class="modal"><h2 id="resultTitle">Sweet!</h2><p id="resultText"></p><button id="playAgain">Play again</button></div></div>
 <script>
 (()=>{
-const N=6, TYPES=['🍬','🍭','🍡','🍩','🍓','🧁'], START_MOVES=25;
+const N=5, TYPES=['🍉','🍊','🍌','🥭'], START_MOVES=25;
 let level=1,bestScore=0,coins=0;try{bestScore=Number(localStorage.getItem('candyBestScore')||0);level=Math.max(1,Number(localStorage.getItem('candyLevel')||1));coins=Math.max(0,Number(localStorage.getItem('candyCoins')||0))}catch(e){}
 function levelGoal(){const cycle=Math.floor((level-1)/6),m=(level-1)%6;const candy=(level+1)%TYPES.length,other=(candy+2)%TYPES.length;if(m===0)return {mode:'score',target:900+cycle*250,moves:25,label:'SCORE RUSH',detail:'Reach the score target!'};if(m===1)return {mode:'collect',target:12+cycle*3,moves:24,candy,label:'CANDY HUNT',detail:'Collect the featured candy!'};if(m===2)return {mode:'combo',target:2+cycle,moves:22,label:'COMBO MASTER',detail:'Make matches of 4 or more!'};if(m===3)return {mode:'striped',target:2+cycle,moves:24,label:'STRIPED CANDY',detail:'Create striped special candies!'};if(m===4)return {mode:'double',target:14+cycle*3,moves:24,candy,other,label:'TWO-COLOR QUEST',detail:'Collect both featured candy colors!'};return {mode:'bigclear',target:2+Math.floor(cycle/2),moves:22,label:'BIG BLAST',detail:'Make matches of 5 or more candies!'};}const targetScore=()=>levelGoal().target;function goalStatus(g){if(g.mode==='score')return 'Reach '+g.target+' points · '+score+' / '+g.target;if(g.mode==='collect')return 'Collect '+TYPES[g.candy]+' · '+goalProgress+' / '+g.target;if(g.mode==='combo')return 'Make 4+ matches · '+goalProgress+' / '+g.target;if(g.mode==='striped')return 'Create 🍭 striped candies · '+goalProgress+' / '+g.target;if(g.mode==='double')return 'Collect '+TYPES[g.candy]+' + '+TYPES[g.other]+' · '+goalProgress+' / '+g.target;return 'Make 5+ candy blasts · '+goalProgress+' / '+g.target;}function goalValue(g){return g.mode==='score'?score:goalProgress;}
 let goalProgress=0,board=[],powers=Array(N*N).fill(0),forcedClear=[],score=0,moves=START_MOVES,selected=-1,locked=false,paused=false,sound=true,voice=true,music=false,musicTimer=null,hintPair=[],suppressClick=false,touchStart=null,roundToken=0;
