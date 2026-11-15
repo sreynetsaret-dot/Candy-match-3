@@ -470,12 +470,13 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
   <button class="account-close" id="accountClose" type="button">✕</button>
   <div style="font-size:34px;margin-bottom:5px">🍬</div>
   <h2 id="accountTitle">Your Candy Account</h2>
-  <p id="accountSubtitle">Use the same email and password for Candy Match 3 and Germany Dating Pro.</p>
+  <p id="accountSubtitle">Use your email and password for Candy Match 3.</p>
   <form id="accountForm">
    <label for="accountEmail">GMAIL / EMAIL</label><input id="accountEmail" type="email" autocomplete="email" maxlength="254" required placeholder="you@gmail.com">
    <label for="accountPassword">PASSWORD (10+ CHARACTERS)</label><input id="accountPassword" type="password" autocomplete="new-password" minlength="10" maxlength="128" required placeholder="Enter your password">
    <div class="account-actions"><button id="accountSubmit" type="submit">CREATE ACCOUNT</button><button class="account-secondary" id="accountSwitch" type="button">SIGN IN</button></div>
   </form>
+  <button class="account-secondary" id="accountLogout" type="button" hidden>SIGN OUT</button>
   <p class="account-status" id="accountStatus" role="status"></p>
  </div>
 </div>
@@ -568,8 +569,8 @@ function rand(){return Math.floor(Math.random()*TYPES.length)}
 function hasMatchAt(b,r,c){const v=b[r*N+c];if(v<0)return false;let n=1;for(let x=c-1;x>=0&&b[r*N+x]===v;x--)n++;for(let x=c+1;x<N&&b[r*N+x]===v;x++)n++;if(n>=3)return true;n=1;for(let y=r-1;y>=0&&b[y*N+c]===v;y--)n++;for(let y=r+1;y<N&&b[y*N+c]===v;y++)n++;return n>=3}
 function makeBoard(){const count=level<2?0:Math.min(8,1+Math.floor(level/2)),spots=[2,4,6,8,10,12,14,16,18,20,22,24,1,5,9,13,17,21,23,3,7,11,15,19];do{obstacles=new Set();board=Array.from({length:N*N},rand);for(let j=0;j<count;j++){const pos=(spots[(j+level*3)%spots.length]+level*2)% (N*N);obstacles.add(pos)}obstacles.forEach(i=>board[i]=-2)}while(findMatches().length||!findMove());powers=Array(N*N).fill(0);}
 function findMatches(){const set=new Set();for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=board[r*N+c];if(v<0)continue;let run=[r*N+c];for(let x=c+1;x<N&&board[r*N+x]===v;x++)run.push(r*N+x);if(run.length>=3)run.forEach(i=>set.add(i));run=[r*N+c];for(let y=r+1;y<N&&board[y*N+c]===v;y++)run.push(y*N+c);if(run.length>=3)run.forEach(i=>set.add(i))}return [...set]}
-function render(){document.body.dataset.stage=String((level-1)%6+1);if(boardEl.children.length!==N*N){boardEl.innerHTML='';const frag=document.createDocumentFragment();for(let i=0;i<N*N;i++){const b=document.createElement('button');b.className='cell';b.style.setProperty('--i',i%8);b.addEventListener('click',()=>tap(i));frag.appendChild(b)}boardEl.appendChild(frag)}board.forEach((v,i)=>{const b=boardEl.children[i];b.className='cell'+(v>=0?' candy-type-'+v:'')+(v===-2?' obstacle':'')+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v===-2?'🧊':v<0?'':(powers[i]===1?'🍭':TYPES[v]);b.setAttribute('aria-label',v===-2?'Ice obstacle':v<0?'Empty':powers[i]===1?'Striped candy':TYPES[v]);b.disabled=locked||v<0});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;const g=levelGoal();el('goalBanner').innerHTML='🌴 '+currentFruitWorld().name+(obstacles.size?' · 🧊 '+obstacles.size+' BLOCKERS':'')+' · '+g.label+'<small>'+goalStatus(g)+'</small>';el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('homeLevel').textContent=level;el('homeCoins').textContent=coins;el('progress').style.width=Math.min(100,goalValue(g)/g.target*100)+'%'}
-function renderMatchScore(){el('score').textContent=score;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;const g=levelGoal();el('goalBanner').innerHTML='🌴 '+currentFruitWorld().name+(obstacles.size?' · 🧊 '+obstacles.size+' BLOCKERS':'')+' · '+g.label+'<small>'+goalStatus(g)+'</small>';el('progress').style.width=Math.min(100,(g.mode==='score'?score:goalProgress)/g.target*100)+'%'}
+function render(){document.body.dataset.stage=String((level-1)%6+1);if(boardEl.children.length!==N*N){boardEl.innerHTML='';const frag=document.createDocumentFragment();for(let i=0;i<N*N;i++){const b=document.createElement('button');b.className='cell';b.style.setProperty('--i',i%8);b.addEventListener('click',()=>tap(i));frag.appendChild(b)}boardEl.appendChild(frag)}board.forEach((v,i)=>{const b=boardEl.children[i];b.className='cell'+(v>=0?' candy-type-'+v:'')+(v===-2?' obstacle':'')+(selected===i?' selected':'')+(hintPair.includes(i)?' hint-cell':'');b.textContent=v===-2?'🧊':v<0?'':(powers[i]===1?'🍭':TYPES[v]);b.setAttribute('aria-label',v===-2?'Ice obstacle':v<0?'Empty':powers[i]===1?'Striped candy':TYPES[v]);b.disabled=locked||v<0});el('score').textContent=score;el('moves').textContent=moves;el('target').textContent=targetScore();el('level').textContent=level;const g=levelGoal();el('goalBanner').innerHTML='🌴 '+currentFruitWorld().name+(obstacles.size?' · 🧊 '+obstacles.size+' BLOCKERS':'')+' · '+g.label+'<small>'+goalStatus(g)+'</small>';el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('homeLevel').textContent=level;el('homeCoins').textContent=coins;el('progress').style.width=Math.min(100,goalValue(g)/g.target*100)+'%';queueProgressSave()}
+function renderMatchScore(){el('score').textContent=score;el('bestScore').textContent=bestScore;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;const g=levelGoal();el('goalBanner').innerHTML='🌴 '+currentFruitWorld().name+(obstacles.size?' · 🧊 '+obstacles.size+' BLOCKERS':'')+' · '+g.label+'<small>'+goalStatus(g)+'</small>';el('progress').style.width=Math.min(100,(g.mode==='score'?score:goalProgress)/g.target*100)+'%';queueProgressSave()}
 function tap(i){if(suppressClick){suppressClick=false;return}if(locked||moves<=0)return;hintPair=[];if(selected<0){selected=i;render();return}if(selected===i){selected=-1;render();return}const a=selected,b=i;selected=-1;if(Math.abs(a-b)===N||Math.floor(a/N)===Math.floor(b/N)&&Math.abs(a-b)===1){swap(a,b)}else{selected=i;render()}}
 function swap(a,b){hintPair=[];[board[a],board[b]]=[board[b],board[a]];[powers[a],powers[b]]=[powers[b],powers[a]];const m=findMatches();if(!m.length&&!powers[a]&&!powers[b]){[board[a],board[b]]=[board[b],board[a]];[powers[a],powers[b]]=[powers[b],powers[a]];render();return}forcedClear=[];if(powers[a])forcedClear.push(a);if(powers[b])forcedClear.push(b);moves--;locked=true;playSound('swap');render();roundToken++;resolve(roundToken)}
 function resolve(token){
@@ -622,7 +623,7 @@ function findMove(){for(let a=0;a<N*N;a++){if(board[a]<0)continue;const r=Math.f
 const todayKey=()=>new Date().toLocaleDateString('en-CA');
 let dailyState={date:todayKey(),wins:0,hints:0,freeUsed:false,adSpins:0,giftClaimed:false};
 try{const saved=JSON.parse(localStorage.getItem('candyDailyState')||'null');if(saved&&saved.date===todayKey())dailyState={...dailyState,...saved};}catch(e){}
-function saveDaily(){try{localStorage.setItem('candyDailyState',JSON.stringify(dailyState))}catch(e){}}
+function saveDaily(){try{localStorage.setItem('candyDailyState',JSON.stringify(dailyState))}catch(e){}queueProgressSave()}
 function refreshHomeFeatures(){
  const w=el('wheelStatus');if(w)w.textContent=dailyState.freeUsed?'Free spin used today':'1 free spin today';
  if(el('freeSpin'))el('freeSpin').disabled=dailyState.freeUsed;
@@ -658,7 +659,7 @@ function spinWheel(isAd=false){
  wheelRotation+=1800+delta;disc.style.transform='rotate('+wheelRotation+'deg)';
  const spinButton=el('freeSpin');spinButton.disabled=true;
  setTimeout(()=>{spinButton.disabled=false;
-  if(prize.coins){coins+=prize.coins;try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins}
+  if(prize.coins){coins+=prize.coins;try{localStorage.setItem('candyCoins',String(coins))}catch(e){}el('homeCoins').textContent=coins;queueProgressSave()}
   if(prize.cash){try{localStorage.setItem('candyCashPrizePending',String(Date.now()))}catch(e){}alert('Congratulations! You landed on the $1 Jackpot. The prize is pending server verification and payout eligibility; it is not yet withdrawable.')}
   else alert(prize.coins?'Congratulations! You won '+prize.label+'!':'THANK YOU! Better luck next time.');
  },3650);
@@ -698,11 +699,15 @@ el('newGame').addEventListener('click',newGame);
 el('doubleRewardAd').addEventListener('click',()=>{alert('Rewarded Ads are not connected yet. Your +20 coin reward has already been credited. The x2 bonus will be available after ad verification is connected.')});
 el('playAgain').addEventListener('click',continueGame);el('sound').addEventListener('click',()=>{sound=!sound;el('sound').textContent=sound?'🔊 Sound':'🔇 Sound';updateSettingButtons();if(sound)playSound('swap')});
 
-let accountMode='register',accountSignedIn=false;
+let accountMode='register',accountSignedIn=false,progressLoaded=false,progressSaveTimer=null;
 function setAccountMode(mode){
  accountMode=mode;
- el('accountTitle').textContent=mode==='register'?'Create Your Account':'Welcome Back';
- el('accountSubtitle').textContent='Use the same email and password for Candy Match 3 and Germany Dating Pro.';
+ const signedIn=mode==='account';
+ el('accountTitle').textContent=signedIn?'Your Candy Account':mode==='register'?'Create Your Account':'Welcome Back';
+ el('accountSubtitle').textContent=signedIn?'Your game progress is saved to your account.':'Use your email and password for Candy Match 3.';
+ el('accountForm').style.display=signedIn?'none':'block';
+ el('accountLogout').hidden=!signedIn;
+ el('accountSwitch').hidden=signedIn;
  el('accountSubmit').textContent=mode==='register'?'CREATE ACCOUNT':'SIGN IN';
  el('accountSwitch').textContent=mode==='register'?'SIGN IN':'CREATE ACCOUNT';
  el('accountPassword').setAttribute('autocomplete',mode==='register'?'new-password':'current-password');
@@ -712,30 +717,75 @@ function openAccount(mode='register'){setAccountMode(mode);el('accountModal').cl
 function closeAccount(){el('accountModal').classList.remove('show');}
 function paintAccount(user){
  accountSignedIn=!!user;
+ progressLoaded=!user;
  el('accountUser').style.display=user?'block':'none';
  el('accountUser').textContent=user?(user.email||'SIGNED IN'):'';
  el('accountOpen').textContent=user?'ACCOUNT ✓':'SIGN IN / SIGN UP';
 }
-async function checkAccount(){
- try{const r=await fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'});const d=await r.json();paintAccount(r.ok&&d.ok?d.user:null);}
- catch(_){paintAccount(null)}
+function readSavedJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'null')??fallback}catch(_){return fallback}}
+function playerGameState(){
+ return {bestScore,hintsLeft:Number(localStorage.getItem('candyHintsLeft')??hintsLeft),hintLevel:Number(localStorage.getItem('candyHintsLevel')??hintLevel),dailyState,missionClaims:readSavedJson('candyMissionClaims',{}),cashPrizePending:localStorage.getItem('candyCashPrizePending')||null};
 }
-el('accountOpen').addEventListener('click',()=>openAccount(accountSignedIn?'login':'register'));
+async function savePlayerProgress(){
+ if(!accountSignedIn||!progressLoaded)return;
+ try{
+  const response=await fetch('/api/progress',{method:'PUT',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({coins,level,game_state:playerGameState()})});
+  if(response.status===401)paintAccount(null);
+ }catch(error){console.warn('Candy progress sync deferred',error)}
+}
+function queueProgressSave(){
+ if(!accountSignedIn||!progressLoaded)return;
+ clearTimeout(progressSaveTimer);progressSaveTimer=setTimeout(savePlayerProgress,500);
+}
+async function loadPlayerProgress(){
+ try{
+  const response=await fetch('/api/progress',{credentials:'same-origin',cache:'no-store'});
+  if(!response.ok)return;
+  const data=await response.json(),saved=data.progress;
+  if(saved){
+   coins=Math.max(0,Number(saved.coins)||0);level=Math.max(1,Number(saved.level)||1);
+   const state=saved.game_state&&typeof saved.game_state==='object'?saved.game_state:{};
+   bestScore=Math.max(0,Number(state.bestScore)||0);
+   if(state.dailyState&&state.dailyState.date===todayKey())dailyState={...dailyState,...state.dailyState};
+   if(state.missionClaims&&typeof state.missionClaims==='object')localStorage.setItem('candyMissionClaims',JSON.stringify(state.missionClaims));
+   if(Number.isFinite(Number(state.hintsLeft)))hintsLeft=Math.max(0,Math.min(3,Number(state.hintsLeft)));
+   if(Number.isFinite(Number(state.hintLevel)))hintLevel=Math.max(1,Number(state.hintLevel));
+   localStorage.setItem('candyCoins',String(coins));localStorage.setItem('candyLevel',String(level));localStorage.setItem('candyBestScore',String(bestScore));
+   localStorage.setItem('candyHintsLeft',String(hintsLeft));localStorage.setItem('candyHintsLevel',String(hintLevel));localStorage.setItem('candyDailyState',JSON.stringify(dailyState));
+   if(state.cashPrizePending)localStorage.setItem('candyCashPrizePending',state.cashPrizePending);
+   el('homeCoins').textContent=coins;el('homeLevel').textContent=level;el('homeBest').textContent=bestScore;el('homeBestFoot').textContent=bestScore;el('bestScore').textContent=bestScore;
+   updateHintButton();refreshHomeFeatures();
+  }
+  progressLoaded=true;
+  if(!saved)await savePlayerProgress();
+ }catch(error){console.warn('Candy progress load deferred',error)}
+}
+async function checkAccount(){
+ try{
+  const r=await fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'}),d=await r.json();
+  paintAccount(r.ok&&d.ok?d.user:null);
+  if(r.ok&&d.ok)await loadPlayerProgress();
+ }catch(_){paintAccount(null)}
+}
+el('accountOpen').addEventListener('click',()=>openAccount(accountSignedIn?'account':'register'));
 el('accountClose').addEventListener('click',closeAccount);
 el('accountModal').addEventListener('click',e=>{if(e.target===el('accountModal'))closeAccount()});
 el('accountSwitch').addEventListener('click',()=>setAccountMode(accountMode==='register'?'login':'register'));
+el('accountLogout').addEventListener('click',async()=>{
+ const button=el('accountLogout');button.disabled=true;
+ try{await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'});}catch(_){}
+ paintAccount(null);el('accountPassword').value='';closeAccount();button.disabled=false;
+});
 el('accountForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const button=el('accountSubmit');button.disabled=true;el('accountStatus').textContent='Please wait…';
  try{
-  const r=await fetch('/api/auth/'+accountMode,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({email:el('accountEmail').value,password:el('accountPassword').value})});
-  const d=await r.json();
+  const r=await fetch('/api/auth/'+accountMode,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({email:el('accountEmail').value,password:el('accountPassword').value})}),d=await r.json();
   if(!r.ok||!d.ok){
-   const messages={account_already_exists_use_login:'This email already has an account. Please sign in.',invalid_email_or_password:'Email or password is incorrect.',invalid_email_or_password_length:'Enter a valid email and a password of at least 10 characters.',too_many_attempts_try_later:'Too many attempts. Please try again later.'};
+   const messages={account_already_exists_use_login:'This email already has an account. Please sign in.',invalid_email_or_password:'Email or password is incorrect.',invalid_email_or_password_length:'Enter a valid email and a password of at least 10 characters.',too_many_attempts_try_later:'Too many attempts. Please try again later.',email_confirmation_required:'Email confirmation is still enabled. Disable Confirm email in Supabase Auth settings, then try again.',account_creation_failed:'Could not create the account. Please check the email and try again.'};
    throw new Error(messages[d.error]||'Account service is temporarily unavailable. Please try again.');
   }
-  paintAccount({email:el('accountEmail').value.trim().toLowerCase()});
-  el('accountPassword').value='';
+  paintAccount(d.user);el('accountPassword').value='';await loadPlayerProgress();
   el('accountStatus').textContent=accountMode==='register'?'Account created successfully!':'You are signed in!';
   setTimeout(closeAccount,700);
  }catch(err){el('accountStatus').textContent=err.message}
