@@ -93,8 +93,20 @@ function makeBuilding(x,z,side){
  // Street-level shopfronts, awnings and lit signs make the blocks feel occupied.
  box(g,width*.78,1.25,.07,mat(0x263d49,.45),0,.78,depth/2+.055);
  for(let sx=-width*.31;sx<=width*.31;sx+=width*.31)box(g,width*.24,.82,.035,Math.random()<.5?materials.window:materials.windowWarm,sx,.82,depth/2+.105);
- box(g,width*.88,.16,.42,mat([0xd65c4c,0x287f89,0xe0a33c][Math.floor(Math.random()*3)],.45,.25),0,1.55,depth/2+.16);
- box(g,width*.72,.22,.055,mat(0x172c3b,.4),0,1.82,depth/2+.18);
+ const awningColor=[0xb85e55,0x3e8584,0xc18a48,0x657b9a][Math.floor(Math.random()*4)];
+ box(g,width*.88,.16,.42,mat(awningColor,.62,.12),0,1.55,depth/2+.16);
+ // Slim alternating canopy panels and a clean sign fascia create more convincing boutique storefronts.
+ const stripeCount=Math.max(4,Math.floor(width/.42));
+ for(let si=0;si<stripeCount;si++){
+  const sx=-width*.39+(si/(stripeCount-1))*width*.78;
+  box(g,.12,.17,.035,mat(si%2===0?0xf1e5cf:awningColor,.68),sx,1.55,depth/2+.385);
+ }
+ box(g,width*.72,.22,.055,mat(0x263b48,.48),0,1.82,depth/2+.18);
+ for(const lx of [-width*.39,width*.39]){
+  box(g,.11,1.55,.12,mat(0xc7b99f,.86),lx,.83,depth/2+.12);
+  const lamp=new THREE.Mesh(new THREE.SphereGeometry(.075,10,8),new THREE.MeshStandardMaterial({color:0xffe1a2,emissive:0xffc46b,emissiveIntensity:.65}));
+  lamp.position.set(lx,2.03,depth/2+.2);g.add(lamp);
+ }
  // Distinctive Manhattan storefront entrance with recessed door, transom and stone stoop.
  const entryX=width*.27,doorTone=mat([0x294b58,0x563c32,0x294238][Math.floor(Math.random()*3)],.72);
  box(g,.92,2.02,.09,mat(0xd3c3a7,.85),entryX,1.02,depth/2+.16);
