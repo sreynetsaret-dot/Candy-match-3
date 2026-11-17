@@ -264,12 +264,39 @@ function makeTree(x,z,scale=1){
  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeGrassPatch(x,z,scale=1){
- const g=new THREE.Group(),soil=mat(0x6d583c,.98),edge=mat(0x967b53,.98),greens=[mat(0x287d3d,.98),mat(0x3f9845,.98),mat(0x65b64e,.98),mat(0x91c95c,.98),mat(0xb4d875,.98)];
- const base=new THREE.Mesh(new THREE.BoxGeometry(2.35,.16,1.32),edge);base.position.y=.02;g.add(base);
- const earth=new THREE.Mesh(new THREE.BoxGeometry(2.22,.1,1.2),soil);earth.position.y=.12;g.add(earth);
- const turf=new THREE.Mesh(new THREE.BoxGeometry(2.16,.09,1.14),greens[1]);turf.position.y=.2;g.add(turf);
- for(let i=0;i<58;i++){const a=i*2.399,r=.12+(i%8)*.115,h=.22+(i%6)*.075,m=new THREE.Mesh(new THREE.ConeGeometry(.045+(i%3)*.012,h,4),greens[i%5]);m.position.set(Math.cos(a)*r,.23+h*.48,Math.sin(a)*r*.43);m.rotation.z=Math.cos(a)*-.32;m.rotation.x=Math.sin(a)*.22;g.add(m);}
- for(let i=0;i<7;i++){const f=new THREE.Group(),stem=new THREE.Mesh(new THREE.CylinderGeometry(.012,.02,.28,5),greens[0]);stem.position.y=.29;f.add(stem);const c=new THREE.Mesh(new THREE.SphereGeometry(.05,7,6),mat(0xf5bd42));c.position.y=.44;f.add(c);const pm=mat([0xffe4ef,0xfff4d1,0xffffff,0xe5dcff][i%4]);for(let k=0;k<5;k++){const a=k*Math.PI*2/5,p=new THREE.Mesh(new THREE.SphereGeometry(.07,7,5),pm);p.position.set(Math.cos(a)*.085,.44,Math.sin(a)*.085);p.scale.set(1,.65,1);f.add(p);}f.position.set(-.9+(i%4)*.58,.24,-.38+Math.floor(i/4)*.65);g.add(f);}
+ const g=new THREE.Group(),soil=mat(0x59452f,.98),edge=mat(0x8c7957,.96),turfMats=[mat(0x286b38,.98),mat(0x347f3d,.98),mat(0x4b9847,.98)];
+ const base=new THREE.Mesh(new THREE.BoxGeometry(2.85,.13,1.62),edge);base.position.y=.015;g.add(base);
+ const earth=new THREE.Mesh(new THREE.BoxGeometry(2.72,.09,1.49),soil);earth.position.y=.105;g.add(earth);
+ const turf=new THREE.Mesh(new THREE.BoxGeometry(2.66,.075,1.43),turfMats[1]);turf.position.y=.18;g.add(turf);
+ // Dense, individually varied blades are combined into one mesh for mobile performance.
+ const positions=[],colors=[],indices=[];
+ const palette=[[.12,.34,.13],[.18,.46,.17],[.25,.55,.19],[.34,.62,.23],[.48,.68,.29],[.09,.29,.12]];
+ for(let i=0;i<210;i++){
+  const px=(Math.random()-.5)*2.55,pz=(Math.random()-.5)*1.32;
+  const h=.19+Math.random()*.34,w=.035+Math.random()*.035,lean=(Math.random()-.5)*.16;
+  const angle=Math.random()*Math.PI*2,dx=Math.cos(angle)*w,dz=Math.sin(angle)*w;
+  const c=palette[Math.floor(Math.random()*palette.length)],tip=[c[0]*.78,c[1]*1.12,c[2]*.72];
+  const n=positions.length/3;
+  positions.push(px-dx,.22,pz-dz,px+dx,.22,pz+dz,px+lean,.22+h,pz+lean*.55);
+  for(let k=0;k<2;k++)colors.push(c[0],c[1],c[2]);
+  colors.push(tip[0],Math.min(.9,tip[1]),tip[2]);indices.push(n,n+1,n+2);
+ }
+ const bladeGeo=new THREE.BufferGeometry();bladeGeo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));bladeGeo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));bladeGeo.setIndex(indices);bladeGeo.computeVertexNormals();
+ const bladeMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
+ g.add(new THREE.Mesh(bladeGeo,bladeMat));
+ // Low, soft groundcover fills gaps so the bed reads as a lush lawn, not spikes.
+ for(let i=0;i<12;i++){
+  const clump=new THREE.Mesh(new THREE.SphereGeometry(.17+Math.random()*.1,8,6),turfMats[i%3]);
+  clump.scale.set(1.25,.28,.78);clump.position.set((Math.random()-.5)*2.35,.23,(Math.random()-.5)*1.18);g.add(clump);
+ }
+ // Small flower groups add color without hiding the grass.
+ const petalMats=[mat(0xffd9e6,.9),mat(0xfff0b8,.9),mat(0xffffff,.9),mat(0xded6ff,.9)],centerMat=mat(0xffc94f,.9);
+ for(let i=0;i<5;i++){
+  const f=new THREE.Group(),stem=new THREE.Mesh(new THREE.CylinderGeometry(.009,.014,.24,5),turfMats[0]);stem.position.y=.31;f.add(stem);
+  for(let k=0;k<5;k++){const ang=k*Math.PI*2/5,p=new THREE.Mesh(new THREE.SphereGeometry(.045,6,5),petalMats[i%4]);p.position.set(Math.cos(ang)*.055,.43,Math.sin(ang)*.055);p.scale.set(1,.62,1);f.add(p);}
+  const center=new THREE.Mesh(new THREE.SphereGeometry(.027,6,5),centerMat);center.position.y=.44;f.add(center);
+  f.position.set(-1.02+(i%3)*.98,.22,-.43+Math.floor(i/3)*.72);g.add(f);
+ }
  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeStreetStand(x,z,side){
