@@ -349,6 +349,21 @@ function makeSkyBackdrop(){
   const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
   const sky=new THREE.Mesh(new THREE.PlaneGeometry(260,142),new THREE.MeshBasicMaterial({map:skyTexture,depthWrite:false,fog:false}));
   sky.position.set(0,37,-146);sky.renderOrder=-10;scene.add(sky);
+  // Fine high-altitude cirrus streaks add depth without adding many 3D objects.
+  const wispCanvas=document.createElement('canvas');wispCanvas.width=1024;wispCanvas.height=512;
+  const wctx=wispCanvas.getContext('2d');
+  for(let i=0;i<13;i++){
+   const y=95+i*23,alpha=.08+(i%4)*.025;
+   const grad=wctx.createLinearGradient(0,y,1024,y+12);
+   grad.addColorStop(0,'rgba(255,255,255,0)');grad.addColorStop(.22,`rgba(255,255,255,${alpha})`);grad.addColorStop(.72,`rgba(255,248,239,${alpha*.8})`);grad.addColorStop(1,'rgba(255,255,255,0)');
+   wctx.beginPath();wctx.moveTo(-20,y+18);
+   wctx.bezierCurveTo(180,y-12+(i%3)*7,330,y+25,520,y+7);
+   wctx.bezierCurveTo(700,y-8,850,y+17,1045,y-3);
+   wctx.lineWidth=3+(i%3)*2;wctx.strokeStyle=grad;wctx.stroke();
+  }
+  const wispTexture=new THREE.CanvasTexture(wispCanvas);wispTexture.colorSpace=THREE.SRGBColorSpace;
+  const wisps=new THREE.Mesh(new THREE.PlaneGeometry(250,125),new THREE.MeshBasicMaterial({map:wispTexture,transparent:true,depthWrite:false,fog:false,opacity:.9}));
+  wisps.position.set(0,39,-145);wisps.renderOrder=-8;scene.add(wisps);
   const glowCanvas=document.createElement('canvas');glowCanvas.width=256;glowCanvas.height=256;
   const glowCtx=glowCanvas.getContext('2d'),glow=glowCtx.createRadialGradient(128,128,8,128,128,126);
   glow.addColorStop(0,'rgba(255,238,190,.72)');glow.addColorStop(.28,'rgba(255,210,153,.34)');glow.addColorStop(1,'rgba(255,190,140,0)');
