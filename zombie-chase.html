@@ -25,7 +25,7 @@ const $=id=>document.getElementById(id);
 const canvas=$('game');
 let scene,camera,renderer,clock,worldReady=false;
 let running=false,paused=false,gameOver=false;
-let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,best=Number(localStorage.getItem('zcBest')||0),speed=17,spawnTimer=0;
+let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,best=(()=>{try{return Number(localStorage.getItem('zcBest')||0)}catch{return 0}})(),speed=17,spawnTimer=0;
 let player,zombie,world=[],obstacles=[],coins=[],roadSegments=[],decor=[];
 let soundOn=true,audioCtx=null,lastMilestone=0;
 $('best').textContent=best;
@@ -72,7 +72,7 @@ function makeBuilding(x,z,side){
 function createWorld(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x9ac8df);scene.fog=new THREE.Fog(0x9ac8df,35,115);
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.25:1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
  const hemi=new THREE.HemisphereLight(0xe4f5ff,0x53606b,2.0);scene.add(hemi);
  const sun=new THREE.DirectionalLight(0xfff0d7,2.3);sun.position.set(-8,15,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
@@ -100,7 +100,7 @@ function spawnWave(){
 }
 function soundBeep(freq=660,duration=.07){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),gain=audioCtx.createGain();o.frequency.value=freq;o.type='sine';gain.gain.setValueAtTime(.055,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(gain);gain.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration);}catch(e){}}
 function startGame(){if(!worldReady)return;if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,0,0);distance=0;coinCount=0;speed=17;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
-function finishGame(){if(gameOver)return;running=false;gameOver=true;best=Math.max(best,Math.floor(distance));localStorage.setItem('zcBest',String(best));$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
+function finishGame(){if(gameOver)return;running=false;gameOver=true;best=Math.max(best,Math.floor(distance));try{localStorage.setItem('zcBest',String(best));}catch(e){console.warn('Best score could not be saved:',e);}$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
 function move(dir){if(!running||paused)return;lane=Math.max(-1,Math.min(1,lane+dir));soundBeep(420,.035);}
 function jump(){if(!running||paused||playerY>0.02)return;jumpV=8.2;slideTimer=0;soundBeep(740,.08);}
 function slide(){if(!running||paused)return;slideTimer=.75;player.scale.y=.58;soundBeep(300,.06);}
@@ -134,12 +134,13 @@ function update(dt){
  camera.position.x=THREE.MathUtils.lerp(camera.position.x,player.position.x*.18,.04);camera.lookAt(player.position.x*.12,1.1,-7);
 }
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.045);update(dt);player.position.y=playerY;if(renderer&&scene&&camera)renderer.render(scene,camera);}
-function resize(){if(!camera||!renderer)return;camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<600?67:62;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));}
+function resize(){if(!camera||!renderer)return;camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<600?67:62;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.25:1.5));}
 $('left').onclick=()=>move(-1);$('right').onclick=()=>move(1);$('jump').onclick=jump;$('slide').onclick=slide;$('play').onclick=startGame;$('again').onclick=startGame;$('pause').onclick=togglePause;$('resume').onclick=togglePause;
 $('sound').onclick=()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'🔊':'🔇';if(soundOn)soundBeep(600,.07);};
 let sx=0,sy=0;canvas.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY;},{passive:true});canvas.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<22)return;if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy<0)jump();else slide();},{passive:true});
 addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1);if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')slide();if(e.key==='Escape'||e.key.toLowerCase()==='p')togglePause();});
 addEventListener('resize',resize);
+addEventListener('blur',()=>{if(running&&!paused)togglePause();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused)togglePause();});
 try{createWorld();clock=new THREE.Clock();worldReady=true;$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){$('load').textContent='3D could not start. Try updating Safari or opening in another browser.';$('play').disabled=true;$('play').textContent='3D NOT AVAILABLE';$('play').style.opacity='.55';console.error('Zombie Chase initialization failed:',err);}
 window.addEventListener('unhandledrejection',e=>{$('load').textContent='A 3D resource failed to load. Check your internet and reload.';console.error('Zombie Chase resource error:',e.reason);});
