@@ -28,7 +28,7 @@ let scene,camera,renderer,clock,worldReady=false;
 let running=false,paused=false,gameOver=false;
 let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,best=(()=>{try{return Number(localStorage.getItem('zcBest')||0)}catch{return 0}})(),speed=17,spawnTimer=0;
 let player,zombie,world=[],obstacles=[],coins=[],roadSegments=[],decor=[];
-let soundOn=true,audioCtx=null,lastMilestone=0;
+let soundOn=true,audioCtx=null,lastMilestone=0,lastObstacleLane=null,lastObstacleKind=null;
 $('best').textContent=best;
 
 function mat(color,roughness=.78,metalness=0){return new THREE.MeshStandardMaterial({color,roughness,metalness});}
@@ -95,13 +95,24 @@ function addObstacle(kind,n,z=-75){
 }
 function addCoinLine(n,z=-42,count=6){for(let i=0;i<count;i++){const g=makeCoin();g.position.set(laneX(n),1.25,z-i*2.2);scene.add(g);coins.push({mesh:g,lane:n,hit:false});}}
 function spawnWave(){
- const n=Math.floor(Math.random()*3)-1,roll=Math.random();
- if(roll<.48){addCoinLine(n,-70,5);addObstacle(Math.random()<.6?'barrier':'train',Math.random()<.55?n:Math.floor(Math.random()*3)-1,-91);}
- else {addObstacle(roll<.76?'barrier':'train',n,-74);const safe=[-1,0,1].filter(v=>v!==n);addCoinLine(safe[Math.floor(Math.random()*safe.length)],-67,4);}
+ // Never place two consecutive obstacles in the same lane: keep an escape route open.
+ const lanes=[-1,0,1].filter(v=>v!==lastObstacleLane);
+ const obstacleLane=lanes[Math.floor(Math.random()*lanes.length)];
+ // Avoid long, repetitive train sequences while keeping obstacle variety.
+ let kind=Math.random()<.58?'barrier':'train';
+ if(lastObstacleKind==='train'&&kind==='train')kind='barrier';
+ if(lastObstacleKind==='barrier'&&Math.random()<.28)kind='train';
+ addObstacle(kind,obstacleLane,-78);
+ lastObstacleLane=obstacleLane;
+ lastObstacleKind=kind;
+ // Put coins on a different, reachable lane so collecting them never requires hitting an obstacle.
+ const coinLanes=[-1,0,1].filter(v=>v!==obstacleLane);
+ const coinLane=coinLanes[Math.floor(Math.random()*coinLanes.length)];
+ addCoinLine(coinLane,-69,4);
 }
 function buzz(pattern=12){try{if(navigator.vibrate)navigator.vibrate(pattern);}catch(e){}}
 function soundBeep(freq=660,duration=.07){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),gain=audioCtx.createGain();o.frequency.value=freq;o.type='sine';gain.gain.setValueAtTime(.055,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(gain);gain.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration);}catch(e){}}
-function startGame(){if(!worldReady)return;$('warning').classList.add('hidden');if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,0,0);distance=0;coinCount=0;speed=17;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
+function startGame(){if(!worldReady)return;$('warning').classList.add('hidden');if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];lastObstacleLane=null;lastObstacleKind=null;lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,0,0);distance=0;coinCount=0;speed=17;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
 function finishGame(){if(gameOver)return;buzz([35,25,60]);running=false;gameOver=true;best=Math.max(best,Math.floor(distance));try{localStorage.setItem('zcBest',String(best));}catch(e){console.warn('Best score could not be saved:',e);}$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
 function move(dir){if(!running||paused)return;const next=Math.max(-1,Math.min(1,lane+dir));if(next===lane)return;lane=next;buzz(8);soundBeep(420,.035);}
 function jump(){if(!running||paused||playerY>0.02)return;jumpV=8.2;slideTimer=0;buzz(14);soundBeep(740,.08);}
