@@ -198,6 +198,27 @@ function makeSkylineBlock(x,z,variant=0){
  }
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
+function makeElevatedSubway(x,z){
+ const g=new THREE.Group(),steel=mat(0x35434b,.72,.28),concrete=mat(0x8d8d83,.92),rail=mat(0x9daeb2,.36,.7),trainBlue=mat(0x315d79,.48,.18),trainRed=mat(0xb84e42,.56);
+ box(g,3.5,.42,31,steel,0,6.35,0);box(g,3.65,.18,31.2,concrete,0,6.08,0);
+ for(const xx of [-1.05,1.05])box(g,.12,.13,31,rail,xx,6.62,0);
+ for(let zz=-14;zz<=14;zz+=1.5)box(g,3.15,.08,.13,steel,0,6.55,zz);
+ for(const zz of [-12,-4,4,12]){
+  for(const xx of [-1.42,1.42]){
+   box(g,.34,6.05,.38,concrete,xx,3.02,zz);
+   box(g,.48,.22,.5,steel,xx,5.95,zz);
+  }
+  box(g,3.2,.22,.42,steel,0,5.78,zz);
+ }
+ const car=new THREE.Group();
+ box(car,2.25,1.75,9,trainBlue,0,7.55,0);box(car,2.28,.18,9.05,trainRed,0,6.72,0);
+ for(let zz=-3.35;zz<=3.35;zz+=1.65){
+  box(car,.055,.82,.98,mat(0x9bcbd4,.28,.2),1.14,7.7,zz);
+  box(car,.055,.82,.98,mat(0x9bcbd4,.28,.2),-1.14,7.7,zz);
+ }
+ box(car,2.05,.12,.16,mat(0xe9c66d,.35),0,8.46,0);car.position.z=-2;g.add(car);
+ g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
 function makeNYCTower(x,z,style=0){
  const g=new THREE.Group(),stone=mat(style===0?0x8a8178:0x657887,.82),trim=mat(0xc8b99b,.68),glass=mat(0x6e9eae,.32,.18);
  const w=style===0?4.8:4.1,d=4.4,h=style===0?27:23;
@@ -459,6 +480,8 @@ function createWorld(){
  // Manhattan-inspired skyline landmarks: stepped Art Deco towers rise above the street.
  makeNYCTower(-10.1,-76,0);
  makeNYCTower(10.4,-91,1);
+ // A classic elevated subway segment enriches the distant Manhattan street scene.
+ makeElevatedSubway(-13.1,-67);
  // Yellow cabs and green subway entrances bring unmistakable New York street character.
  for(let z=-32;z>-100;z-=64){
   makeNYCTaxi(-5.12,z,-1);
