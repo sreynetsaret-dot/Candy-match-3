@@ -255,23 +255,22 @@ function makeSubwayEntrance(x,z){
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeTree(x,z,scale=1){
-  const g=new THREE.Group();
-  const bark=mat(0x68452f,.98),barkLight=mat(0x98704d,.96);
-  const leafDeep=mat(0x1f633e,.98),leafDark=mat(0x2e7c49,.98),leafMid=mat(0x469b55,.98),leafBright=mat(0x69b85d,.98),leafSun=mat(0x9acb68,.98);
-  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.105,.25,2.55,9),bark);trunk.position.y=1.27;trunk.castShadow=true;g.add(trunk);
-  for(let i=0;i<4;i++){const a=i*Math.PI*.5+.35,root=new THREE.Mesh(new THREE.CylinderGeometry(.035,.14,.72,6),bark);root.position.set(Math.cos(a)*.18,.28,Math.sin(a)*.18);root.rotation.z=Math.cos(a)*-.48;root.rotation.x=Math.sin(a)*.42;g.add(root);}
-  for(let i=0;i<5;i++){const a=i*Math.PI*2/5,branch=new THREE.Mesh(new THREE.CylinderGeometry(.035,.085,1.22,6),barkLight);branch.position.set(Math.cos(a)*.39,2.12,Math.sin(a)*.34);branch.rotation.z=-Math.cos(a)*.58;branch.rotation.x=Math.sin(a)*.5;g.add(branch);}
-  const clusters=[[0,2.75,0,.78,leafDark],[-.55,2.55,.02,.58,leafDeep],[.56,2.58,-.04,.61,leafMid],[-.3,3.18,.1,.61,leafBright],[.34,3.2,-.12,.62,leafBright],[0,3.68,.02,.52,leafSun],[-.82,2.98,-.1,.43,leafMid],[.82,2.98,.08,.45,leafDark],[0,2.4,.34,.47,leafDeep],[-.48,3.52,-.24,.38,leafMid],[.5,3.55,.22,.4,leafBright],[-.95,2.65,.22,.32,leafMid],[.96,2.68,-.2,.34,leafBright],[-.18,3.88,-.2,.3,leafSun],[.18,3.9,.2,.3,leafBright]];
-  for(const p of clusters){const crown=new THREE.Mesh(new THREE.SphereGeometry(p[3],10,8),p[4]);crown.position.set(p[0],p[1],p[2]);crown.scale.set(1.08,.86,.98);crown.castShadow=true;g.add(crown);}
-  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+ const g=new THREE.Group(),bark=mat(0x65432e,.98),barkHi=mat(0x9b704b,.96);
+ const leaves=[mat(0x185d38,.98),mat(0x267743,.98),mat(0x3e9850,.98),mat(0x62b65b,.98),mat(0x9bcf6b,.98)];
+ const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.13,.29,2.8,10),bark);trunk.position.y=1.4;g.add(trunk);
+ for(let i=0;i<6;i++){const a=i*Math.PI/3,branch=new THREE.Mesh(new THREE.CylinderGeometry(.035,.095,1.45,7),barkHi);branch.position.set(Math.cos(a)*.43,2.25,Math.sin(a)*.39);branch.rotation.z=-Math.cos(a)*.62;branch.rotation.x=Math.sin(a)*.58;g.add(branch);}
+ const crown=[[0,3.05,0,.92,2],[-.68,2.8,.08,.72,0],[.68,2.82,-.08,.74,1],[-.34,3.52,.12,.7,3],[.38,3.55,-.12,.72,4],[0,4.05,.02,.59,4],[-1.02,3.12,-.12,.48,2],[1.02,3.13,.12,.5,3],[-.62,3.75,-.3,.48,2],[.63,3.78,.28,.5,3],[0,2.62,.43,.56,0],[-.95,2.72,.32,.42,1],[.95,2.75,-.3,.43,2],[-.2,4.18,-.22,.34,3],[.24,4.2,.22,.35,4]];
+ for(const p of crown){const m=new THREE.Mesh(new THREE.SphereGeometry(p[3],12,9),leaves[p[4]]);m.position.set(p[0],p[1],p[2]);m.scale.set(1.12,.92,1.02);g.add(m);}
+ g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeGrassPatch(x,z,scale=1){
-  const g=new THREE.Group(),soil=mat(0x75694b,.98),turf=mat(0x438d45,.98),bladeMats=[mat(0x318348,.98),mat(0x57a94c,.98),mat(0x8ac65b,.98),mat(0xb0cf69,.98)];
-  const bed=new THREE.Mesh(new THREE.BoxGeometry(1.72,.12,.96),soil);bed.position.y=.015;g.add(bed);
-  const lawn=new THREE.Mesh(new THREE.BoxGeometry(1.61,.075,.86),turf);lawn.position.y=.09;g.add(lawn);
-  for(let i=0;i<26;i++){const angle=i*2.399,rad=.1+(i%6)*.105,h=.2+(i%5)*.075,blade=new THREE.Mesh(new THREE.ConeGeometry(.052+(i%3)*.012,h,4),bladeMats[i%4]);blade.position.set(Math.cos(angle)*rad,.13+h*.48,Math.sin(angle)*rad*.48);blade.rotation.z=Math.cos(angle)*-.32;blade.rotation.x=Math.sin(angle)*.24;g.add(blade);}
-  for(let i=0;i<3;i++){const flower=new THREE.Group(),stem=new THREE.Mesh(new THREE.CylinderGeometry(.012,.02,.3,5),turf);stem.position.y=.29;flower.add(stem);const center=new THREE.Mesh(new THREE.SphereGeometry(.055,7,6),mat(0xf5bd42));center.position.y=.47;flower.add(center);const petalMat=mat(i===1?0xffe6a3:0xfff4df);for(let p=0;p<5;p++){const a=p*Math.PI*2/5,petal=new THREE.Mesh(new THREE.SphereGeometry(.065,7,5),petalMat);petal.position.set(Math.cos(a)*.085,.47+Math.sin(a)*.018,Math.sin(a)*.085);petal.scale.set(1,.65,1);flower.add(petal);}flower.position.set(-.48+i*.48,.08,(i%2)*.23-.1);g.add(flower);}
-  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+ const g=new THREE.Group(),soil=mat(0x6d583c,.98),edge=mat(0x967b53,.98),greens=[mat(0x287d3d,.98),mat(0x3f9845,.98),mat(0x65b64e,.98),mat(0x91c95c,.98),mat(0xb4d875,.98)];
+ const base=new THREE.Mesh(new THREE.BoxGeometry(2.35,.16,1.32),edge);base.position.y=.02;g.add(base);
+ const earth=new THREE.Mesh(new THREE.BoxGeometry(2.22,.1,1.2),soil);earth.position.y=.12;g.add(earth);
+ const turf=new THREE.Mesh(new THREE.BoxGeometry(2.16,.09,1.14),greens[1]);turf.position.y=.2;g.add(turf);
+ for(let i=0;i<58;i++){const a=i*2.399,r=.12+(i%8)*.115,h=.22+(i%6)*.075,m=new THREE.Mesh(new THREE.ConeGeometry(.045+(i%3)*.012,h,4),greens[i%5]);m.position.set(Math.cos(a)*r,.23+h*.48,Math.sin(a)*r*.43);m.rotation.z=Math.cos(a)*-.32;m.rotation.x=Math.sin(a)*.22;g.add(m);}
+ for(let i=0;i<7;i++){const f=new THREE.Group(),stem=new THREE.Mesh(new THREE.CylinderGeometry(.012,.02,.28,5),greens[0]);stem.position.y=.29;f.add(stem);const c=new THREE.Mesh(new THREE.SphereGeometry(.05,7,6),mat(0xf5bd42));c.position.y=.44;f.add(c);const pm=mat([0xffe4ef,0xfff4d1,0xffffff,0xe5dcff][i%4]);for(let k=0;k<5;k++){const a=k*Math.PI*2/5,p=new THREE.Mesh(new THREE.SphereGeometry(.07,7,5),pm);p.position.set(Math.cos(a)*.085,.44,Math.sin(a)*.085);p.scale.set(1,.65,1);f.add(p);}f.position.set(-.9+(i%4)*.58,.24,-.38+Math.floor(i/4)*.65);g.add(f);}
+ g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeStreetStand(x,z,side){
  const g=new THREE.Group(),base=mat(0x263c4b),accent=mat(side<0?0xff9b45:0x49c6b4),awning=mat(side<0?0xe95f55:0x398bd0);
@@ -500,9 +499,9 @@ function createWorld(){
  // NYC bus shelters and curbside street furniture add scale and everyday city life.
  for(const z of [-27,-83]){makeBusShelter(-5.35,z,-1);makeBusShelter(5.35,z-15,1);}
  // A cheerful boulevard: trees, little kiosks and bright billboards add recognizable city life.
- for(let z=-7;z>-105;z-=24){makeTree(-5.25,z,.88+(Math.random()*.18));makeTree(5.25,z-9,.9+(Math.random()*.16));}
+ for(let z=-7;z>-105;z-=20){makeTree(-5.25,z,1.12+(Math.random()*.16));makeTree(5.25,z-9,1.08+(Math.random()*.18));}
  // Fresh landscaped grass pockets soften the sidewalks without entering the running lanes.
- for(let z=-12;z>-108;z-=24){makeGrassPatch(-6.35,z,.9);makeGrassPatch(6.35,z-10,.88);}
+ for(let z=-12;z>-108;z-=18){makeGrassPatch(-6.35,z,1.08);makeGrassPatch(6.35,z-9,1.04);}
  for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
  for(let z=-39;z>-105;z-=58){makeBillboard(-6.8,z,-1);makeBillboard(6.8,z-18,1);}
  // Signature New York skyline details: bridge silhouette, rooftop tanks and Times Square LEDs.
