@@ -86,6 +86,41 @@ function makeBuilding(x,z,side){
  if(Math.random()<.55){const sign=box(g,width*.55,.48,.12,mat([0x1b9aaa,0xe26b48,0x8b6bd6][Math.floor(Math.random()*3)],.5,.25),0,height*.68,depth/2+.09);sign.position.y=height*.68;}
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
+function makeNYCTower(x,z,style=0){
+ const g=new THREE.Group(),stone=mat(style===0?0x8a8178:0x657887,.82),trim=mat(0xc8b99b,.68),glass=mat(0x6e9eae,.32,.18);
+ const w=style===0?4.8:4.1,d=4.4,h=style===0?27:23;
+ box(g,w,h,d,stone,0,h/2,0);
+ for(let y=1.2;y<h-1;y+=1.55)for(let xx=-w/2+.48;xx<w/2-.25;xx+=.62)
+  box(g,.36,.86,.045,Math.random()<.14?materials.windowWarm:glass,xx,y,d/2+.035);
+ for(let xx=-w/2+.15;xx<=w/2;xx+=.62)box(g,.055,h-.5,.08,trim,xx,h/2,d/2+.08);
+ for(let level=0;level<4;level++){
+  const inset=.32+level*.28,levelH=1.55,levelW=w-inset*2,levelD=d-inset*1.6;
+  box(g,levelW,levelH,levelD,stone,0,h+levelH/2+level*1.55,0);
+  for(let xx=-levelW/2+.3;xx<levelW/2-.2;xx+=.62)box(g,.34,.75,.04,glass,xx,h+level*1.55+.78,levelD/2+.03);
+ }
+ const crownY=h+7.1;box(g,.16,5.2,.16,trim,0,crownY+2.6,0);
+ const tip=new THREE.Mesh(new THREE.ConeGeometry(.22,2.4,8),trim);tip.position.set(0,crownY+6.4,0);g.add(tip);
+ box(g,w+.12,.22,d+.12,trim,0,h-.15,0);
+ g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeNYCTaxi(x,z,flip=1){
+ const g=new THREE.Group(),yellow=mat(0xffc928,.55),black=mat(0x202b35),glass=mat(0x8ec7d7,.2,.25),white=mat(0xf8f0d8);
+ box(g,1.42,.62,2.25,yellow,0,.62,0);box(g,1.12,.62,1.16,yellow,0,1.18,-.08);
+ box(g,1.02,.42,.035,glass,0,1.2,.52);box(g,1.02,.42,.035,glass,0,1.2,-.68);
+ box(g,.38,.12,.25,white,0,1.57,-.05);box(g,.54,.07,.12,white,0,1.65,-.05);
+ for(const xx of [-.72,.72])for(const zz of [-.68,.68]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.13,12),black);wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.3,zz);g.add(wheel);}
+ box(g,.34,.1,.05,white,0,.76,1.14);
+ g.position.set(x,0,z);g.rotation.y=flip<0?Math.PI:0;scene.add(g);decor.push(g);return g;
+}
+function makeSubwayEntrance(x,z){
+ const g=new THREE.Group(),green=mat(0x176b4c),metal=mat(0x303d42),signMat=new THREE.MeshStandardMaterial({color:0x14734e,emissive:0x073c28,emissiveIntensity:.45});
+ box(g,1.75,.18,1.15,green,0,1.95,0);
+ for(const xx of [-.78,.78])box(g,.12,1.9,.12,metal,xx,.95,0);
+ box(g,1.65,.78,.1,signMat,0,2.48,.04);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(.27,.065,8,20),mat(0xf4f3e9,.5));ring.position.set(0,2.5,.12);g.add(ring);
+ box(g,.62,.055,.035,materials.white,0,2.18,.12);
+ g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
 function makeTree(x,z,scale=1){
  const g=new THREE.Group();
  const bark=mat(0x79533a),leafA=mat(0x3e9b69),leafB=mat(0x62b978),leafC=mat(0x2f8059);
@@ -159,6 +194,14 @@ function createWorld(){
  }
  // Short zebra-crossing marks at the distant boulevard entrance add familiar street detail.
  for(let i=0;i<7;i++){const stripe=box(scene,.62,.025,.16,materials.white,-2.7+i*.9,.105,-105);roadSegments.push(stripe);}
+ // Manhattan-inspired skyline landmarks: stepped Art Deco towers rise above the street.
+ makeNYCTower(-10.1,-76,0);
+ makeNYCTower(10.4,-91,1);
+ // Yellow cabs and green subway entrances bring unmistakable New York street character.
+ for(let z=-32;z>-100;z-=64){
+  makeNYCTaxi(-5.12,z,-1);
+  makeSubwayEntrance(5.12,z-25);
+ }
  // A cheerful boulevard: trees, little kiosks and bright billboards add recognizable city life.
  for(let z=-7;z>-105;z-=24){makeTree(-5.25,z,.88+(Math.random()*.18));makeTree(5.25,z-9,.9+(Math.random()*.16));}
  for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
