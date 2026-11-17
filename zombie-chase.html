@@ -115,6 +115,25 @@ function makeBuilding(x,z,side){
  sphere(g,.055,mat(0xe6c36e,.45),entryX+.23,.92,depth/2+.29);
  box(g,1.16,.16,.72,materials.concrete,entryX,.13,depth/2+.42);
  box(g,1.02,.13,.48,materials.white,entryX,.29,depth/2+.36);
+ // Warm vertical blade signs make the small shops readable from along the boulevard.
+ {
+  const labels=['CAFE','DELI','PIZZA','MARKET','BAKERY'];
+  const label=labels[Math.floor(Math.random()*labels.length)];
+  const signCanvas=document.createElement('canvas');signCanvas.width=128;signCanvas.height=256;
+  const sc=signCanvas.getContext('2d');
+  const signColors=['#174e63','#8d3f3a','#356b50','#6b4b83'];
+  const tone=signColors[Math.floor(Math.random()*signColors.length)];
+  sc.fillStyle='#d9c49c';sc.fillRect(5,5,118,246);sc.fillStyle=tone;sc.fillRect(12,12,104,232);
+  sc.strokeStyle='#f5dca8';sc.lineWidth=4;sc.strokeRect(18,18,92,220);
+  sc.fillStyle='#fff0cf';sc.textAlign='center';sc.font='900 23px system-ui';
+  const chars=label.split('');chars.forEach((ch,n)=>sc.fillText(ch,64,65+n*34));
+  sc.fillStyle='#f6cf83';sc.beginPath();sc.arc(64,215,8,0,Math.PI*2);sc.fill();
+  const tex=new THREE.CanvasTexture(signCanvas);tex.colorSpace=THREE.SRGBColorSpace;
+  const blade=new THREE.Mesh(new THREE.PlaneGeometry(.48,1.18),new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+  const sx=width*.43;blade.position.set(sx,2.72,depth/2+.42);g.add(blade);
+  box(g,.07,.08,.48,materials.dark,sx,3.38,depth/2+.2);
+  box(g,.07,.08,.48,materials.dark,sx,2.06,depth/2+.2);
+ }
  // Small projecting air-conditioner units and drain pipes add lived-in apartment detail.
  if(height>7){
   for(let yy=3.8;yy<height-1;yy+=3.5){
