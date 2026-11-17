@@ -474,11 +474,24 @@ h1{font-size:clamp(27px,7vw,36px)!important;letter-spacing:-.6px}
   .cell.matched { animation: none !important; opacity: .35; }
 }
 </style>
+
+<style id="daily-merge-home-card">
+.daily-merge-card{display:flex;align-items:center;gap:13px;margin:16px 0 20px;padding:14px;border:2px solid #fff;border-radius:20px;background:linear-gradient(125deg,#fff8b7,#ffd0e7 55%,#c9c0ff);color:#754477;text-decoration:none;box-shadow:0 6px 0 #a95d9e,0 11px 20px #57348a44}
+.daily-merge-icon{display:grid;place-items:center;flex:0 0 62px;width:62px;height:62px;border:2px solid #fff;border-radius:17px;background:linear-gradient(145deg,#fff,#ffe1a9);font-size:34px;box-shadow:0 4px 0 #d38ab0}
+.daily-merge-copy{min-width:0;flex:1}.daily-merge-copy strong{display:block;font-size:14px;font-weight:1000}.daily-merge-copy small{display:block;margin-top:4px;font-size:10px;line-height:1.4;color:#885d8b}
+.daily-merge-cta{flex:0 0 auto;padding:9px 10px;border:2px solid #fff;border-radius:12px;background:linear-gradient(#fff5a8,#ffc64d);color:#754477;font-size:10px;font-weight:1000;box-shadow:0 3px 0 #bc8742}
+</style>
+
 </head>
 <body>
 <section class="home-screen" id="homeScreen"><div class="home-shell">
 <div class="home-top"><div class="home-brand"><img class="home-brand-icon" src="assets/candy-match-3-icon.svg" alt="Candy Match 3"><span>CANDY MATCH <span style="color:#ffcf68">3</span></span></div><div class="home-wallet-chip"><span class="home-coin">🪙</span><div><small>MY GAME COINS</small><b id="homeCoins">0</b></div></div><button id="homeMusicToggle" class="home-music-toggle" type="button" aria-label="Turn music off">🎵 MUSIC ON</button><div class="account-user" id="accountUser"></div><button class="home-account-button" id="accountOpen">SIGN IN / SIGN UP</button></div>
 <div class="home-hero"><div class="home-hero-kicker">✨ A little fun. A lot of sweetness.</div><h2>Match candies.<br>Reach new levels.</h2><p>Swap, match and beat the target in this colorful candy puzzle.</p><button class="home-play" id="startGame">▶ &nbsp; PLAY NOW</button><div class="home-level">⭐ LEVEL <span id="homeLevel">1</span> <span>•</span> 🏆 BEST <span id="homeBest">0</span></div></div>
+<a class="daily-merge-card" id="dailyMergeCard" href="daily-merge.html">
+ <span class="daily-merge-icon" aria-hidden="true">🍉🍊</span>
+ <span class="daily-merge-copy"><strong>🎯 DAILY MERGE & COLLECT</strong><small>A fresh fruit puzzle every day. Merge, build your collection and claim a daily game-coin reward.</small></span>
+ <span class="daily-merge-cta">PLAY ▶</span>
+</a>
 <section class="home-feature" aria-label="Daily rewards">
 <div class="home-section-head"><h3>🎡 Lucky Wheel</h3><span id="wheelStatus">1 FREE SPIN TODAY</span></div>
 <div class="wheel-card">
