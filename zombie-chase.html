@@ -67,13 +67,38 @@ function makeBarrier(){const g=new THREE.Group();box(g,1.5,.82,.45,materials.ora
 function makeCoin(){const g=new THREE.Group();const tor=new THREE.Mesh(new THREE.TorusGeometry(.36,.11,10,24),materials.yellow);g.add(tor);const core=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.08,24),materials.yellow);core.rotation.x=Math.PI/2;g.add(core);return g;}
 function makeBuilding(x,z,side){
  const g=new THREE.Group(),width=3+Math.random()*3,height=5+Math.random()*12,depth=3+Math.random()*4;
- const colors=[0x344b5b,0x52606a,0x465565,0x655b57,0x3d5961];
+ const colors=[0x477a8a,0x6b718c,0x8b665f,0x477b69,0x806c91,0x52718e,0x9a7959];
  box(g,width,height,depth,mat(colors[Math.floor(Math.random()*colors.length)]),0,height/2,0);
  for(let y=1.2;y<height-.5;y+=1.35)for(let xx=-width/2+.55;xx<width/2-.3;xx+=.95){const winMat=Math.random()<.22?materials.windowWarm:materials.window;box(g,.48,.65,.035,winMat,xx,y,depth/2+.02);}
  // Rooftop details break up the repeated silhouettes and make the skyline feel lived-in.
  const roofBox=box(g,.8,.65,.8,materials.dark,width*.18,height+.32,0);roofBox.castShadow=true;
  if(Math.random()<.55){const sign=box(g,width*.55,.48,.12,mat([0x1b9aaa,0xe26b48,0x8b6bd6][Math.floor(Math.random()*3)],.5,.25),0,height*.68,depth/2+.09);sign.position.y=height*.68;}
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeTree(x,z,scale=1){
+ const g=new THREE.Group();
+ const bark=mat(0x79533a),leafA=mat(0x3e9b69),leafB=mat(0x62b978),leafC=mat(0x2f8059);
+ const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.13,.2,2.1,9),bark);trunk.position.y=1.05;trunk.castShadow=true;g.add(trunk);
+ for(const p of [[0,2.25,0,.95,leafA],[-.42,2.05,.08,.66,leafB],[.4,2.1,-.05,.7,leafC],[0,2.85,.02,.62,leafB]]){
+  const crown=new THREE.Mesh(new THREE.SphereGeometry(p[3],12,10),p[4]);crown.position.set(p[0],p[1],p[2]);crown.castShadow=true;g.add(crown);
+ }
+ g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeStreetStand(x,z,side){
+ const g=new THREE.Group(),base=mat(0x263c4b),accent=mat(side<0?0xff9b45:0x49c6b4),awning=mat(side<0?0xe95f55:0x398bd0);
+ box(g,1.65,1.35,1.05,base,0,.68,0);
+ box(g,1.78,.16,1.18,accent,0,1.42,0);
+ box(g,1.8,.28,.12,awning,0,1.17,.58);
+ for(let x of [-.55,.55])box(g,.12,.5,.08,materials.window,x,.65,.54);
+ const sign=new THREE.Mesh(new THREE.BoxGeometry(1.35,.3,.08),new THREE.MeshStandardMaterial({color:side<0?0xffd46b:0x8cf5e1,emissive:side<0?0xff8b35:0x19a99b,emissiveIntensity:.55}));
+ sign.position.set(0,1.85,.55);g.add(sign);
+ g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeBillboard(x,z,side){
+ const g=new THREE.Group(),frame=mat(0x263548),panelMat=new THREE.MeshStandardMaterial({color:side<0?0xff7b61:0x66d7ed,emissive:side<0?0xa92e40:0x146d8a,emissiveIntensity:.5});
+ box(g,.14,3.8,.14,frame,0,1.9,0);box(g,2.5,1.25,.18,frame,0,3.35,0);box(g,2.28,1.02,.06,panelMat,0,3.35,.12);
+ const stripe=box(g,1.55,.12,.04,materials.white,0,3.35,.17);
+ g.position.set(x,0,z);g.rotation.y=side<0?.12:-.12;scene.add(g);decor.push(g);return g;
 }
 function createWorld(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x9ac8df);scene.fog=new THREE.Fog(0x9ac8df,35,115);
@@ -96,8 +121,13 @@ function createWorld(){
  // Dashed lane guides make lane changes easier to read on small screens.
  const lanePaint=mat(0xe5d9a5,.55);for(const x of [-.95,.95])for(let z=7;z>-115;z-=7){const dash=box(scene,.055,.025,2.8,lanePaint,x,.095,z);roadSegments.push(dash);}
  // Repeating street lamps add depth and help frame the road.
- for(let z=-8;z>-105;z-=23){for(const x of [-4.4,4.4]){const lamp=new THREE.Group();box(lamp,.13,4.2,.13,materials.dark,0,2.1,0);box(lamp,.9,.12,.14,materials.dark,x<0?.35:-.35,4.12,0);const glow=new THREE.Mesh(new THREE.SphereGeometry(.2,12,10),new THREE.MeshStandardMaterial({color:0xffe4a1,emissive:0xffbd55,emissiveIntensity:1.8}));glow.position.set(x<0?.72:-.72,3.98,0);lamp.add(glow);lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);}}
+ for(let z=-8;z>-105;z-=23){for(const x of [-4.4,4.4]){const lamp=new THREE.Group();box(lamp,.13,4.2,.13,materials.dark,0,2.1,0);box(lamp,.9,.12,.14,materials.dark,x<0?.35:-.35,4.12,0);const glow=new THREE.Mesh(new THREE.SphereGeometry(.24,12,10),new THREE.MeshStandardMaterial({color:0xfff0c4,emissive:0xffbd55,emissiveIntensity:2.2}));glow.position.set(x<0?.72:-.72,3.98,0);lamp.add(glow);lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);}}
  for(let z=-12;z>-105;z-=17){makeBuilding(-8-Math.random()*3,z,-1);makeBuilding(8+Math.random()*3,z-7,1);}
+ // A cheerful boulevard: trees, little kiosks and bright billboards add recognizable city life.
+ for(let z=-7;z>-105;z-=24){makeTree(-5.25,z,.88+(Math.random()*.18));makeTree(5.25,z-9,.9+(Math.random()*.16));}
+ for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
+ for(let z=-39;z>-105;z-=58){makeBillboard(-6.8,z,-1);makeBillboard(6.8,z-18,1);}
+
  player=makePerson(false);player.position.set(0,0,2.3);scene.add(player);
  // Small backpack and bright shoe accents improve the runner silhouette at phone size.
  box(player,.42,.48,.2,materials.orange,0,1.12,-.25);
