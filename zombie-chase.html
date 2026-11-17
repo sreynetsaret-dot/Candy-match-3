@@ -255,34 +255,23 @@ function makeSubwayEntrance(x,z){
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeTree(x,z,scale=1){
- const g=new THREE.Group();
- const bark=mat(0x765039,.96),barkLight=mat(0x98704d,.95),leafDark=mat(0x28734b,.98),leafMid=mat(0x3f985b,.98),leafLight=mat(0x70b96a,.98),leafSun=mat(0x9acb72,.98);
- const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.12,.22,2.35,10),bark);trunk.position.y=1.17;trunk.castShadow=true;g.add(trunk);
- for(const side of [-1,1]){
-  const branch=new THREE.Mesh(new THREE.CylinderGeometry(.055,.095,1.05,7),barkLight);
-  branch.position.set(side*.32,2.05,.02);branch.rotation.z=side*-.55;branch.castShadow=true;g.add(branch);
- }
- const clusters=[
-  [0,2.75,0,.78,leafMid],[-.53,2.55,.04,.57,leafDark],[.52,2.57,-.04,.6,leafMid],
-  [-.28,3.12,.12,.56,leafLight],[.32,3.17,-.1,.58,leafLight],[0,3.55,.02,.48,leafSun],
-  [-.72,2.95,-.08,.37,leafMid],[.72,2.92,.08,.39,leafDark],[0,2.38,.28,.43,leafDark]
- ];
- for(const p of clusters){
-  const crown=new THREE.Mesh(new THREE.SphereGeometry(p[3],11,9),p[4]);
-  crown.position.set(p[0],p[1],p[2]);crown.scale.set(1.08,.88,.96);crown.castShadow=true;g.add(crown);
- }
- g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+  const g=new THREE.Group();
+  const bark=mat(0x68452f,.98),barkLight=mat(0x98704d,.96);
+  const leafDeep=mat(0x1f633e,.98),leafDark=mat(0x2e7c49,.98),leafMid=mat(0x469b55,.98),leafBright=mat(0x69b85d,.98),leafSun=mat(0x9acb68,.98);
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.105,.25,2.55,9),bark);trunk.position.y=1.27;trunk.castShadow=true;g.add(trunk);
+  for(let i=0;i<4;i++){const a=i*Math.PI*.5+.35,root=new THREE.Mesh(new THREE.CylinderGeometry(.035,.14,.72,6),bark);root.position.set(Math.cos(a)*.18,.28,Math.sin(a)*.18);root.rotation.z=Math.cos(a)*-.48;root.rotation.x=Math.sin(a)*.42;g.add(root);}
+  for(let i=0;i<5;i++){const a=i*Math.PI*2/5,branch=new THREE.Mesh(new THREE.CylinderGeometry(.035,.085,1.22,6),barkLight);branch.position.set(Math.cos(a)*.39,2.12,Math.sin(a)*.34);branch.rotation.z=-Math.cos(a)*.58;branch.rotation.x=Math.sin(a)*.5;g.add(branch);}
+  const clusters=[[0,2.75,0,.78,leafDark],[-.55,2.55,.02,.58,leafDeep],[.56,2.58,-.04,.61,leafMid],[-.3,3.18,.1,.61,leafBright],[.34,3.2,-.12,.62,leafBright],[0,3.68,.02,.52,leafSun],[-.82,2.98,-.1,.43,leafMid],[.82,2.98,.08,.45,leafDark],[0,2.4,.34,.47,leafDeep],[-.48,3.52,-.24,.38,leafMid],[.5,3.55,.22,.4,leafBright],[-.95,2.65,.22,.32,leafMid],[.96,2.68,-.2,.34,leafBright],[-.18,3.88,-.2,.3,leafSun],[.18,3.9,.2,.3,leafBright]];
+  for(const p of clusters){const crown=new THREE.Mesh(new THREE.SphereGeometry(p[3],10,8),p[4]);crown.position.set(p[0],p[1],p[2]);crown.scale.set(1.08,.86,.98);crown.castShadow=true;g.add(crown);}
+  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeGrassPatch(x,z,scale=1){
- const g=new THREE.Group(),soil=mat(0x6d8050,.98),grassA=mat(0x4d9b50,.98),grassB=mat(0x80b957,.98),grassC=mat(0xb1ce68,.98);
- const base=new THREE.Mesh(new THREE.BoxGeometry(1.5,.09,.82),soil);base.position.y=.015;g.add(base);
- for(let i=0;i<13;i++){
-  const angle=i*2.399,rad=.12+(i%4)*.13,h=.22+(i%5)*.075;
-  const blade=new THREE.Mesh(new THREE.ConeGeometry(.075,h,5),[grassA,grassB,grassC][i%3]);
-  blade.position.set(Math.cos(angle)*rad,h*.5+.06,Math.sin(angle)*rad*.52);
-  blade.rotation.z=Math.cos(angle)*-.28;blade.rotation.x=Math.sin(angle)*.22;g.add(blade);
- }
- g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+  const g=new THREE.Group(),soil=mat(0x75694b,.98),turf=mat(0x438d45,.98),bladeMats=[mat(0x318348,.98),mat(0x57a94c,.98),mat(0x8ac65b,.98),mat(0xb0cf69,.98)];
+  const bed=new THREE.Mesh(new THREE.BoxGeometry(1.72,.12,.96),soil);bed.position.y=.015;g.add(bed);
+  const lawn=new THREE.Mesh(new THREE.BoxGeometry(1.61,.075,.86),turf);lawn.position.y=.09;g.add(lawn);
+  for(let i=0;i<26;i++){const angle=i*2.399,rad=.1+(i%6)*.105,h=.2+(i%5)*.075,blade=new THREE.Mesh(new THREE.ConeGeometry(.052+(i%3)*.012,h,4),bladeMats[i%4]);blade.position.set(Math.cos(angle)*rad,.13+h*.48,Math.sin(angle)*rad*.48);blade.rotation.z=Math.cos(angle)*-.32;blade.rotation.x=Math.sin(angle)*.24;g.add(blade);}
+  for(let i=0;i<3;i++){const flower=new THREE.Group(),stem=new THREE.Mesh(new THREE.CylinderGeometry(.012,.02,.3,5),turf);stem.position.y=.29;flower.add(stem);const center=new THREE.Mesh(new THREE.SphereGeometry(.055,7,6),mat(0xf5bd42));center.position.y=.47;flower.add(center);const petalMat=mat(i===1?0xffe6a3:0xfff4df);for(let p=0;p<5;p++){const a=p*Math.PI*2/5,petal=new THREE.Mesh(new THREE.SphereGeometry(.065,7,5),petalMat);petal.position.set(Math.cos(a)*.085,.47+Math.sin(a)*.018,Math.sin(a)*.085);petal.scale.set(1,.65,1);flower.add(petal);}flower.position.set(-.48+i*.48,.08,(i%2)*.23-.1);g.add(flower);}
+  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeStreetStand(x,z,side){
  const g=new THREE.Group(),base=mat(0x263c4b),accent=mat(side<0?0xff9b45:0x49c6b4),awning=mat(side<0?0xe95f55:0x398bd0);
