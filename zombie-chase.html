@@ -28,7 +28,8 @@ let scene,camera,renderer,clock,worldReady=false;
 let running=false,paused=false,gameOver=false;
 let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,coinStreak=0,coinStreakTimer=0,best=(()=>{try{return Number(localStorage.getItem('zcBest')||0)}catch{return 0}})(),speed=17,spawnTimer=0;
 let player,zombie,world=[],obstacles=[],coins=[],roadSegments=[],decor=[];
-let soundOn=true,audioCtx=null,lastMilestone=0,lastObstacleLane=null,lastObstacleKind=null;\nlet comboFlashTimer=0;
+let soundOn=true,audioCtx=null,lastMilestone=0,lastObstacleLane=null,lastObstacleKind=null;
+let comboFlashTimer=0;
 $('best').textContent=best;
 
 function mat(color,roughness=.78,metalness=0){return new THREE.MeshStandardMaterial({color,roughness,metalness});}
