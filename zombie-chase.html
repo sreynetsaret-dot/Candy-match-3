@@ -481,7 +481,27 @@ function createWorld(){
  // Dashed lane guides make lane changes easier to read on small screens.
  const lanePaint=mat(0xe5d9a5,.55);for(const x of [-.95,.95])for(let z=7;z>-115;z-=7){const dash=box(scene,.055,.025,2.8,lanePaint,x,.095,z);roadSegments.push(dash);}
  // Repeating street lamps add depth and help frame the road.
- for(let z=-8;z>-105;z-=23){for(const x of [-4.4,4.4]){const lamp=new THREE.Group();box(lamp,.13,4.2,.13,materials.dark,0,2.1,0);box(lamp,.9,.12,.14,materials.dark,x<0?.35:-.35,4.12,0);const glow=new THREE.Mesh(new THREE.SphereGeometry(.24,12,10),new THREE.MeshStandardMaterial({color:0xfff0c4,emissive:0xffbd55,emissiveIntensity:2.2}));glow.position.set(x<0?.72:-.72,3.98,0);lamp.add(glow);lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);}}
+ for(let z=-8;z>-105;z-=23){for(const x of [-4.4,4.4]){
+  const lamp=new THREE.Group();
+  box(lamp,.13,4.2,.13,materials.dark,0,2.1,0);
+  box(lamp,.9,.12,.14,materials.dark,x<0?.35:-.35,4.12,0);
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(.24,12,10),new THREE.MeshStandardMaterial({color:0xfff0c4,emissive:0xffbd55,emissiveIntensity:2.2}));
+  glow.position.set(x<0?.72:-.72,3.98,0);lamp.add(glow);
+  // Small illustrated NYC district banner adds a polished, lived-in boulevard detail.
+  const bannerCanvas=document.createElement('canvas');bannerCanvas.width=256;bannerCanvas.height=384;
+  const bc=bannerCanvas.getContext('2d');
+  const bg=bc.createLinearGradient(0,0,256,384);bg.addColorStop(0,x<0?'#174f76':'#8d3442');bg.addColorStop(1,x<0?'#247f83':'#d17b48');
+  bc.fillStyle=bg;bc.fillRect(0,0,256,384);
+  bc.strokeStyle='#f4d89a';bc.lineWidth=9;bc.strokeRect(12,12,232,360);
+  bc.fillStyle='#fff3d7';bc.textAlign='center';bc.font='900 86px system-ui';bc.fillText('NYC',128,168);
+  bc.font='700 27px system-ui';bc.fillText('NEW YORK',128,220);bc.fillText('CITY',128,258);
+  bc.fillStyle='#f4d89a';bc.beginPath();bc.arc(128,310,13,0,Math.PI*2);bc.fill();
+  const bannerTex=new THREE.CanvasTexture(bannerCanvas);
+  const banner=new THREE.Mesh(new THREE.PlaneGeometry(.68,1.02),new THREE.MeshBasicMaterial({map:bannerTex,side:THREE.DoubleSide}));
+  const bx=x<0?.25:-.25;banner.position.set(bx,2.9,.1);lamp.add(banner);
+  box(lamp,.78,.055,.07,materials.dark,bx,3.43,.06);
+  lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);
+}}
  for(let z=-12;z>-105;z-=17){makeBuilding(-8-Math.random()*3,z,-1);makeBuilding(8+Math.random()*3,z-7,1);}
  // A second, taller row of varied Manhattan blocks fills empty skyline gaps and adds depth behind the street.
  for(let i=0;i<6;i++){
