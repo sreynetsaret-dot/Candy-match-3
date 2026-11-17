@@ -340,8 +340,26 @@ function makeNYCBrownstoneSteps(x,z,side){
  box(g,1.45,.16,.18,brick,0,.9,-.12);
  g.position.set(x,0,z);g.rotation.y=side<0?0:Math.PI;scene.add(g);decor.push(g);return g;
 }
+function makeSkyBackdrop(){
+  const skyCanvas=document.createElement('canvas');skyCanvas.width=4;skyCanvas.height=512;
+  const skyCtx=skyCanvas.getContext('2d');
+  const skyGradient=skyCtx.createLinearGradient(0,0,0,512);
+  skyGradient.addColorStop(0,'#4f86b5');skyGradient.addColorStop(.34,'#83b6d0');skyGradient.addColorStop(.68,'#c4dce0');skyGradient.addColorStop(.88,'#f4d3b2');skyGradient.addColorStop(1,'#f6b98f');
+  skyCtx.fillStyle=skyGradient;skyCtx.fillRect(0,0,4,512);
+  const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
+  const sky=new THREE.Mesh(new THREE.PlaneGeometry(260,142),new THREE.MeshBasicMaterial({map:skyTexture,depthWrite:false,fog:false}));
+  sky.position.set(0,37,-146);sky.renderOrder=-10;scene.add(sky);
+  const glowCanvas=document.createElement('canvas');glowCanvas.width=256;glowCanvas.height=256;
+  const glowCtx=glowCanvas.getContext('2d'),glow=glowCtx.createRadialGradient(128,128,8,128,128,126);
+  glow.addColorStop(0,'rgba(255,238,190,.72)');glow.addColorStop(.28,'rgba(255,210,153,.34)');glow.addColorStop(1,'rgba(255,190,140,0)');
+  glowCtx.fillStyle=glow;glowCtx.fillRect(0,0,256,256);
+  const glowTexture=new THREE.CanvasTexture(glowCanvas);glowTexture.colorSpace=THREE.SRGBColorSpace;
+  const halo=new THREE.Mesh(new THREE.PlaneGeometry(34,34),new THREE.MeshBasicMaterial({map:glowTexture,transparent:true,depthWrite:false,fog:false}));
+  halo.position.set(-25,23,-140);halo.renderOrder=-9;scene.add(halo);
+}
 function createWorld(){
- scene=new THREE.Scene();scene.background=new THREE.Color(0xb8d2dc);scene.fog=new THREE.Fog(0xb8d2dc,32,108);
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x9fc6d8);scene.fog=new THREE.Fog(0xb8d2dc,32,108);
+ makeSkyBackdrop();
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.15:1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
@@ -354,7 +372,7 @@ function createWorld(){
  // Warm sunrise and layered distant hills create a more cinematic city horizon.
  const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(7,48),new THREE.MeshBasicMaterial({color:0xffd58c}));sunDisc.position.set(-25,22,-105);scene.add(sunDisc);
  for(let i=0;i<5;i++){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),new THREE.MeshStandardMaterial({color:[0x769b91,0x64877f,0x8aa89a][i%3],roughness:1}));hill.scale.set(24+i*5,5+i%2*2,3);hill.position.set(-38+i*19,1.5,-116-i*2);scene.add(hill);}
- for(let i=0;i<9;i++){const cloud=new THREE.Group();const cloudMat=new THREE.MeshStandardMaterial({color:0xf4fbff,roughness:1});for(let j=0;j<4;j++){const puff=new THREE.Mesh(new THREE.SphereGeometry(1.1+(j%2)*.25,14,10),cloudMat);puff.position.set(j*1.35,Math.sin(j)*.25,0);cloud.add(puff);}cloud.position.set(-28+i*7,18+(i%3)*2,-72-(i%4)*12);cloud.scale.setScalar(.8+(i%3)*.12);scene.add(cloud);decor.push(cloud);}
+ for(let i=0;i<11;i++){const cloud=new THREE.Group();const cloudMat=new THREE.MeshBasicMaterial({color:i%3===0?0xfff7ed:0xf7fbff,transparent:true,opacity:.86,depthWrite:false});const count=5+(i%3);for(let j=0;j<count;j++){const puff=new THREE.Mesh(new THREE.SphereGeometry(1.05+(j%3)*.28,12,8),cloudMat);puff.position.set(j*1.12,Math.sin(j*.9)*.28+(j%2)*.12,Math.cos(j*.7)*.18);puff.scale.y=.58+(j%2)*.12;cloud.add(puff);}cloud.position.set(-34+i*6.8,17+(i%4)*2.1,-68-(i%5)*13);cloud.scale.setScalar(.82+(i%3)*.15);scene.add(cloud);decor.push(cloud);}
  // Three-lane road, rails and repeating sleepers.
  for(let i=0;i<3;i++){const railL=-1.9+i*1.9;const rail1=box(scene,.12,.12,130,materials.rail,railL-.62,.05,-52);const rail2=box(scene,.12,.12,130,materials.rail,railL+.62,.05,-52);roadSegments.push(rail1,rail2);}
  for(let z=8;z>-115;z-=2.1){const s=box(scene,6.1,.12,.34,materials.sleeper,0,.02,z);roadSegments.push(s);}
