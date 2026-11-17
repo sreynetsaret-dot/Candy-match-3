@@ -123,7 +123,8 @@ function update(dt){
      if(o.kind==='train'){o.hit=true;finishGame();}
    }
  }
- const approaching=obstacles.filter(o=>o.mesh.position.z>-35&&o.mesh.position.z<-10).sort((a,b)=>b.mesh.position.z-a.mesh.position.z)[0];\n if(approaching){const laneName=approaching.lane===-1?'LEFT':approaching.lane===0?'MIDDLE':'RIGHT';$('warning').textContent=`⚠ ${approaching.kind==='train'?'TRAIN':'BARRIER'} AHEAD · ${laneName} LANE`;$('warning').classList.remove('hidden');}else{$('warning').classList.add('hidden');}\n obstacles=obstacles.filter(o=>{if(o.mesh.position.z>13){scene.remove(o.mesh);return false;}return true;});
+ const approaching=obstacles.filter(o=>o.mesh.position.z>-35&&o.mesh.position.z<-10).sort((a,b)=>b.mesh.position.z-a.mesh.position.z)[0];
+ if(approaching){const laneName=approaching.lane===-1?'LEFT':approaching.lane===0?'MIDDLE':'RIGHT';$('warning').textContent=`⚠ ${approaching.kind==='train'?'TRAIN':'BARRIER'} AHEAD · ${laneName} LANE`;$('warning').classList.remove('hidden');}else{$('warning').classList.add('hidden');}\n obstacles=obstacles.filter(o=>{if(o.mesh.position.z>13){scene.remove(o.mesh);return false;}return true;});
  for(const c of coins){c.mesh.position.z+=step;c.mesh.rotation.y+=dt*4;c.mesh.rotation.x=Math.sin(distance*.04)*.18;if(!c.hit&&c.mesh.position.z>1.0&&c.mesh.position.z<3.6&&c.lane===lane){c.hit=true;coinCount++;$('coins').textContent=coinCount;buzz(5);scene.remove(c.mesh);soundBeep(980,.055);}}
  coins=coins.filter(c=>{if(c.hit||c.mesh.position.z>12){scene.remove(c.mesh);return false;}return true;});
  if(jumpV!==0||playerY>0){playerY+=jumpV*dt;jumpV-=21*dt;if(playerY<0){playerY=0;jumpV=0;}}
