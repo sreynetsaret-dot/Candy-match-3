@@ -70,6 +70,17 @@ function makeBuilding(x,z,side){
  const colors=[0x477a8a,0x6b718c,0x8b665f,0x477b69,0x806c91,0x52718e,0x9a7959];
  box(g,width,height,depth,mat(colors[Math.floor(Math.random()*colors.length)]),0,height/2,0);
  for(let y=1.2;y<height-.5;y+=1.35)for(let xx=-width/2+.55;xx<width/2-.3;xx+=.95){const winMat=Math.random()<.22?materials.windowWarm:materials.window;box(g,.48,.65,.035,winMat,xx,y,depth/2+.02);}
+ // Selected windows get slim balcony rails and projecting ledges for a richer skyline silhouette.
+ if(Math.random()<.72){
+  const balconyY=2.05+Math.floor(Math.random()*Math.max(1,Math.floor(height/3.2)))*2.7;
+  for(let xx=-width/2+.7;xx<width/2-.4;xx+=1.9){
+   box(g,.86,.09,.38,materials.concrete,xx,balconyY-.34,depth/2+.2);
+   box(g,.86,.055,.045,materials.white,xx,balconyY-.02,depth/2+.39);
+   for(const bx of [xx-.39,xx,xx+.39])box(g,.035,.31,.035,materials.white,bx,balconyY-.18,depth/2+.39);
+  }
+ }
+ // A narrow contrasting facade band breaks up tall flat walls.
+ if(height>10)box(g,width+.025,.12,depth+.025,materials.concrete,0,height*.52,0);
  // Rooftop details break up the repeated silhouettes and make the skyline feel lived-in.
  const roofBox=box(g,.8,.65,.8,materials.dark,width*.18,height+.32,0);roofBox.castShadow=true;
  if(Math.random()<.55){const sign=box(g,width*.55,.48,.12,mat([0x1b9aaa,0xe26b48,0x8b6bd6][Math.floor(Math.random()*3)],.5,.25),0,height*.68,depth/2+.09);sign.position.y=height*.68;}
@@ -123,6 +134,31 @@ function createWorld(){
  // Repeating street lamps add depth and help frame the road.
  for(let z=-8;z>-105;z-=23){for(const x of [-4.4,4.4]){const lamp=new THREE.Group();box(lamp,.13,4.2,.13,materials.dark,0,2.1,0);box(lamp,.9,.12,.14,materials.dark,x<0?.35:-.35,4.12,0);const glow=new THREE.Mesh(new THREE.SphereGeometry(.24,12,10),new THREE.MeshStandardMaterial({color:0xfff0c4,emissive:0xffbd55,emissiveIntensity:2.2}));glow.position.set(x<0?.72:-.72,3.98,0);lamp.add(glow);lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);}}
  for(let z=-12;z>-105;z-=17){makeBuilding(-8-Math.random()*3,z,-1);makeBuilding(8+Math.random()*3,z-7,1);}
+ // Finished pedestrian sidewalks, patterned paving and planted borders make the boulevard feel like a real city.
+ const sidewalkMat=mat(0xb8b4a5,.95),paverA=mat(0xd5cbb7,.95),paverB=mat(0x9faaa6,.95),planterMat=mat(0x596d62);
+ for(const side of [-1,1]){
+  const sidewalk=new THREE.Mesh(new THREE.PlaneGeometry(2.45,145),sidewalkMat);
+  sidewalk.rotation.x=-Math.PI/2;sidewalk.position.set(side*5.05,-.105,-52);sidewalk.receiveShadow=true;scene.add(sidewalk);
+  const edge=box(scene,.12,.22,145,curbMat,side*3.82,.02,-52);roadSegments.push(edge);
+  for(let z=5;z>-115;z-=3.8){
+   const tile=box(scene,2.25,.035,.075,((Math.round(Math.abs(z)/3.8)%2)===0?paverA:paverB),side*5.05,-.075,z);
+   roadSegments.push(tile);
+  }
+  for(let z=-15;z>-108;z-=31){
+   const planter=new THREE.Group();
+   box(planter,1.25,.38,.72,planterMat,0,.19,0);
+   const soil=mat(0x493d30);box(planter,1.12,.07,.6,soil,0,.4,0);
+   for(let i=0;i<5;i++){
+    const flower=new THREE.Group();
+    const stem=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.42,6),mat(0x3d965b));stem.position.y=.61;flower.add(stem);
+    const bloom=new THREE.Mesh(new THREE.SphereGeometry(.15,9,7),mat([0xffcf58,0xf17d91,0xfff0d0,0x9e8bea][i%4]));bloom.position.set((i-2)*.19,.86,(i%2)*.16-.08);flower.add(bloom);
+    planter.add(flower);
+   }
+   planter.position.set(side*5.05,0,z);scene.add(planter);decor.push(planter);
+  }
+ }
+ // Short zebra-crossing marks at the distant boulevard entrance add familiar street detail.
+ for(let i=0;i<7;i++){const stripe=box(scene,.62,.025,.16,materials.white,-2.7+i*.9,.105,-105);roadSegments.push(stripe);}
  // A cheerful boulevard: trees, little kiosks and bright billboards add recognizable city life.
  for(let z=-7;z>-105;z-=24){makeTree(-5.25,z,.88+(Math.random()*.18));makeTree(5.25,z-9,.9+(Math.random()*.16));}
  for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
