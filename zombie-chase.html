@@ -67,9 +67,20 @@ function makeBarrier(){const g=new THREE.Group();box(g,1.5,.82,.45,materials.ora
 function makeCoin(){const g=new THREE.Group();const tor=new THREE.Mesh(new THREE.TorusGeometry(.36,.11,10,24),materials.yellow);g.add(tor);const core=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.08,24),materials.yellow);core.rotation.x=Math.PI/2;g.add(core);return g;}
 function makeBuilding(x,z,side){
  const g=new THREE.Group(),width=3+Math.random()*3,height=5+Math.random()*12,depth=3+Math.random()*4;
- const colors=[0x477a8a,0x6b718c,0x8b665f,0x477b69,0x806c91,0x52718e,0x9a7959];
- box(g,width,height,depth,mat(colors[Math.floor(Math.random()*colors.length)]),0,height/2,0);
- for(let y=1.2;y<height-.5;y+=1.35)for(let xx=-width/2+.55;xx<width/2-.3;xx+=.95){const winMat=Math.random()<.22?materials.windowWarm:materials.window;box(g,.48,.65,.035,winMat,xx,y,depth/2+.02);}
+ const colors=[0x547b83,0x687b91,0x92766d,0x557c70,0x7d7890,0x5c7890,0x9a866c,0x738b8b];
+ const facade=mat(colors[Math.floor(Math.random()*colors.length)],.88);
+ box(g,width,height,depth,facade,0,height/2,0);
+ // Refined stone framing, roof cornice and restrained facade bands give each block a finished architectural silhouette.
+ const trim=mat(0xd2c9b8,.82),edge=mat(0x344a55,.9);
+ for(const px of [-width/2+.12,width/2-.12])box(g,.16,height*.94,.16,trim,px,height/2,depth/2+.055);
+ box(g,width+.22,.2,depth+.18,trim,0,height-.12,0);
+ box(g,width+.12,.13,depth+.12,edge,0,height-.34,0);
+ if(height>8){for(const yy of [height*.34,height*.68])box(g,width+.035,.075,.1,trim,0,yy,depth/2+.06);}
+ for(let y=1.2;y<height-.5;y+=1.35)for(let xx=-width/2+.55;xx<width/2-.3;xx+=.95){
+  const winMat=Math.random()<.2?materials.windowWarm:materials.window;
+  box(g,.48,.65,.035,winMat,xx,y,depth/2+.02);
+  if(Math.random()<.62)box(g,.56,.07,.075,trim,xx,y-.39,depth/2+.055);
+ }
  // Selected windows get slim balcony rails and projecting ledges for a richer skyline silhouette.
  if(Math.random()<.72){
   const balconyY=2.05+Math.floor(Math.random()*Math.max(1,Math.floor(height/3.2)))*2.7;
@@ -318,16 +329,16 @@ function makeNYCBrownstoneSteps(x,z,side){
  g.position.set(x,0,z);g.rotation.y=side<0?0:Math.PI;scene.add(g);decor.push(g);return g;
 }
 function createWorld(){
- scene=new THREE.Scene();scene.background=new THREE.Color(0x9ac8df);scene.fog=new THREE.Fog(0x9ac8df,35,115);
+ scene=new THREE.Scene();scene.background=new THREE.Color(0xb8d2dc);scene.fog=new THREE.Fog(0xb8d2dc,32,108);
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.25:1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
- const hemi=new THREE.HemisphereLight(0xe4f5ff,0x53606b,2.0);scene.add(hemi);
- const sun=new THREE.DirectionalLight(0xfff0d7,2.3);sun.position.set(-8,15,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x526b5a));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.15:1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+ const hemi=new THREE.HemisphereLight(0xeaf6f7,0x586b70,2.05);scene.add(hemi);
+ const sun=new THREE.DirectionalLight(0xfff5e8,2.05);sun.position.set(-8,15,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x657d73,.98));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
  // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
  const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
- const curbMat=mat(0xd6c9a5,.8);for(const x of [-3.68,3.68]){const curb=box(scene,.18,.24,145,curbMat,x,.03,-52);curb.receiveShadow=true;}
+ const curbMat=mat(0xc9c8ba,.86);for(const x of [-3.68,3.68]){const curb=box(scene,.18,.24,145,curbMat,x,.03,-52);curb.receiveShadow=true;}
  // Warm sunrise and layered distant hills create a more cinematic city horizon.
  const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(7,48),new THREE.MeshBasicMaterial({color:0xffd58c}));sunDisc.position.set(-25,22,-105);scene.add(sunDisc);
  for(let i=0;i<5;i++){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),new THREE.MeshStandardMaterial({color:[0x769b91,0x64877f,0x8aa89a][i%3],roughness:1}));hill.scale.set(24+i*5,5+i%2*2,3);hill.position.set(-38+i*19,1.5,-116-i*2);scene.add(hill);}
