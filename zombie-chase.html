@@ -129,6 +129,20 @@ function makeBuilding(x,z,side){
  // Rooftop details break up the repeated silhouettes and make the skyline feel lived-in.
  const roofBox=box(g,.8,.65,.8,materials.dark,width*.18,height+.32,0);roofBox.castShadow=true;
  if(Math.random()<.55){const sign=box(g,width*.55,.48,.12,mat([0x1b9aaa,0xe26b48,0x8b6bd6][Math.floor(Math.random()*3)],.5,.25),0,height*.68,depth/2+.09);sign.position.y=height*.68;}
+ // Brick pilasters, stone cornices and stoops create varied Brooklyn/Manhattan street fronts.
+ if(Math.random()<.58){
+  const brick=mat(0x9a6250,.92),stoneTrim=mat(0xd0c2a8,.9);
+  for(const px of [-width*.43,width*.43])box(g,.16,height*.82,.13,brick,px,height*.48,depth/2+.075);
+  box(g,width+.18,.22,.22,stoneTrim,0,height-.18,depth/2+.08);
+  for(const wy of [2.15,3.55])if(wy<height-1){
+   for(const wx of [-width*.25,0,width*.25]){
+    box(g,.62,.09,.16,stoneTrim,wx,wy-.48,depth/2+.13);
+    box(g,.07,.88,.12,stoneTrim,wx-.34,wy,depth/2+.12);
+    box(g,.07,.88,.12,stoneTrim,wx+.34,wy,depth/2+.12);
+    box(g,.78,.1,.14,stoneTrim,wx,wy+.46,depth/2+.12);
+   }
+  }
+ }
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeNYCTower(x,z,style=0){
@@ -192,6 +206,17 @@ function makeBillboard(x,z,side){
  g.position.set(x,0,z);g.rotation.y=side<0?.12:-.12;scene.add(g);decor.push(g);return g;
 }
 
+function makeBusShelter(x,z,side){
+ const g=new THREE.Group(),metal=mat(0x344b59,.62,.35),glass=new THREE.MeshStandardMaterial({color:0x9bd8e6,transparent:true,opacity:.32,roughness:.18}),roof=mat(0x263e50,.55,.2),seat=mat(0x247b78,.7);
+ for(const px of [-.92,.92])for(const pz of [-.48,.48])box(g,.075,2.05,.075,metal,px,1.03,pz);
+ box(g,2.02,.12,1.12,roof,0,2.08,0);
+ box(g,1.82,1.42,.035,glass,0,1.12,-.49);
+ box(g,1.82,1.42,.035,glass,0,1.12,.49);
+ box(g,1.18,.12,.38,seat,0,.58,0);
+ box(g,.72,.42,.08,mat(0x16735d,.45,.2),-.53,1.58,.54);
+ box(g,.52,.055,.025,materials.white,-.53,1.58,.59);
+ g.position.set(x,0,z);g.rotation.y=side<0?.035:-.035;scene.add(g);decor.push(g);return g;
+}
 function makeNYCBridge(z){
  const g=new THREE.Group(),steel=mat(0x526b7d,.62),cableMat=mat(0x263d50,.5),deckMat=mat(0x8b9295,.85);
  // Brooklyn Bridge-inspired landmark kept beyond the playable lanes.
@@ -322,6 +347,8 @@ function createWorld(){
   makeNYCTaxi(-5.12,z,-1);
   makeSubwayEntrance(5.12,z-25);
  }
+ // NYC bus shelters and curbside street furniture add scale and everyday city life.
+ for(const z of [-27,-83]){makeBusShelter(-5.35,z,-1);makeBusShelter(5.35,z-15,1);}
  // A cheerful boulevard: trees, little kiosks and bright billboards add recognizable city life.
  for(let z=-7;z>-105;z-=24){makeTree(-5.25,z,.88+(Math.random()*.18));makeTree(5.25,z-9,.9+(Math.random()*.16));}
  for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
