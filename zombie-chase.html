@@ -291,6 +291,32 @@ function makeLEDPanel(x,z,side,label,color){
  g.position.set(x,0,z);g.rotation.y=side<0?.1:-.1;scene.add(g);decor.push(g);return g;
 }
 
+function makeNYCStreetFurniture(x,z,side){
+ const g=new THREE.Group(),iron=mat(0x34444b,.72,.42),blue=mat(0x245c87,.62,.18),steel=mat(0x9ba7a9,.48,.65),green=mat(0x286b55,.8);
+ // NYC-style litter bin with a domed lid and front opening.
+ const bin=new THREE.Group();
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(.28,.32,.82,12),green);body.position.y=.48;bin.add(body);
+ const lid=new THREE.Mesh(new THREE.CylinderGeometry(.33,.28,.12,12),iron);lid.position.y=.94;bin.add(lid);
+ box(bin,.34,.2,.035,iron,0,.56,.29);
+ bin.position.set(-.72,0,0);g.add(bin);
+ // Parking meter on a slim post.
+ box(g,.055,1.12,.055,steel,.55,.56,0);
+ const head=new THREE.Group();box(head,.22,.3,.13,blue,0,0,0);box(head,.13,.07,.025,materials.white,0,.02,.075);head.position.set(.55,1.18,0);g.add(head);
+ // Short protective bollards and a U-shaped bicycle rack.
+ for(const bx of [-.15,1.12]){const post=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.72,10),iron);post.position.set(bx,.36,.58);g.add(post);}
+ for(const zz of [-.48,-.1,.28]){const rail=box(g,.055,.72,.055,steel,.32,.36,zz);rail.rotation.z=Math.PI/2;}
+ g.position.set(x,0,z);g.rotation.y=side<0?.03:-.03;scene.add(g);decor.push(g);return g;
+}
+function makeNYCBrownstoneSteps(x,z,side){
+ const g=new THREE.Group(),stone=mat(0xb9ad98,.95),brick=mat(0x87594c,.92),rail=mat(0x303b40,.72,.35);
+ for(let i=0;i<4;i++)box(g,1.2,.18,.34,stone,0,.09+i*.18,.55-i*.34);
+ for(const sx of [-.62,.62]){
+  box(g,.07,1.05,.07,rail,sx,.62,-.05);
+  for(let i=0;i<4;i++)box(g,.045,.045,.045,rail,sx,.25+i*.2,.36-i*.28);
+ }
+ box(g,1.45,.16,.18,brick,0,.9,-.12);
+ g.position.set(x,0,z);g.rotation.y=side<0?0:Math.PI;scene.add(g);decor.push(g);return g;
+}
 function createWorld(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x9ac8df);scene.fog=new THREE.Fog(0x9ac8df,35,115);
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
@@ -362,6 +388,12 @@ function createWorld(){
  }
  makeLEDPanel(-7.05,-48,-1,'BROADWAY',0xff477d);
  makeLEDPanel(7.05,-75,1,'TIMES SQ',0x28c7e8);
+ // More authentic curbside details: litter bins, parking meters, bike racks and stoops.
+ for(let z=-18;z>-110;z-=29){
+  makeNYCStreetFurniture(-5.85,z,-1);
+  makeNYCStreetFurniture(5.85,z-12,1);
+  makeNYCBrownstoneSteps(-6.05,z-17,-1);
+ }
  // Everyday sidewalk life: benches, blue postal boxes and extra planted corners.
  for(let z=-34;z>-104;z-=35){
   makeBench(-5.1,z,-1);
