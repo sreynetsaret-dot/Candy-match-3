@@ -401,6 +401,31 @@ function makeLEDPanel(x,z,side,label,color){
  g.position.set(x,0,z);g.rotation.y=side<0?.1:-.1;scene.add(g);decor.push(g);return g;
 }
 
+function makeSidewalkCafe(x,z,side){
+ const g=new THREE.Group(),metal=mat(0x34434a,.68,.42),wood=mat(0x956c4d,.86),cream=mat(0xf1dfbd,.92),green=mat(0x397653,.9);
+ // Compact sidewalk cafe table and two chairs, kept entirely on the pedestrian paving.
+ const top=new THREE.Mesh(new THREE.CylinderGeometry(.48,.48,.09,16),wood);top.position.y=.88;g.add(top);
+ const rim=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.055,16),metal);rim.position.y=.82;g.add(rim);
+ const stem=new THREE.Mesh(new THREE.CylinderGeometry(.075,.11,.76,10),metal);stem.position.y=.43;g.add(stem);
+ const foot=new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,.07,12),metal);foot.position.y=.06;g.add(foot);
+ for(const dz of [-.82,.82]){
+  const chair=new THREE.Group();
+  box(chair,.62,.09,.58,green,0,.48,0);
+  box(chair,.62,.62,.09,green,0,.79,-.25);
+  for(const cx of [-.24,.24])for(const cz of [-.2,.2])box(chair,.055,.48,.055,metal,cx,.24,cz);
+  chair.position.z=dz;g.add(chair);
+ }
+ // Small striped cafe umbrella adds a recognizable street-life accent without tall geometry.
+ const pole=new THREE.Mesh(new THREE.CylinderGeometry(.035,.045,1.55,8),metal);pole.position.set(0,1.62,0);g.add(pole);
+ const canopy=new THREE.Mesh(new THREE.ConeGeometry(1.02,.48,12),cream);canopy.position.set(0,2.52,0);canopy.rotation.y=.12;g.add(canopy);
+ for(let i=0;i<6;i++){
+  const a=i*Math.PI/3,strip=new THREE.Mesh(new THREE.BoxGeometry(.035,.34,.88),mat(i%2?0xb85e55:0xf1dfbd,.9));
+  strip.position.set(Math.cos(a)*.48,2.49,Math.sin(a)*.48);strip.rotation.y=-a;g.add(strip);
+ }
+ const pot=new THREE.Mesh(new THREE.CylinderGeometry(.2,.15,.32,10),mat(0xb66d4b,.95));pot.position.set(.82,.16,-.48);g.add(pot);
+ const plant=new THREE.Mesh(new THREE.SphereGeometry(.24,9,7),green);plant.position.set(.82,.43,-.48);g.add(plant);
+ g.position.set(x,0,z);g.rotation.y=side<0?0:Math.PI;scene.add(g);decor.push(g);return g;
+}
 function makeNYCStreetFurniture(x,z,side){
  const g=new THREE.Group(),iron=mat(0x34444b,.72,.42),blue=mat(0x245c87,.62,.18),steel=mat(0x9ba7a9,.48,.65),green=mat(0x286b55,.8);
  // NYC-style litter bin with a domed lid and front opening.
@@ -566,6 +591,9 @@ function createWorld(){
   makeNYCStreetFurniture(5.85,z-12,1);
   makeNYCBrownstoneSteps(-6.05,z-17,-1);
  }
+ // A few compact sidewalk cafe corners add human-scale detail to quieter blocks.
+ makeSidewalkCafe(-5.05,-58,-1);
+ makeSidewalkCafe(5.05,-74,1);
  // Everyday sidewalk life: benches, blue postal boxes and extra planted corners.
  for(let z=-34;z>-104;z-=35){
   makeBench(-5.1,z,-1);
