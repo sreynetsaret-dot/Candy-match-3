@@ -23,7 +23,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.m
 
 const $=id=>document.getElementById(id);
 const canvas=$('game');
-let scene,camera,renderer,clock;
+let scene,camera,renderer,clock,worldReady=false;
 let running=false,paused=false,gameOver=false;
 let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,best=Number(localStorage.getItem('zcBest')||0),speed=17,spawnTimer=0;
 let player,zombie,world=[],obstacles=[],coins=[],roadSegments=[],decor=[];
@@ -99,7 +99,7 @@ function spawnWave(){
  else {addObstacle(roll<.76?'barrier':'train',n,-74);const safe=[-1,0,1].filter(v=>v!==n);addCoinLine(safe[Math.floor(Math.random()*safe.length)],-67,4);}
 }
 function soundBeep(freq=660,duration=.07){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),gain=audioCtx.createGain();o.frequency.value=freq;o.type='sine';gain.gain.setValueAtTime(.055,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(gain);gain.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration);}catch(e){}}
-function startGame(){obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,0,0);distance=0;coinCount=0;speed=17;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
+function startGame(){if(!worldReady)return;if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,0,0);distance=0;coinCount=0;speed=17;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
 function finishGame(){if(gameOver)return;running=false;gameOver=true;best=Math.max(best,Math.floor(distance));localStorage.setItem('zcBest',String(best));$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
 function move(dir){if(!running||paused)return;lane=Math.max(-1,Math.min(1,lane+dir));soundBeep(420,.035);}
 function jump(){if(!running||paused||playerY>0.02)return;jumpV=8.2;slideTimer=0;soundBeep(740,.08);}
@@ -141,7 +141,8 @@ let sx=0,sy=0;canvas.addEventListener('touchstart',e=>{sx=e.changedTouches[0].cl
 addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1);if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')slide();if(e.key==='Escape'||e.key.toLowerCase()==='p')togglePause();});
 addEventListener('resize',resize);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused)togglePause();});
-try{createWorld();clock=new THREE.Clock();$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){$('load').textContent='3D could not start on this browser. Please reload.';console.error(err);}
+try{createWorld();clock=new THREE.Clock();worldReady=true;$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){$('load').textContent='3D could not start. Try updating Safari or opening in another browser.';$('play').disabled=true;$('play').textContent='3D NOT AVAILABLE';$('play').style.opacity='.55';console.error('Zombie Chase initialization failed:',err);}
+window.addEventListener('unhandledrejection',e=>{$('load').textContent='A 3D resource failed to load. Check your internet and reload.';console.error('Zombie Chase resource error:',e.reason);});
 </script>
 </body>
 </html>
