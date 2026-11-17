@@ -134,6 +134,22 @@ function makeBuilding(x,z,side){
   box(g,.07,.08,.48,materials.dark,sx,3.38,depth/2+.2);
   box(g,.07,.08,.48,materials.dark,sx,2.06,depth/2+.2);
  }
+ // Compact flower boxes beneath selected lower windows bring color and life to the street-facing facades.
+ if(Math.random()<.78){
+  const boxMat=mat(0x594b3e,.92),leafMat=mat(0x397b50,.95);
+  for(const fx of [-width*.34,width*.02,width*.36]){
+   const fy=2.55+(Math.random()<.5?0:1.15);
+   if(fy<height-1){
+    box(g,.72,.16,.28,boxMat,fx,fy,depth/2+.2);
+    for(let fi=0;fi<4;fi++){
+     const bloom=new THREE.Mesh(new THREE.SphereGeometry(.105,8,6),mat([0xe9a2a0,0xf1cf72,0xf2e8d1,0xa99be0][(fi+Math.floor(Math.random()*4))%4]));
+     bloom.position.set(fx-.25+fi*.16,fy+.16,depth/2+.28);g.add(bloom);
+     const leaf=new THREE.Mesh(new THREE.SphereGeometry(.09,7,5),leafMat);
+     leaf.scale.set(1,.55,1);leaf.position.set(fx-.2+fi*.14,fy+.09,depth/2+.24);g.add(leaf);
+    }
+   }
+  }
+ }
  // Small projecting air-conditioner units and drain pipes add lived-in apartment detail.
  if(height>7){
   for(let yy=3.8;yy<height-1;yy+=3.5){
@@ -515,6 +531,9 @@ function createWorld(){
  // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
  const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
  const curbMat=mat(0xc9c8ba,.86);for(const x of [-3.68,3.68]){const curb=box(scene,.18,.24,145,curbMat,x,.03,-52);curb.receiveShadow=true;}
+ // A faint cool atmospheric wash behind the skyline separates distant buildings from the bright morning sky.
+ const horizonGlow=new THREE.Mesh(new THREE.PlaneGeometry(220,34),new THREE.MeshBasicMaterial({color:0xd7e6df,transparent:true,opacity:.16,depthWrite:false,fog:false}));
+ horizonGlow.position.set(0,9,-132);horizonGlow.renderOrder=-7;scene.add(horizonGlow);
  // Warm sunrise and layered distant hills create a more cinematic city horizon.
  const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(7,48),new THREE.MeshBasicMaterial({color:0xffd58c}));sunDisc.position.set(-25,22,-105);scene.add(sunDisc);
  for(let i=0;i<5;i++){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),new THREE.MeshStandardMaterial({color:[0x769b91,0x64877f,0x8aa89a][i%3],roughness:1}));hill.scale.set(24+i*5,5+i%2*2,3);hill.position.set(-38+i*19,1.5,-116-i*2);scene.add(hill);}
@@ -551,6 +570,12 @@ function createWorld(){
  for(let i=0;i<6;i++){
   makeSkylineBlock(-14.2-(i%2)*3.2,-35-i*14, i);
   makeSkylineBlock(14.2+(i%2)*3.2,-43-i*14, i+2);
+ }
+ // A softer outer skyline layer fills the far edges and gives Manhattan a deeper layered horizon.
+ for(let i=0;i<5;i++){
+  const left=makeSkylineBlock(-21.5-(i%2)*2.4,-49-i*17,i+1);
+  const right=makeSkylineBlock(21.5+(i%2)*2.4,-57-i*17,i+3);
+  left.scale.setScalar(.78);right.scale.setScalar(.78);
  }
  // Finished pedestrian sidewalks, patterned paving and planted borders make the boulevard feel like a real city.
  const sidewalkMat=mat(0xb8b4a5,.95),paverA=mat(0xd5cbb7,.95),paverB=mat(0x9faaa6,.95),planterMat=mat(0x596d62);
