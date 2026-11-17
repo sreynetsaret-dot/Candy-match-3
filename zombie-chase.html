@@ -107,10 +107,14 @@ function update(dt){
  if(distance-lastMilestone>100){lastMilestone=distance;soundBeep(880,.05);}
  spawnTimer+=dt;if(spawnTimer>Math.max(.82,1.42-(speed-17)*.025)){spawnTimer=0;spawnWave();}
  for(const o of obstacles){o.mesh.position.z+=step;if(o.kind==='train')o.mesh.rotation.y=Math.sin(distance*.03)*.008;
-   if(!o.hit&&o.mesh.position.z>1.1&&o.mesh.position.z<3.5&&o.lane===lane){
+   // Trains are long: detect the full front-to-back collision window,
+   // while road barriers can be cleared by jumping or sliding.
+   const z=o.mesh.position.z;
+   const inCollisionWindow=o.kind==='train'?(z>-1.8&&z<6.3):(z>1.1&&z<3.5);
+   if(!o.hit&&inCollisionWindow&&o.lane===lane){
      const safeJump=playerY>.95,safeSlide=slideTimer>0;
      if(o.kind==='barrier'&&!safeJump&&!safeSlide){o.hit=true;finishGame();}
-     if(o.kind==='train'&&!safeJump){o.hit=true;finishGame();}
+     if(o.kind==='train'){o.hit=true;finishGame();}
    }
  }
  obstacles=obstacles.filter(o=>{if(o.mesh.position.z>13){scene.remove(o.mesh);return false;}return true;});
@@ -132,6 +136,7 @@ $('sound').onclick=()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'🔊':'
 let sx=0,sy=0;canvas.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY;},{passive:true});canvas.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<22)return;if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy<0)jump();else slide();},{passive:true});
 addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1);if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')slide();if(e.key==='Escape'||e.key.toLowerCase()==='p')togglePause();});
 addEventListener('resize',resize);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused)togglePause();});
 try{createWorld();clock=new THREE.Clock();$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){$('load').textContent='3D could not start on this browser. Please reload.';console.error(err);}
 </script>
 </body>
