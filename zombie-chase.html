@@ -84,6 +84,25 @@ function makeBuilding(x,z,side){
  for(let sx=-width*.31;sx<=width*.31;sx+=width*.31)box(g,width*.24,.82,.035,Math.random()<.5?materials.window:materials.windowWarm,sx,.82,depth/2+.105);
  box(g,width*.88,.16,.42,mat([0xd65c4c,0x287f89,0xe0a33c][Math.floor(Math.random()*3)],.45,.25),0,1.55,depth/2+.16);
  box(g,width*.72,.22,.055,mat(0x172c3b,.4),0,1.82,depth/2+.18);
+ // Distinctive Manhattan storefront entrance with recessed door, transom and stone stoop.
+ const entryX=width*.27,doorTone=mat([0x294b58,0x563c32,0x294238][Math.floor(Math.random()*3)],.72);
+ box(g,.92,2.02,.09,mat(0xd3c3a7,.85),entryX,1.02,depth/2+.16);
+ box(g,.72,1.78,.055,doorTone,entryX,1.0,depth/2+.22);
+ box(g,.52,.34,.035,materials.window,entryX,1.55,depth/2+.26);
+ sphere(g,.055,mat(0xe6c36e,.45),entryX+.23,.92,depth/2+.29);
+ box(g,1.16,.16,.72,materials.concrete,entryX,.13,depth/2+.42);
+ box(g,1.02,.13,.48,materials.white,entryX,.29,depth/2+.36);
+ // Small projecting air-conditioner units and drain pipes add lived-in apartment detail.
+ if(height>7){
+  for(let yy=3.8;yy<height-1;yy+=3.5){
+   if(Math.random()<.68){
+    const ax=(Math.random()<.5?-1:1)*(width*.28);
+    box(g,.72,.38,.42,materials.concrete,ax,yy,depth/2+.24);
+    box(g,.48,.19,.035,materials.dark,ax,yy,depth/2+.46);
+    for(let vent=-1;vent<=1;vent++)box(g,.035,.13,.018,materials.dark,ax+vent*.13,yy,depth/2+.49);
+   }
+  }
+ }
  // A narrow contrasting facade band breaks up tall flat walls.
  if(height>10)box(g,width+.025,.12,depth+.025,materials.concrete,0,height*.52,0);
  // Classic iron fire escapes give Manhattan apartment blocks a recognizable silhouette.
