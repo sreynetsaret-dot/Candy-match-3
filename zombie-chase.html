@@ -86,6 +86,27 @@ function makeBuilding(x,z,side){
  box(g,width*.72,.22,.055,mat(0x172c3b,.4),0,1.82,depth/2+.18);
  // A narrow contrasting facade band breaks up tall flat walls.
  if(height>10)box(g,width+.025,.12,depth+.025,materials.concrete,0,height*.52,0);
+ // Classic iron fire escapes give Manhattan apartment blocks a recognizable silhouette.
+ if(height>8&&Math.random()<.62){
+  const fire=mat(0x303c43,.78),rail=mat(0x53616a,.72),fx=width*.31;
+  for(let level=0;level<3;level++){
+   const yy=2.35+level*2.45;
+   box(g,1.05,.11,.72,fire,fx,yy,depth/2+.39);
+   box(g,1.05,.055,.055,rail,fx,yy+.48,depth/2+.72);
+   for(const dx of [-.49,0,.49])box(g,.045,.48,.045,rail,fx+dx,yy+.24,depth/2+.72);
+   if(level<2){
+    const stair=box(g,.72,.075,1.48,fire,fx-.48,yy+1.2,depth/2+.92);
+    stair.rotation.x=-.72;
+    for(const dx of [-.8,-.16])box(g,.045,1.35,.045,rail,fx+dx,yy+.78,depth/2+.95);
+   }
+  }
+ }
+ // Small rooftop antenna and chimney silhouettes add detail against the skyline.
+ if(Math.random()<.48){
+  box(g,.12,1.35,.12,materials.dark,-width*.22,height+.66,0);
+  box(g,.62,.12,.12,materials.concrete,-width*.22,height+1.18,0);
+  box(g,.48,.65,.48,materials.concrete,width*.22,height+.32,0);
+ }
  // Rooftop details break up the repeated silhouettes and make the skyline feel lived-in.
  const roofBox=box(g,.8,.65,.8,materials.dark,width*.18,height+.32,0);roofBox.castShadow=true;
  if(Math.random()<.55){const sign=box(g,width*.55,.48,.12,mat([0x1b9aaa,0xe26b48,0x8b6bd6][Math.floor(Math.random()*3)],.5,.25),0,height*.68,depth/2+.09);sign.position.y=height*.68;}
@@ -184,6 +205,22 @@ function makeTrafficLight(x,z,side){
  for(let i=0;i<3;i++){const lamp=new THREE.Mesh(new THREE.CircleGeometry(.16,12),[red,amber,green][i]);lamp.position.set(side<0?.25:-.25,3.5-i*.45,.16);g.add(lamp);}
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
+function makeBench(x,z,side){
+ const g=new THREE.Group(),wood=mat(0x9b6540,.9),iron=mat(0x303c44,.75);
+ box(g,1.45,.12,.48,wood,0,.62,0);box(g,1.45,.12,.12,wood,0,.95,-.18);
+ for(const xx of [-.58,.58]){
+  box(g,.09,.62,.09,iron,xx,.34,0);box(g,.09,.72,.09,iron,xx,.83,-.18);
+ }
+ g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeMailbox(x,z){
+ const g=new THREE.Group(),blue=mat(0x27658d,.6),dark=mat(0x263642,.7);
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(.32,.34,1.05,12),blue);body.position.y=.65;g.add(body);
+ const cap=new THREE.Mesh(new THREE.SphereGeometry(.32,12,8),blue);cap.position.y=1.18;g.add(cap);
+ box(g,.34,.08,.045,dark,0,.86,.31);
+ box(g,.12,.22,.08,dark,0,1.34,0);
+ g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
 function makeHydrant(x,z){
  const g=new THREE.Group(),paint=mat(0xe84e3f,.55),cap=mat(0xf2c84b,.45);
  const body=new THREE.Mesh(new THREE.CylinderGeometry(.22,.27,.72,10),paint);body.position.y=.42;g.add(body);
@@ -279,6 +316,12 @@ function createWorld(){
  }
  makeLEDPanel(-7.05,-48,-1,'BROADWAY',0xff477d);
  makeLEDPanel(7.05,-75,1,'TIMES SQ',0x28c7e8);
+ // Everyday sidewalk life: benches, blue postal boxes and extra planted corners.
+ for(let z=-34;z>-104;z-=35){
+  makeBench(-5.1,z,-1);
+  makeMailbox(5.55,z-16);
+ }
+
 
 
  player=makePerson(false);player.position.set(0,0,2.3);scene.add(player);
