@@ -35,9 +35,9 @@ $('best').textContent=best;
 
 function mat(color,roughness=.78,metalness=0){return new THREE.MeshStandardMaterial({color,roughness,metalness});}
 const materials={
- road:mat(0x343d46),rail:mat(0x9ca8ad,.35,.7),sleeper:mat(0x574b42),yellow:mat(0xffd447,.4,.15),
+ road:mat(0x303b49,.92),rail:mat(0xb7c5cb,.28,.82),sleeper:mat(0x59483d),yellow:mat(0xffd447,.4,.15),
  red:mat(0xd94b3d),blue:mat(0x286a91),dark:mat(0x172431),skin:mat(0xe7b68d),shirt:mat(0x247c69),
- pants:mat(0x25354b),zskin:mat(0x8eaa72),zshirt:mat(0x526d48),window:mat(0x8dd4e5,.28,.15),
+ pants:mat(0x25354b),zskin:mat(0x8eaa72),zshirt:mat(0x526d48),window:mat(0x8dd4e5,.22,.25),windowWarm:mat(0xffd58a,.25,.18),
  concrete:mat(0x77818a),orange:mat(0xf18c32),white:mat(0xf0e9d7)
 };
 
@@ -69,7 +69,10 @@ function makeBuilding(x,z,side){
  const g=new THREE.Group(),width=3+Math.random()*3,height=5+Math.random()*12,depth=3+Math.random()*4;
  const colors=[0x344b5b,0x52606a,0x465565,0x655b57,0x3d5961];
  box(g,width,height,depth,mat(colors[Math.floor(Math.random()*colors.length)]),0,height/2,0);
- for(let y=1.2;y<height-.5;y+=1.35)for(let xx=-width/2+.55;xx<width/2-.3;xx+=.95)box(g,.48,.65,.035,materials.window,xx,y,depth/2+.02);
+ for(let y=1.2;y<height-.5;y+=1.35)for(let xx=-width/2+.55;xx<width/2-.3;xx+=.95){const winMat=Math.random()<.22?materials.windowWarm:materials.window;box(g,.48,.65,.035,winMat,xx,y,depth/2+.02);}
+ // Rooftop details break up the repeated silhouettes and make the skyline feel lived-in.
+ const roofBox=box(g,.8,.65,.8,materials.dark,width*.18,height+.32,0);roofBox.castShadow=true;
+ if(Math.random()<.55){const sign=box(g,width*.55,.48,.12,mat([0x1b9aaa,0xe26b48,0x8b6bd6][Math.floor(Math.random()*3)],.5,.25),0,height*.68,depth/2+.09);sign.position.y=height*.68;}
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function createWorld(){
@@ -79,7 +82,14 @@ function createWorld(){
  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
  const hemi=new THREE.HemisphereLight(0xe4f5ff,0x53606b,2.0);scene.add(hemi);
  const sun=new THREE.DirectionalLight(0xfff0d7,2.3);sun.position.set(-8,15,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),mat(0x596b54));ground.rotation.x=-Math.PI/2;ground.position.y=-.13;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x526b5a));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
+ // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
+ const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
+ const curbMat=mat(0xd6c9a5,.8);for(const x of [-3.68,3.68]){const curb=box(scene,.18,.24,145,curbMat,x,.03,-52);curb.receiveShadow=true;}
+ // Warm sunrise and layered distant hills create a more cinematic city horizon.
+ const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(7,48),new THREE.MeshBasicMaterial({color:0xffd58c}));sunDisc.position.set(-25,22,-105);scene.add(sunDisc);
+ for(let i=0;i<5;i++){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),new THREE.MeshStandardMaterial({color:[0x769b91,0x64877f,0x8aa89a][i%3],roughness:1}));hill.scale.set(24+i*5,5+i%2*2,3);hill.position.set(-38+i*19,1.5,-116-i*2);scene.add(hill);}
+ for(let i=0;i<9;i++){const cloud=new THREE.Group();const cloudMat=new THREE.MeshStandardMaterial({color:0xf4fbff,roughness:1});for(let j=0;j<4;j++){const puff=new THREE.Mesh(new THREE.SphereGeometry(1.1+(j%2)*.25,14,10),cloudMat);puff.position.set(j*1.35,Math.sin(j)*.25,0);cloud.add(puff);}cloud.position.set(-28+i*7,18+(i%3)*2,-72-(i%4)*12);cloud.scale.setScalar(.8+(i%3)*.12);scene.add(cloud);decor.push(cloud);}
  // Three-lane road, rails and repeating sleepers.
  for(let i=0;i<3;i++){const railL=-1.9+i*1.9;const rail1=box(scene,.12,.12,130,materials.rail,railL-.62,.05,-52);const rail2=box(scene,.12,.12,130,materials.rail,railL+.62,.05,-52);roadSegments.push(rail1,rail2);}
  for(let z=8;z>-115;z-=2.1){const s=box(scene,6.1,.12,.34,materials.sleeper,0,.02,z);roadSegments.push(s);}
@@ -89,7 +99,11 @@ function createWorld(){
  for(let z=-8;z>-105;z-=23){for(const x of [-4.4,4.4]){const lamp=new THREE.Group();box(lamp,.13,4.2,.13,materials.dark,0,2.1,0);box(lamp,.9,.12,.14,materials.dark,x<0?.35:-.35,4.12,0);const glow=new THREE.Mesh(new THREE.SphereGeometry(.2,12,10),new THREE.MeshStandardMaterial({color:0xffe4a1,emissive:0xffbd55,emissiveIntensity:1.8}));glow.position.set(x<0?.72:-.72,3.98,0);lamp.add(glow);lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);}}
  for(let z=-12;z>-105;z-=17){makeBuilding(-8-Math.random()*3,z,-1);makeBuilding(8+Math.random()*3,z-7,1);}
  player=makePerson(false);player.position.set(0,0,2.3);scene.add(player);
+ // Small backpack and bright shoe accents improve the runner silhouette at phone size.
+ box(player,.42,.48,.2,materials.orange,0,1.12,-.25);
+ for(const x of [-.18,.18])box(player,.29,.09,.42,materials.yellow,x,.08,.12);
  zombie=makePerson(true);zombie.scale.setScalar(1.05);zombie.position.set(0,0,5.1);scene.add(zombie);
+ const scar=new THREE.Mesh(new THREE.BoxGeometry(.045,.22,.025),mat(0x344a32));scar.position.set(.14,1.68,.235);zombie.add(scar);
 }
 function laneX(n){return n*1.9;}
 function addObstacle(kind,n,z=-75){
