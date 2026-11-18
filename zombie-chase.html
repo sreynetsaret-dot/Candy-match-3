@@ -343,11 +343,14 @@ function makeNYCTower(x,z,style=0){
  const g=new THREE.Group(),stone=mat(style===0?0x96877a:0x718b9b,.78),trim=mat(0xd8c8a9,.62),glass=mat(0x79b2c5,.24,.22),lit=mat(0xffd99a,.38,.08);
  const w=style===0?4.8:4.1,d=4.4,h=style===0?27:23;
  box(g,w,h,d,stone,0,h/2,0);
- for(let y=1.2;y<h-1;y+=1.55)for(let xx=-w/2+.48;xx<w/2-.25;xx+=.62)
-  box(g,.36,.86,.045,Math.random()<.2?lit:glass,xx,y,d/2+.035);
-  box(g,.045,.94,.065,trim,xx-.205,y,d/2+.055);
-  box(g,.045,.94,.065,trim,xx+.205,y,d/2+.055);
-  box(g,.42,.055,.07,trim,xx,y-.47,d/2+.06);
+ for(let y=1.2;y<h-1;y+=1.55){
+  for(let xx=-w/2+.48;xx<w/2-.25;xx+=.62){
+   box(g,.36,.86,.045,Math.random()<.2?lit:glass,xx,y,d/2+.035);
+   box(g,.045,.94,.065,trim,xx-.205,y,d/2+.055);
+   box(g,.045,.94,.065,trim,xx+.205,y,d/2+.055);
+   box(g,.42,.055,.07,trim,xx,y-.47,d/2+.06);
+  }
+ }
  for(let xx=-w/2+.15;xx<=w/2;xx+=.62)box(g,.055,h-.5,.08,trim,xx,h/2,d/2+.08);
  for(let level=0;level<4;level++){
   const inset=.32+level*.28,levelH=1.55,levelW=w-inset*2,levelD=d-inset*1.6;
