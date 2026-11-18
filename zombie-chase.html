@@ -540,9 +540,10 @@ function makeWaterTower(x,z){
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeTrafficLight(x,z,side){
- const g=new THREE.Group(),pole=mat(0x35434a),housing=mat(0x202a30),red=mat(0xff403d,.3,1.2),amber=mat(0xffc342,.3,.8),green=mat(0x55e58b,.3,.8);
+ const g=new THREE.Group(),pole=mat(0x35434a),housing=mat(0x202a30),red=mat(0xff403d,.3,1.2),amber=mat(0xffc342,.3,.8),green=mat(0x55e58b,.3,.8),lamps=[];
  box(g,.12,3.7,.12,pole,0,1.85,0);box(g,.72,1.5,.3,housing,side<0?.25:-.25,3.05,0);
- for(let i=0;i<3;i++){const lamp=new THREE.Mesh(new THREE.CircleGeometry(.16,12),[red,amber,green][i]);lamp.position.set(side<0?.25:-.25,3.5-i*.45,.16);g.add(lamp);}
+ for(let i=0;i<3;i++){const lamp=new THREE.Mesh(new THREE.CircleGeometry(.16,12),[red,amber,green][i]);lamp.position.set(side<0?.25:-.25,3.5-i*.45,.16);g.add(lamp);lamps.push(lamp);}
+ g.userData.citySignals=lamps;g.userData.citySignalOffset=(x+z)*.13;
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeFlowerGarden(x,z,side=1){
@@ -964,6 +965,7 @@ function update(dt){
   if(d.userData.cityBanner)d.userData.cityBanner.rotation.z=Math.sin(clock.elapsedTime*1.35+d.userData.phase)*.045;
   if(d.userData.cityFoliage)d.userData.cityFoliage.rotation.z=Math.sin(clock.elapsedTime*1.05+d.userData.cityWindPhase)*.022;
   if(d.userData.cityWalker){const w=d.userData.cityWalker,phase=clock.elapsedTime*5+w.phase;w.legL.rotation.x=Math.sin(phase)*.42;w.legR.rotation.x=-Math.sin(phase)*.42;w.armL.rotation.x=-Math.sin(phase)*.3;w.armR.rotation.x=Math.sin(phase)*.3;}
+  if(d.userData.citySignals){const phase=((clock.elapsedTime+d.userData.citySignalOffset)%12+12)%12,active=phase<5?0:phase<6?1:phase<11?2:1;for(let i=0;i<3;i++)d.userData.citySignals[i].visible=i===active;}
   if(d.userData.cityWheels)for(const wheel of d.userData.cityWheels)wheel.rotation.x+=dt*5.5;
  }
  for(const r of roadSegments){r.position.z+=step;if(r.position.z>12)r.position.z=-115;}
