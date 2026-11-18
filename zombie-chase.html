@@ -596,36 +596,79 @@ function makeNYCBrownstoneSteps(x,z,side){
  g.position.set(x,0,z);g.rotation.y=side<0?0:Math.PI;scene.add(g);decor.push(g);return g;
 }
 function makeSkyBackdrop(){
-  const skyCanvas=document.createElement('canvas');skyCanvas.width=4;skyCanvas.height=512;
+  // A wide, high-resolution blue-hour-to-sunlit gradient gives the skyline a richer horizon.
+  const skyCanvas=document.createElement('canvas');skyCanvas.width=1024;skyCanvas.height=768;
   const skyCtx=skyCanvas.getContext('2d');
-  const skyGradient=skyCtx.createLinearGradient(0,0,0,512);
-  skyGradient.addColorStop(0,'#3f8fc9');skyGradient.addColorStop(.28,'#70b5df');skyGradient.addColorStop(.58,'#b8dced');skyGradient.addColorStop(.82,'#f3dfc3');skyGradient.addColorStop(1,'#f8c99d');
-  skyCtx.fillStyle=skyGradient;skyCtx.fillRect(0,0,4,512);
+  const skyGradient=skyCtx.createLinearGradient(0,0,0,768);
+  skyGradient.addColorStop(0,'#2877b8');
+  skyGradient.addColorStop(.22,'#438fca');
+  skyGradient.addColorStop(.48,'#78b9df');
+  skyGradient.addColorStop(.68,'#b8d9e8');
+  skyGradient.addColorStop(.84,'#f0d9c3');
+  skyGradient.addColorStop(1,'#f7c49e');
+  skyCtx.fillStyle=skyGradient;skyCtx.fillRect(0,0,1024,768);
+  // Soft atmospheric light near the horizon, kept subtle so it does not wash out the buildings.
+  const horizonGlow=skyCtx.createRadialGradient(290,590,10,290,590,570);
+  horizonGlow.addColorStop(0,'rgba(255,224,190,.34)');
+  horizonGlow.addColorStop(.42,'rgba(255,218,190,.13)');
+  horizonGlow.addColorStop(1,'rgba(255,218,190,0)');
+  skyCtx.fillStyle=horizonGlow;skyCtx.fillRect(0,0,1024,768);
   const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
   const sky=new THREE.Mesh(new THREE.PlaneGeometry(260,142),new THREE.MeshBasicMaterial({map:skyTexture,depthWrite:false,fog:false}));
   sky.position.set(0,37,-146);sky.renderOrder=-10;scene.add(sky);
-  // Fine high-altitude cirrus streaks add depth without adding many 3D objects.
+
+  // Layered, soft cumulus clouds add depth while remaining a single lightweight texture.
+  const cloudCanvas=document.createElement('canvas');cloudCanvas.width=1024;cloudCanvas.height=512;
+  const c=cloudCanvas.getContext('2d');
+  function cloudBank(cx,cy,scale,alpha){
+    c.save();c.translate(cx,cy);c.scale(scale,scale);
+    c.shadowColor='rgba(255,255,255,.42)';c.shadowBlur=17;
+    const puffs=[[-115,8,70,22],[-70,-8,62,34],[-18,-20,78,42],[42,-7,68,31],[94,5,75,23],[12,13,150,20]];
+    for(const p of puffs){
+      const g=c.createRadialGradient(p[0]-12,p[1]-12,2,p[0],p[1],p[2]);
+      g.addColorStop(0,`rgba(255,255,255,${alpha})`);
+      g.addColorStop(.62,`rgba(250,252,255,${alpha*.78})`);
+      g.addColorStop(1,'rgba(255,255,255,0)');
+      c.fillStyle=g;c.beginPath();c.ellipse(p[0],p[1],p[2],p[3],0,0,Math.PI*2);c.fill();
+    }
+    c.restore();
+  }
+  cloudBank(180,175,.9,.48);cloudBank(565,115,.72,.35);cloudBank(900,205,.82,.42);
+  cloudBank(390,315,.55,.22);cloudBank(770,330,.62,.2);
+  const cloudTexture=new THREE.CanvasTexture(cloudCanvas);cloudTexture.colorSpace=THREE.SRGBColorSpace;
+  const clouds=new THREE.Mesh(new THREE.PlaneGeometry(250,125),new THREE.MeshBasicMaterial({map:cloudTexture,transparent:true,depthWrite:false,fog:false,opacity:.9}));
+  clouds.position.set(0,40,-144);clouds.renderOrder=-8;scene.add(clouds);
+
+  // Fine high-altitude cirrus strands soften the transition between cloud layers.
   const wispCanvas=document.createElement('canvas');wispCanvas.width=1024;wispCanvas.height=512;
   const wctx=wispCanvas.getContext('2d');
-  for(let i=0;i<13;i++){
-   const y=95+i*23,alpha=.08+(i%4)*.025;
-   const grad=wctx.createLinearGradient(0,y,1024,y+12);
-   grad.addColorStop(0,'rgba(255,255,255,0)');grad.addColorStop(.22,`rgba(255,255,255,${alpha})`);grad.addColorStop(.72,`rgba(255,248,239,${alpha*.8})`);grad.addColorStop(1,'rgba(255,255,255,0)');
-   wctx.beginPath();wctx.moveTo(-20,y+18);
-   wctx.bezierCurveTo(180,y-12+(i%3)*7,330,y+25,520,y+7);
-   wctx.bezierCurveTo(700,y-8,850,y+17,1045,y-3);
-   wctx.lineWidth=3+(i%3)*2;wctx.strokeStyle=grad;wctx.stroke();
+  for(let i=0;i<10;i++){
+    const y=75+i*31,alpha=.045+(i%3)*.018;
+    const grad=wctx.createLinearGradient(0,y,1024,y+10);
+    grad.addColorStop(0,'rgba(255,255,255,0)');
+    grad.addColorStop(.25,`rgba(255,255,255,${alpha})`);
+    grad.addColorStop(.72,`rgba(255,248,239,${alpha*.8})`);
+    grad.addColorStop(1,'rgba(255,255,255,0)');
+    wctx.beginPath();wctx.moveTo(-20,y+16);
+    wctx.bezierCurveTo(180,y-10+(i%3)*6,350,y+22,520,y+5);
+    wctx.bezierCurveTo(700,y-7,850,y+15,1045,y-2);
+    wctx.lineWidth=2+(i%3)*1.5;wctx.strokeStyle=grad;wctx.stroke();
   }
   const wispTexture=new THREE.CanvasTexture(wispCanvas);wispTexture.colorSpace=THREE.SRGBColorSpace;
-  const wisps=new THREE.Mesh(new THREE.PlaneGeometry(250,125),new THREE.MeshBasicMaterial({map:wispTexture,transparent:true,depthWrite:false,fog:false,opacity:.9}));
-  wisps.position.set(0,39,-145);wisps.renderOrder=-8;scene.add(wisps);
+  const wisps=new THREE.Mesh(new THREE.PlaneGeometry(250,125),new THREE.MeshBasicMaterial({map:wispTexture,transparent:true,depthWrite:false,fog:false,opacity:.72}));
+  wisps.position.set(0,42,-143);wisps.renderOrder=-7;scene.add(wisps);
+
+  // Warm sun glow at the left edge of the distant skyline.
   const glowCanvas=document.createElement('canvas');glowCanvas.width=256;glowCanvas.height=256;
-  const glowCtx=glowCanvas.getContext('2d'),glow=glowCtx.createRadialGradient(128,128,8,128,128,126);
-  glow.addColorStop(0,'rgba(255,238,210,.42)');glow.addColorStop(.28,'rgba(255,220,190,.2)');glow.addColorStop(1,'rgba(255,205,175,0)');
+  const glowCtx=glowCanvas.getContext('2d'),glow=glowCtx.createRadialGradient(128,128,5,128,128,126);
+  glow.addColorStop(0,'rgba(255,244,222,.62)');
+  glow.addColorStop(.2,'rgba(255,228,199,.3)');
+  glow.addColorStop(.55,'rgba(255,218,190,.12)');
+  glow.addColorStop(1,'rgba(255,205,175,0)');
   glowCtx.fillStyle=glow;glowCtx.fillRect(0,0,256,256);
   const glowTexture=new THREE.CanvasTexture(glowCanvas);glowTexture.colorSpace=THREE.SRGBColorSpace;
-  const halo=new THREE.Mesh(new THREE.PlaneGeometry(34,34),new THREE.MeshBasicMaterial({map:glowTexture,transparent:true,depthWrite:false,fog:false}));
-  halo.position.set(-25,23,-140);halo.renderOrder=-9;scene.add(halo);
+  const halo=new THREE.Mesh(new THREE.PlaneGeometry(38,38),new THREE.MeshBasicMaterial({map:glowTexture,transparent:true,depthWrite:false,fog:false}));
+  halo.position.set(-25,24,-140);halo.renderOrder=-9;scene.add(halo);
 }
 function createWorld(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x91c5df);scene.fog=new THREE.Fog(0xc9dce0,48,132);
