@@ -409,7 +409,9 @@ function makeTree(x,z,scale=1){
  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.13,.29,2.8,10),bark);trunk.position.y=1.4;g.add(trunk);
  for(let i=0;i<6;i++){const a=i*Math.PI/3,branch=new THREE.Mesh(new THREE.CylinderGeometry(.035,.095,1.45,7),barkHi);branch.position.set(Math.cos(a)*.43,2.25,Math.sin(a)*.39);branch.rotation.z=-Math.cos(a)*.62;branch.rotation.x=Math.sin(a)*.58;g.add(branch);}
  const crown=[[0,3.05,0,.92,2],[-.68,2.8,.08,.72,0],[.68,2.82,-.08,.74,1],[-.34,3.52,.12,.7,3],[.38,3.55,-.12,.72,4],[0,4.05,.02,.59,4],[-1.02,3.12,-.12,.48,2],[1.02,3.13,.12,.5,3],[-.62,3.75,-.3,.48,2],[.63,3.78,.28,.5,3],[0,2.62,.43,.56,0],[-.95,2.72,.32,.42,1],[.95,2.75,-.3,.43,2],[-.2,4.18,-.22,.34,3],[.24,4.2,.22,.35,4]];
- for(const p of crown){const m=new THREE.Mesh(new THREE.SphereGeometry(p[3],12,9),leaves[p[4]]);m.position.set(p[0],p[1],p[2]);m.scale.set(1.12,.92,1.02);g.add(m);}
+ const foliage=new THREE.Group();foliage.position.y=3.2;
+ for(const p of crown){const m=new THREE.Mesh(new THREE.SphereGeometry(p[3],12,9),leaves[p[4]]);m.position.set(p[0],p[1]-3.2,p[2]);m.scale.set(1.12,.92,1.02);foliage.add(m);}
+ g.add(foliage);g.userData.cityFoliage=foliage;g.userData.cityWindPhase=x*.83+z*.11;
  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeGrassPatch(x,z,scale=1){
@@ -948,6 +950,7 @@ function update(dt){
  for(const d of decor){d.position.z+=step*.8;if(d.position.z>20)d.position.z=-110-Math.random()*20;
   if(d.userData.cityGlow){const pulse=1+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.12;d.userData.cityGlow.scale.setScalar(pulse);d.userData.cityGlow.material.emissiveIntensity=1.9+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.22;}
   if(d.userData.cityBanner)d.userData.cityBanner.rotation.z=Math.sin(clock.elapsedTime*1.35+d.userData.phase)*.045;
+  if(d.userData.cityFoliage)d.userData.cityFoliage.rotation.z=Math.sin(clock.elapsedTime*1.05+d.userData.cityWindPhase)*.022;
   if(d.userData.cityWheels)for(const wheel of d.userData.cityWheels)wheel.rotation.x+=dt*5.5;
  }
  for(const r of roadSegments){r.position.z+=step;if(r.position.z>12)r.position.z=-115;}
