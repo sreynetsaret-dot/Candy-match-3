@@ -267,6 +267,39 @@ function makeElevatedSubway(x,z){
  box(car,2.05,.12,.16,mat(0xe9c66d,.35),0,8.46,0);car.position.z=-2;g.add(car);
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
+function makeSkylineCrane(x,z,scale=1){
+ const g=new THREE.Group(),steel=mat(0xe5b943,.72,.18),dark=mat(0x59636a,.72,.28),red=mat(0xd95748,.62,.12);
+ for(const xx of [-.58,.58])for(const zz of [-.48,.48]){
+  box(g,.14,18,.14,steel,xx,9,zz);
+  for(let level=1;level<9;level++)box(g,1.22,.075,.075,dark,0,level*2,zz);
+ }
+ for(const yy of [2,5,8,11,14,17]){
+  const a=box(g,.075,2.35,.075,dark,-.29,yy,.52);a.rotation.z=-.52;
+  const b=box(g,.075,2.35,.075,dark,.29,yy,.52);b.rotation.z=.52;
+  const c=box(g,.075,2.35,.075,dark,-.29,yy,-.52);c.rotation.z=.52;
+  const d=box(g,.075,2.35,.075,dark,.29,yy,-.52);d.rotation.z=-.52;
+ }
+ box(g,1.5,.22,1.45,dark,0,.18,0);
+ box(g,1.35,.82,1.05,mat(0x4e7480,.38,.25),.72,18.15,0);
+ box(g,14.2,.2,.24,steel,4.15,18.75,0);box(g,4.2,.2,.24,steel,-3.35,18.75,0);
+ for(const xx of [-2.8,0,3.2,6.2,8.7]){
+  const cable=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,2.05,5),dark);cable.position.set(xx,17.65,0);g.add(cable);
+ }
+ box(g,.12,2.2,.12,dark,7.1,17.7,0);box(g,.55,.14,.16,red,7.1,16.55,0);
+ box(g,.12,2.5,.12,steel,0,19.95,0);
+ const beacon=new THREE.Mesh(new THREE.SphereGeometry(.16,8,6),new THREE.MeshBasicMaterial({color:0xff5a48}));beacon.position.set(0,21.25,0);g.add(beacon);
+ g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeBirdFlock(x,y,z,count=5){
+ const flock=new THREE.Group(),ink=new THREE.MeshBasicMaterial({color:0x344a58});
+ for(let i=0;i<count;i++){
+  const bird=new THREE.Group(),body=new THREE.Mesh(new THREE.BoxGeometry(.28,.045,.07),ink);bird.add(body);
+  const left=new THREE.Mesh(new THREE.BoxGeometry(.48,.035,.065),ink);left.position.set(-.22,.07,0);left.rotation.z=.38;bird.add(left);
+  const right=new THREE.Mesh(new THREE.BoxGeometry(.48,.035,.065),ink);right.position.set(.22,.07,0);right.rotation.z=-.38;bird.add(right);
+  bird.position.set(i*.82,Math.sin(i*.8)*.22,-i*.34);bird.rotation.y=i%2?-.12:.12;flock.add(bird);
+ }
+ flock.position.set(x,y,z);scene.add(flock);decor.push(flock);return flock;
+}
 function makeNYCTower(x,z,style=0){
  const g=new THREE.Group(),stone=mat(style===0?0x8a8178:0x657887,.82),trim=mat(0xc8b99b,.68),glass=mat(0x6e9eae,.32,.18);
  const w=style===0?4.8:4.1,d=4.4,h=style===0?27:23;
@@ -646,6 +679,11 @@ function createWorld(){
  }
  // Short zebra-crossing marks at the distant boulevard entrance add familiar street detail.
  for(let i=0;i<7;i++){const stripe=box(scene,.62,.025,.16,materials.white,-2.7+i*.9,.105,-105);roadSegments.push(stripe);}
+ // Distant construction cranes and small bird flocks give the skyline more scale and everyday motion.
+ makeSkylineCrane(-23.5,-91,.92);
+ makeSkylineCrane(23.5,-108,.82);
+ makeBirdFlock(-12,16,-58,5);
+ makeBirdFlock(10,19,-87,6);
  // Manhattan-inspired skyline landmarks: stepped Art Deco towers rise above the street.
  makeNYCTower(-10.1,-76,0);
  makeNYCTower(10.4,-91,1);
