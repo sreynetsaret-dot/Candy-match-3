@@ -403,6 +403,16 @@ function makeSubwayEntrance(x,z){
  box(g,.62,.055,.035,materials.white,0,2.18,.12);
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
+function makeNYCPedestrian(x,z,variant=0){
+ const g=new THREE.Group(),skin=mat([0xc98f68,0x9a674b,0xe0b18a,0x754d3a][variant%4],.92),shirt=mat([0x315f91,0x9b493f,0x47734e,0x6b557e][variant%4],.88),pants=mat([0x293746,0x41434b,0x343f36,0x263b50][variant%4],.92),shoe=mat(0x24282c,.95),hair=mat([0x342a26,0x211f20,0x60412e,0x292522][variant%4],.98);
+ const torso=new THREE.Mesh(new THREE.CylinderGeometry(.22,.29,.72,9),shirt);torso.position.y=1.15;g.add(torso);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.19,10,8),skin);head.position.y=1.72;g.add(head);
+ const hairCap=new THREE.Mesh(new THREE.SphereGeometry(.195,10,7,0,Math.PI*2,0,Math.PI*.48),hair);hairCap.position.y=1.79;g.add(hairCap);
+ const armL=new THREE.Group(),armR=new THREE.Group(),legL=new THREE.Group(),legR=new THREE.Group();
+ for(const [arm,side] of [[armL,-1],[armR,1]]){const upper=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.48,7),shirt);upper.position.y=-.23;arm.add(upper);const hand=new THREE.Mesh(new THREE.SphereGeometry(.075,7,6),skin);hand.position.y=-.49;arm.add(hand);arm.position.set(side*.29,1.42,0);g.add(arm);}
+ for(const [leg,side] of [[legL,-1],[legR,1]]){const thigh=new THREE.Mesh(new THREE.CylinderGeometry(.095,.11,.48,7),pants);thigh.position.y=-.24;leg.add(thigh);const foot=new THREE.Mesh(new THREE.BoxGeometry(.17,.11,.29),shoe);foot.position.set(0,-.49,.07);leg.add(foot);leg.position.set(side*.13,.82,0);g.add(leg);}
+ g.position.set(x,0,z);g.userData.cityWalker={armL,armR,legL,legR,phase:z*.37+variant};scene.add(g);decor.push(g);return g;
+}
 function makeTree(x,z,scale=1){
  const g=new THREE.Group(),bark=mat(0x65432e,.98),barkHi=mat(0x9b704b,.96);
  const leaves=[mat(0x286b43,.98),mat(0x358451,.98),mat(0x4b9858,.98),mat(0x68a85e,.98),mat(0x91b96b,.98)];
@@ -841,7 +851,9 @@ function createWorld(){
  // NYC bus shelters and curbside street furniture add scale and everyday city life.
  for(const z of [-27,-83]){makeBusShelter(-5.35,z,-1);makeBusShelter(5.35,z-15,1);}
  // A cheerful boulevard: trees, little kiosks and bright billboards add recognizable city life.
- for(let z=-7;z>-105;z-=20){makeTree(-5.25,z,1.12+(Math.random()*.16));makeTree(5.25,z-9,1.08+(Math.random()*.18));}
+ // Small sidewalk pedestrians add life while staying clear of the three running lanes.
+  for(let i=0;i<8;i++){const z=-14-i*12;makeNYCPedestrian(i%2===0?-4.55:4.55,z,i%4);}
+  for(let z=-7;z>-105;z-=20){makeTree(-5.25,z,1.12+(Math.random()*.16));makeTree(5.25,z-9,1.08+(Math.random()*.18));}
  // Fresh landscaped grass pockets soften the sidewalks without entering the running lanes.
  for(let z=-12;z>-108;z-=18){makeGrassPatch(-6.35,z,1.08);makeGrassPatch(6.35,z-9,1.04);}
  for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
@@ -951,6 +963,7 @@ function update(dt){
   if(d.userData.cityGlow){const pulse=1+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.12;d.userData.cityGlow.scale.setScalar(pulse);d.userData.cityGlow.material.emissiveIntensity=1.9+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.22;}
   if(d.userData.cityBanner)d.userData.cityBanner.rotation.z=Math.sin(clock.elapsedTime*1.35+d.userData.phase)*.045;
   if(d.userData.cityFoliage)d.userData.cityFoliage.rotation.z=Math.sin(clock.elapsedTime*1.05+d.userData.cityWindPhase)*.022;
+  if(d.userData.cityWalker){const w=d.userData.cityWalker,phase=clock.elapsedTime*5+w.phase;w.legL.rotation.x=Math.sin(phase)*.42;w.legR.rotation.x=-Math.sin(phase)*.42;w.armL.rotation.x=-Math.sin(phase)*.3;w.armR.rotation.x=Math.sin(phase)*.3;}
   if(d.userData.cityWheels)for(const wheel of d.userData.cityWheels)wheel.rotation.x+=dt*5.5;
  }
  for(const r of roadSegments){r.position.z+=step;if(r.position.z>12)r.position.z=-115;}
