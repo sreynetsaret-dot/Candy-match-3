@@ -67,7 +67,7 @@ function makeBarrier(){const g=new THREE.Group();box(g,1.5,.82,.45,materials.ora
 function makeCoin(){const g=new THREE.Group();const tor=new THREE.Mesh(new THREE.TorusGeometry(.36,.11,10,24),materials.yellow);g.add(tor);const core=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.08,24),materials.yellow);core.rotation.x=Math.PI/2;g.add(core);return g;}
 function makeBuilding(x,z,side){
  const g=new THREE.Group(),width=3+Math.random()*3,height=5+Math.random()*12,depth=3+Math.random()*4;
- const colors=[0x667d83,0x71818c,0x927c70,0x607c70,0x817c78,0x647b87,0x9a896f,0x788b86];
+ const colors=[0x8fa9b8,0xc58f79,0x8cae9b,0xd0b18a,0x829db8,0xb18eaa,0x9fb7a1,0xc6a58d];
  const facade=mat(colors[Math.floor(Math.random()*colors.length)],.88);
  box(g,width,height,depth,facade,0,height/2,0);
  // Refined stone framing, roof cornice and restrained facade bands give each block a finished architectural silhouette.
@@ -205,7 +205,7 @@ function makeBuilding(x,z,side){
 }
 function makeSkylineBlock(x,z,variant=0){
  const g=new THREE.Group(),width=4.8+(variant%3)*.65,depth=3.6+(variant%2)*.55,height=15+(variant%4)*3.1;
- const tones=[0x647b88,0x8a766e,0x596f79,0x8a866f,0x526b78];
+ const tones=[0x6f91a8,0xb17f6d,0x658c91,0xb7a078,0x5f8297];
  const facade=mat(tones[variant%tones.length],.88),stone=mat(0xc8c0b1,.86),glass=mat(0x83b7c5,.3,.16),warm=mat(0xf4c985,.35,.1);
  box(g,width,height,depth,facade,0,height/2,0);
  // Repeating narrow window bays and strong vertical masonry piers make the distant blocks read as real city buildings.
@@ -304,7 +304,7 @@ function makeSubwayEntrance(x,z){
 }
 function makeTree(x,z,scale=1){
  const g=new THREE.Group(),bark=mat(0x65432e,.98),barkHi=mat(0x9b704b,.96);
- const leaves=[mat(0x285b3e,.98),mat(0x356e48,.98),mat(0x468456,.98),mat(0x5b9660,.98),mat(0x83a96e,.98)];
+ const leaves=[mat(0x286b43,.98),mat(0x358451,.98),mat(0x4b9858,.98),mat(0x68a85e,.98),mat(0x91b96b,.98)];
  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.13,.29,2.8,10),bark);trunk.position.y=1.4;g.add(trunk);
  for(let i=0;i<6;i++){const a=i*Math.PI/3,branch=new THREE.Mesh(new THREE.CylinderGeometry(.035,.095,1.45,7),barkHi);branch.position.set(Math.cos(a)*.43,2.25,Math.sin(a)*.39);branch.rotation.z=-Math.cos(a)*.62;branch.rotation.x=Math.sin(a)*.58;g.add(branch);}
  const crown=[[0,3.05,0,.92,2],[-.68,2.8,.08,.72,0],[.68,2.82,-.08,.74,1],[-.34,3.52,.12,.7,3],[.38,3.55,-.12,.72,4],[0,4.05,.02,.59,4],[-1.02,3.12,-.12,.48,2],[1.02,3.13,.12,.5,3],[-.62,3.75,-.3,.48,2],[.63,3.78,.28,.5,3],[0,2.62,.43,.56,0],[-.95,2.72,.32,.42,1],[.95,2.75,-.3,.43,2],[-.2,4.18,-.22,.34,3],[.24,4.2,.22,.35,4]];
@@ -504,7 +504,7 @@ function makeSkyBackdrop(){
   const skyCanvas=document.createElement('canvas');skyCanvas.width=4;skyCanvas.height=512;
   const skyCtx=skyCanvas.getContext('2d');
   const skyGradient=skyCtx.createLinearGradient(0,0,0,512);
-  skyGradient.addColorStop(0,'#648da8');skyGradient.addColorStop(.34,'#91b6c5');skyGradient.addColorStop(.68,'#c8d8d8');skyGradient.addColorStop(.88,'#e8d8c7');skyGradient.addColorStop(1,'#e9c9ae');
+  skyGradient.addColorStop(0,'#3f8fc9');skyGradient.addColorStop(.28,'#70b5df');skyGradient.addColorStop(.58,'#b8dced');skyGradient.addColorStop(.82,'#f3dfc3');skyGradient.addColorStop(1,'#f8c99d');
   skyCtx.fillStyle=skyGradient;skyCtx.fillRect(0,0,4,512);
   const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
   const sky=new THREE.Mesh(new THREE.PlaneGeometry(260,142),new THREE.MeshBasicMaterial({map:skyTexture,depthWrite:false,fog:false}));
@@ -533,13 +533,13 @@ function makeSkyBackdrop(){
   halo.position.set(-25,23,-140);halo.renderOrder=-9;scene.add(halo);
 }
 function createWorld(){
- scene=new THREE.Scene();scene.background=new THREE.Color(0xb9cbd0);scene.fog=new THREE.Fog(0xc5d0cd,42,122);
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x91c5df);scene.fog=new THREE.Fog(0xc9dce0,48,132);
  makeSkyBackdrop();
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
  const mobile=innerWidth<700;const gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,stencil:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.3:1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
- const hemi=new THREE.HemisphereLight(0xeaf3f4,0x64766d,1.65);scene.add(hemi);
- const sun=new THREE.DirectionalLight(0xfff2df,1.75);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
+ renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
+ const hemi=new THREE.HemisphereLight(0xf1f8ff,0x718b79,1.55);scene.add(hemi);
+ const sun=new THREE.DirectionalLight(0xffe8c8,1.65);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x788b7e,.98));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
  // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
  const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
