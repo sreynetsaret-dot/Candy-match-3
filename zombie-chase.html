@@ -536,10 +536,10 @@ function createWorld(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x9fc6d8);scene.fog=new THREE.Fog(0xb8d2dc,32,108);
  makeSkyBackdrop();
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.15:1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ const mobile=innerWidth<700;const gl=canvas.getContext('webgl2',{alpha:false,antialias:false,depth:true,stencil:false,powerPreference:'low-power',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:false,alpha:false,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1:1.35));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
  const hemi=new THREE.HemisphereLight(0xeaf6f7,0x586b70,2.05);scene.add(hemi);
- const sun=new THREE.DirectionalLight(0xfff5e8,2.05);sun.position.set(-8,15,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
+ const sun=new THREE.DirectionalLight(0xfff5e8,2.05);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x657d73,.98));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
  // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
  const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
@@ -740,7 +740,7 @@ addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a'
 addEventListener('resize',resize,{passive:true});
 addEventListener('blur',()=>{if(running&&!paused)togglePause();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused)togglePause();});
-try{createWorld();clock=new THREE.Clock();worldReady=true;$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){$('load').textContent='3D could not start. Try updating Safari or opening in another browser.';$('play').disabled=true;$('play').textContent='3D NOT AVAILABLE';$('play').style.opacity='.55';console.error('Zombie Chase initialization failed:',err);}
+try{createWorld();clock=new THREE.Clock();worldReady=true;$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){const detail=(err&&err.message)?err.message:String(err);$('load').textContent='3D startup error: '+detail.slice(0,150);$('play').disabled=true;$('play').textContent='3D NOT AVAILABLE';$('play').style.opacity='.55';console.error('Zombie Chase initialization failed:',err);}
 window.addEventListener('unhandledrejection',e=>{$('load').textContent='A 3D resource failed to load. Check your internet and reload.';console.error('Zombie Chase resource error:',e.reason);});
 </script>
 </body>
