@@ -227,7 +227,7 @@ function makeSkylineBlock(x,z,variant=0){
  for(const hx of [-width*.27,width*.27]){
   box(g,.72,.58,.72,concrete,hx,height+1.55,-.25);
   box(g,.76,.09,.76,stone,hx,height+1.88,-.25);
-  for(let vent=-1;vent<=1;vent++)box(g,.035,.28,.48,steel,hx+vent*.17,height+1.55,.13);
+  for(let vent=-1;vent<=1;vent++)box(g,.035,.28,.48,materials.dark,hx+vent*.17,height+1.55,.13);
  }
  if(variant%2===0){
   const tankMat=mat(0x725a45,.92),tank=new THREE.Mesh(new THREE.CylinderGeometry(.65,.65,1.45,10),tankMat);
