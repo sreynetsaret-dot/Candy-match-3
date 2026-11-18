@@ -300,6 +300,37 @@ function makeBirdFlock(x,y,z,count=5){
  }
  flock.position.set(x,y,z);scene.add(flock);decor.push(flock);return flock;
 }
+function makeNYCFireEscape(x,z,side=1){
+ const g=new THREE.Group(),iron=mat(0x35434a,.72,.42),rail=mat(0x718087,.62,.48),grate=mat(0x596970,.78,.3);
+ // Three compact grated landings and alternating stair flights on a classic NYC brick facade.
+ for(let floor=0;floor<3;floor++){
+  const y=2.15+floor*3.15;
+  box(g,2.15,.13,1.05,grate,0,y,0);
+  for(const xx of [-1.02,1.02]){
+   box(g,.075,1.0,.075,iron,xx,y+.5,-.43);
+   box(g,.075,1.0,.075,iron,xx,y+.5,.43);
+   box(g,.075,.075,1.0,rail,xx,y+1,-.0);
+  }
+  box(g,2.1,.075,.075,rail,0,y+1,.43);
+  box(g,2.1,.075,.075,rail,0,y+1,-.43);
+  if(floor<2){
+   const stair=new THREE.Group();
+   const run=floor%2===0?1:-1;
+   for(let step=0;step<7;step++){
+    const tread=box(stair,.92,.07,.32,grate,run*(.48-step*.16),.12+step*.39,run>0?-.28+step*.13:.28-step*.13);
+    tread.rotation.x=0;
+   }
+   for(const xx of [-.48,.48]){
+    const stringer=box(stair,.075,2.9,.075,iron,xx,1.28,0);stringer.rotation.z=run>0?-.48:.48;
+   }
+   stair.position.set(0,y+.02,0);g.add(stair);
+  }
+ }
+ for(const xx of [-.88,.88])box(g,.09,9.4,.09,iron,xx,4.7,-.46);
+ // A short access ladder reaches the upper landing.
+ for(let rung=0;rung<10;rung++)box(g,1.05,.055,.055,rail,0,1.05+rung*.78,.55);
+ g.position.set(x,0,z);g.scale.x=side;scene.add(g);decor.push(g);return g;
+}
 function makeNYCTower(x,z,style=0){
  const g=new THREE.Group(),stone=mat(style===0?0x8a8178:0x657887,.82),trim=mat(0xc8b99b,.68),glass=mat(0x6e9eae,.32,.18);
  const w=style===0?4.8:4.1,d=4.4,h=style===0?27:23;
@@ -702,6 +733,10 @@ function createWorld(){
  for(let z=-12;z>-108;z-=18){makeGrassPatch(-6.35,z,1.08);makeGrassPatch(6.35,z-9,1.04);}
  for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
  for(let z=-39;z>-105;z-=58){makeBillboard(-6.8,z,-1);makeBillboard(6.8,z-18,1);}
+ // Classic black-metal fire escapes add fine-grained NYC character to the mid-distance facades.
+ makeNYCFireEscape(-14.2,-60.95,1);
+ makeNYCFireEscape(14.2,-69.0,-1);
+ makeNYCFireEscape(-17.4,-89.0,1);
  // Signature New York skyline details: bridge silhouette, rooftop tanks and Times Square LEDs.
  makeNYCBridge(-108);
  for(let z=-28;z>-108;z-=38){makeWaterTower(-8.2,z);makeWaterTower(8.4,z-13);}
