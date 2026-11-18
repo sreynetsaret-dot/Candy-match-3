@@ -214,11 +214,19 @@ function makeSkylineBlock(x,z,variant=0){
   const y=1.35+row*2.05;
   for(let col=0;col<bays;col++){
    const xx=-width*.37+col*(width*.74/(bays-1));
-   box(g,.48,1.05,.045,((row+col+variant)%7===0)?warm:glass,xx,y,depth/2+.035);
-   box(g,.54,.07,.08,stone,xx,y-.58,depth/2+.07);
+   const windowMat=((row*3+col+variant)%9===0)?warm:glass;
+   box(g,.48,1.05,.045,windowMat,xx,y,depth/2+.035);
+   // Thin stone jambs and lintels make each distant window bay read clearly.
+   box(g,.055,1.16,.075,stone,xx-.285,y,depth/2+.055);
+   box(g,.055,1.16,.075,stone,xx+.285,y,depth/2+.055);
+   box(g,.57,.075,.085,stone,xx,y-.58,depth/2+.07);
+   box(g,.57,.055,.08,stone,xx,y+.57,depth/2+.07);
   }
  }
  for(const px of [-width*.47,width*.47])box(g,.13,height*.96,.14,stone,px,height/2,depth/2+.06);
+ // Vertical facade ribs and subtle floor bands give the blocks stronger Manhattan proportions.
+ for(let rib=-1;rib<=1;rib++)box(g,.085,height*.94,.11,stone,rib*width*.34,height/2,depth/2+.085);
+ for(let floor=1;floor<Math.floor(height/4);floor++)box(g,width+.08,.075,.12,stone,0,floor*4,depth/2+.07);
  box(g,width+.35,.3,depth+.3,stone,0,height+.08,0);
  // Stepped rooftop crown, mechanical penthouse and classic NYC water-tank details.
  box(g,width*.66,1.1,depth*.72,facade,0,height+.68,0);
@@ -332,11 +340,14 @@ function makeNYCFireEscape(x,z,side=1){
  g.position.set(x,0,z);g.scale.x=side;scene.add(g);decor.push(g);return g;
 }
 function makeNYCTower(x,z,style=0){
- const g=new THREE.Group(),stone=mat(style===0?0x8a8178:0x657887,.82),trim=mat(0xc8b99b,.68),glass=mat(0x6e9eae,.32,.18);
+ const g=new THREE.Group(),stone=mat(style===0?0x96877a:0x718b9b,.78),trim=mat(0xd8c8a9,.62),glass=mat(0x79b2c5,.24,.22),lit=mat(0xffd99a,.38,.08);
  const w=style===0?4.8:4.1,d=4.4,h=style===0?27:23;
  box(g,w,h,d,stone,0,h/2,0);
  for(let y=1.2;y<h-1;y+=1.55)for(let xx=-w/2+.48;xx<w/2-.25;xx+=.62)
-  box(g,.36,.86,.045,Math.random()<.14?materials.windowWarm:glass,xx,y,d/2+.035);
+  box(g,.36,.86,.045,Math.random()<.2?lit:glass,xx,y,d/2+.035);
+  box(g,.045,.94,.065,trim,xx-.205,y,d/2+.055);
+  box(g,.045,.94,.065,trim,xx+.205,y,d/2+.055);
+  box(g,.42,.055,.07,trim,xx,y-.47,d/2+.06);
  for(let xx=-w/2+.15;xx<=w/2;xx+=.62)box(g,.055,h-.5,.08,trim,xx,h/2,d/2+.08);
  for(let level=0;level<4;level++){
   const inset=.32+level*.28,levelH=1.55,levelW=w-inset*2,levelD=d-inset*1.6;
@@ -675,15 +686,15 @@ function createWorld(){
  makeSkyBackdrop();
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
  const mobile=innerWidth<700;const gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,stencil:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.3:1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
- const hemi=new THREE.HemisphereLight(0xf1f8ff,0x718b79,1.55);scene.add(hemi);
- const sun=new THREE.DirectionalLight(0xffe8c8,1.65);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
+ renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+ const hemi=new THREE.HemisphereLight(0xf4f8ff,0x718b79,1.68);scene.add(hemi);
+ const sun=new THREE.DirectionalLight(0xffedcf,1.82);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x788b7e,.98));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
  // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
  const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
  const curbMat=mat(0xd0c9b9,.9);for(const x of [-3.68,3.68]){const curb=box(scene,.18,.24,145,curbMat,x,.03,-52);curb.receiveShadow=true;}
  // A faint cool atmospheric wash behind the skyline separates distant buildings from the bright morning sky.
- const horizonGlow=new THREE.Mesh(new THREE.PlaneGeometry(220,34),new THREE.MeshBasicMaterial({color:0xd7e6df,transparent:true,opacity:.16,depthWrite:false,fog:false}));
+ const horizonGlow=new THREE.Mesh(new THREE.PlaneGeometry(220,34),new THREE.MeshBasicMaterial({color:0xe4edf0,transparent:true,opacity:.12,depthWrite:false,fog:false}));
  horizonGlow.position.set(0,9,-132);horizonGlow.renderOrder=-7;scene.add(horizonGlow);
  // Warm sunrise and layered distant hills create a more cinematic city horizon.
  const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(7,48),new THREE.MeshBasicMaterial({color:0xffd58c}));sunDisc.position.set(-25,22,-105);scene.add(sunDisc);
