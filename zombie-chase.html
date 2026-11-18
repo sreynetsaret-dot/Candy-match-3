@@ -766,6 +766,7 @@ function createWorld(){
   const banner=new THREE.Mesh(new THREE.PlaneGeometry(.68,1.02),new THREE.MeshBasicMaterial({map:bannerTex,side:THREE.DoubleSide}));
   const bx=x<0?.25:-.25;banner.position.set(bx,2.9,.1);lamp.add(banner);
   box(lamp,.78,.055,.07,materials.dark,bx,3.43,.06);
+  lamp.userData.cityGlow=glow;lamp.userData.cityBanner=banner;lamp.userData.phase=(z*-.13)+(x*.7);
   lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);
 }}
  for(let z=-12;z>-108;z-=13.5){makeBuilding(-8-Math.random()*2.5,z,-1);makeBuilding(8+Math.random()*2.5,z-6.75,1);}
@@ -932,7 +933,10 @@ function update(dt){
  player.position.x=THREE.MathUtils.lerp(player.position.x,laneX(lane),Math.min(1,dt*12));player.position.y=playerY;
  const t=clock.elapsedTime;const crouch=slideTimer>0;player.rotation.z=THREE.MathUtils.lerp(player.rotation.z,(laneX(lane)-player.position.x)*-.08,.1);player.userData.legL.rotation.x=Math.sin(t*12)*(crouch?.15:.8);player.userData.legR.rotation.x=-Math.sin(t*12)*(crouch?.15:.8);player.userData.armL.rotation.x=-Math.sin(t*12)*.65;player.userData.armR.rotation.x=Math.sin(t*12)*.65;
  zombie.position.x=THREE.MathUtils.lerp(zombie.position.x,player.position.x*.78,.018);zombie.position.z=5.1-Math.min(1.1,distance/1400);zombie.userData.legL.rotation.x=Math.sin(t*10)*.7;zombie.userData.legR.rotation.x=-Math.sin(t*10)*.7;zombie.userData.armL.rotation.x=Math.sin(t*10)*.55;zombie.userData.armR.rotation.x=-Math.sin(t*10)*.55;
- for(const d of decor){d.position.z+=step*.8;if(d.position.z>20)d.position.z=-110-Math.random()*20;}
+ for(const d of decor){d.position.z+=step*.8;if(d.position.z>20)d.position.z=-110-Math.random()*20;
+  if(d.userData.cityGlow){const pulse=1+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.12;d.userData.cityGlow.scale.setScalar(pulse);d.userData.cityGlow.material.emissiveIntensity=1.9+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.22;}
+  if(d.userData.cityBanner)d.userData.cityBanner.rotation.z=Math.sin(clock.elapsedTime*1.35+d.userData.phase)*.045;
+ }
  for(const r of roadSegments){r.position.z+=step;if(r.position.z>12)r.position.z=-115;}
  camera.position.x=THREE.MathUtils.lerp(camera.position.x,player.position.x*.18,.04);camera.lookAt(player.position.x*.12,1.1,-7);
 }
