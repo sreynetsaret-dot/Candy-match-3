@@ -25,4 +25,5 @@ $("search").addEventListener("input",render);
 $("addForm").addEventListener("submit",e=>{e.preventDefault();const url=$("videoUrl").value.trim();if(!/^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(url)){alert("Please enter a valid YouTube link.");return}videos.unshift({title:$("videoTitle").value.trim(),url,cat:$("category").value,name:$("creatorName").value.trim()||"Creator"});localStorage.setItem("subview-links",JSON.stringify(videos));e.target.reset();closeModal("addModal");render();alert("Link added to this preview on this device.")});
 $("authForm").addEventListener("submit",e=>{e.preventDefault();$("profileName").textContent=$("displayName").value;$("profileEmail").textContent=$("email").value;closeModal("authModal");alert("Preview only: no account was created. Backend authentication is not connected.")});
 render();
-</script></body></html>
+</script></body><!-- SubView preview build -->
+</html>
