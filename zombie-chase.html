@@ -407,6 +407,37 @@ function makeTrafficLight(x,z,side){
  for(let i=0;i<3;i++){const lamp=new THREE.Mesh(new THREE.CircleGeometry(.16,12),[red,amber,green][i]);lamp.position.set(side<0?.25:-.25,3.5-i*.45,.16);g.add(lamp);}
  g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
+function makeFlowerGarden(x,z,side=1){
+ const g=new THREE.Group(),stone=mat(0xd5c5a8,.94),soil=mat(0x604936,.98),grass=mat(0x4f9658,.98),path=mat(0xe6d7bd,.95);
+ box(g,1.92,.16,3.15,stone,0,.02,0);box(g,1.72,.07,2.95,grass,0,.13,0);box(g,.62,.045,2.55,path,0,.19,0);
+ for(const zz of [-1.28,1.28])box(g,1.72,.13,.12,soil,0,.22,zz);
+ for(const xx of [-.78,.78])box(g,.12,.3,2.72,stone,xx,.3,0);
+ const blooms=[0xff7896,0xffd45d,0xf8f0df,0xbba0ff,0xffa45c];
+ for(let row=0;row<2;row++)for(let i=0;i<5;i++){
+  const px=(row===0?-.48:.48)+(Math.random()-.5)*.12,pz=-1.02+i*.51;
+  const stem=new THREE.Mesh(new THREE.CylinderGeometry(.018,.025,.38,5),mat(0x38834b));stem.position.set(px,.39,pz);g.add(stem);
+  for(let k=0;k<5;k++){const a=k*Math.PI*2/5,petal=new THREE.Mesh(new THREE.SphereGeometry(.105,7,6),mat(blooms[(i+row+k)%blooms.length]));petal.position.set(px+Math.cos(a)*.105,.59,pz+Math.sin(a)*.105);petal.scale.set(1,.72,1);g.add(petal);}
+  const center=new THREE.Mesh(new THREE.SphereGeometry(.055,7,6),mat(0xffdf63));center.position.set(px,.6,pz);g.add(center);
+ }
+ for(const px of [-.78,.78]){box(g,.055,1.18,.055,materials.dark,px,.78,-1.03);const glow=new THREE.Mesh(new THREE.SphereGeometry(.13,8,7),new THREE.MeshBasicMaterial({color:0xffe6a6}));glow.position.set(px,1.42,-1.03);g.add(glow);}
+ box(g,.95,.12,.38,mat(0x9b6540,.9),0,.55,1.0);for(const px of [-.36,.36])box(g,.07,.48,.07,materials.dark,px,.3,1.0);
+ g.position.set(x,0,z);g.rotation.y=side<0?Math.PI:0;scene.add(g);decor.push(g);return g;
+}
+function makeKidsPlayground(x,z,side=-1){
+ const g=new THREE.Group(),rubber=mat(0x5c9e9a,.94),blue=mat(0x3287b8,.72),red=mat(0xe66b58,.72),yellow=mat(0xf2c64f,.72),metal=mat(0x485c66,.78);
+ box(g,2.02,.16,3.45,mat(0xd5c5a8,.94),0,.02,0);box(g,1.84,.075,3.27,rubber,0,.14,0);
+ for(const xx of [-.94,.94])box(g,.1,.22,3.25,mat(0xf0d9a7,.9),xx,.22,0);
+ for(const xx of [-.48,.48])box(g,.09,1.45,.09,blue,xx,.88,-.72);
+ box(g,1.12,.12,.95,yellow,0,1.58,-.72);box(g,1.12,.12,.12,red,0,1.68,-.72);box(g,.95,.12,.78,blue,0,1.31,-.72);
+ const slide=box(g,.62,.1,1.12,red,0,.68,.15);slide.rotation.x=-.34;
+ for(const xx of [-.29,.29])box(g,.07,.58,.07,metal,xx,.91,-.42);
+ for(const xx of [-.78,.78]){const leg=box(g,.075,1.7,.075,yellow,xx,.88,1.0);leg.rotation.z=xx<0?-.13:.13;}
+ box(g,1.8,.09,.09,red,0,1.72,1.0);
+ for(const xx of [-.38,.38]){const chain=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,.7,5),metal);chain.position.set(xx,.99,1.0);g.add(chain);box(g,.48,.09,.28,blue,xx,.62,1.0);}
+ const spring=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.38,7),metal);spring.position.set(.55,.43,-.12);g.add(spring);
+ const rider=new THREE.Mesh(new THREE.SphereGeometry(.25,9,7),yellow);rider.scale.set(1.25,.72,.8);rider.position.set(.55,.7,-.12);g.add(rider);
+ g.position.set(x,0,z);g.rotation.y=side<0?Math.PI:0;scene.add(g);decor.push(g);return g;
+}
 function makeBench(x,z,side){
  const g=new THREE.Group(),wood=mat(0x9b6540,.9),iron=mat(0x303c44,.75);
  box(g,1.45,.12,.48,wood,0,.62,0);box(g,1.45,.12,.12,wood,0,.95,-.18);
@@ -652,6 +683,9 @@ function createWorld(){
  makeSidewalkCafe(-5.05,-58,-1);
  makeSidewalkCafe(5.05,-74,1);
  // Everyday sidewalk life: benches, blue postal boxes and extra planted corners.
+ // Flower garden and children's play area fill two quiet sidewalk gaps without entering the running lanes.
+ makeFlowerGarden(5.12,-28,1);
+ makeKidsPlayground(-5.12,-38,-1);
  for(let z=-34;z>-104;z-=35){
   makeBench(-5.1,z,-1);
   makeMailbox(5.55,z-16);
