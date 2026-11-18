@@ -304,7 +304,7 @@ function makeSubwayEntrance(x,z){
 }
 function makeTree(x,z,scale=1){
  const g=new THREE.Group(),bark=mat(0x65432e,.98),barkHi=mat(0x9b704b,.96);
- const leaves=[mat(0x185d38,.98),mat(0x267743,.98),mat(0x3e9850,.98),mat(0x62b65b,.98),mat(0x9bcf6b,.98)];
+ const leaves=[mat(0x285b42,.98),mat(0x356b4b,.98),mat(0x477b54,.98),mat(0x628b5c,.98),mat(0x8fa879,.98)];
  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.13,.29,2.8,10),bark);trunk.position.y=1.4;g.add(trunk);
  for(let i=0;i<6;i++){const a=i*Math.PI/3,branch=new THREE.Mesh(new THREE.CylinderGeometry(.035,.095,1.45,7),barkHi);branch.position.set(Math.cos(a)*.43,2.25,Math.sin(a)*.39);branch.rotation.z=-Math.cos(a)*.62;branch.rotation.x=Math.sin(a)*.58;g.add(branch);}
  const crown=[[0,3.05,0,.92,2],[-.68,2.8,.08,.72,0],[.68,2.82,-.08,.74,1],[-.34,3.52,.12,.7,3],[.38,3.55,-.12,.72,4],[0,4.05,.02,.59,4],[-1.02,3.12,-.12,.48,2],[1.02,3.13,.12,.5,3],[-.62,3.75,-.3,.48,2],[.63,3.78,.28,.5,3],[0,2.62,.43,.56,0],[-.95,2.72,.32,.42,1],[.95,2.75,-.3,.43,2],[-.2,4.18,-.22,.34,3],[.24,4.2,.22,.35,4]];
@@ -318,7 +318,7 @@ function makeGrassPatch(x,z,scale=1){
  const turf=new THREE.Mesh(new THREE.BoxGeometry(2.66,.075,1.43),turfMats[1]);turf.position.y=.18;g.add(turf);
  // Dense, individually varied blades are combined into one mesh for mobile performance.
  const positions=[],colors=[],indices=[];
- const palette=[[.12,.34,.13],[.18,.46,.17],[.25,.55,.19],[.34,.62,.23],[.48,.68,.29],[.09,.29,.12]];
+ const palette=[[.16,.31,.17],[.22,.39,.21],[.28,.46,.25],[.34,.51,.29],[.42,.56,.34],[.13,.27,.15]];
  for(let i=0;i<210;i++){
   const px=(Math.random()-.5)*2.55,pz=(Math.random()-.5)*1.32;
   const h=.19+Math.random()*.34,w=.035+Math.random()*.035,lean=(Math.random()-.5)*.16;
@@ -504,7 +504,7 @@ function makeSkyBackdrop(){
   const skyCanvas=document.createElement('canvas');skyCanvas.width=4;skyCanvas.height=512;
   const skyCtx=skyCanvas.getContext('2d');
   const skyGradient=skyCtx.createLinearGradient(0,0,0,512);
-  skyGradient.addColorStop(0,'#4f86b5');skyGradient.addColorStop(.34,'#83b6d0');skyGradient.addColorStop(.68,'#c4dce0');skyGradient.addColorStop(.88,'#f4d3b2');skyGradient.addColorStop(1,'#f6b98f');
+  skyGradient.addColorStop(0,'#648da8');skyGradient.addColorStop(.34,'#91b6c5');skyGradient.addColorStop(.68,'#c8d8d8');skyGradient.addColorStop(.88,'#e8d8c7');skyGradient.addColorStop(1,'#e9c9ae');
   skyCtx.fillStyle=skyGradient;skyCtx.fillRect(0,0,4,512);
   const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
   const sky=new THREE.Mesh(new THREE.PlaneGeometry(260,142),new THREE.MeshBasicMaterial({map:skyTexture,depthWrite:false,fog:false}));
@@ -526,20 +526,20 @@ function makeSkyBackdrop(){
   wisps.position.set(0,39,-145);wisps.renderOrder=-8;scene.add(wisps);
   const glowCanvas=document.createElement('canvas');glowCanvas.width=256;glowCanvas.height=256;
   const glowCtx=glowCanvas.getContext('2d'),glow=glowCtx.createRadialGradient(128,128,8,128,128,126);
-  glow.addColorStop(0,'rgba(255,238,190,.72)');glow.addColorStop(.28,'rgba(255,210,153,.34)');glow.addColorStop(1,'rgba(255,190,140,0)');
+  glow.addColorStop(0,'rgba(255,238,210,.42)');glow.addColorStop(.28,'rgba(255,220,190,.2)');glow.addColorStop(1,'rgba(255,205,175,0)');
   glowCtx.fillStyle=glow;glowCtx.fillRect(0,0,256,256);
   const glowTexture=new THREE.CanvasTexture(glowCanvas);glowTexture.colorSpace=THREE.SRGBColorSpace;
   const halo=new THREE.Mesh(new THREE.PlaneGeometry(34,34),new THREE.MeshBasicMaterial({map:glowTexture,transparent:true,depthWrite:false,fog:false}));
   halo.position.set(-25,23,-140);halo.renderOrder=-9;scene.add(halo);
 }
 function createWorld(){
- scene=new THREE.Scene();scene.background=new THREE.Color(0x9fc6d8);scene.fog=new THREE.Fog(0xb8d2dc,32,108);
+ scene=new THREE.Scene();scene.background=new THREE.Color(0xb5cbd4);scene.fog=new THREE.Fog(0xc1d0d2,38,112);
  makeSkyBackdrop();
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
- const mobile=innerWidth<700;const gl=canvas.getContext('webgl2',{alpha:false,antialias:false,depth:true,stencil:false,powerPreference:'low-power',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:false,alpha:false,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1:1.35));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
- const hemi=new THREE.HemisphereLight(0xeaf6f7,0x586b70,2.05);scene.add(hemi);
- const sun=new THREE.DirectionalLight(0xfff5e8,2.05);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
+ const mobile=innerWidth<700;const gl=canvas.getContext('webgl2',{alpha:false,antialias:false,depth:true,stencil:false,powerPreference:'low-power',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:false,alpha:false,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.2:1.35));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NeutralToneMapping;renderer.toneMappingExposure=.92;
+ const hemi=new THREE.HemisphereLight(0xeaf1f2,0x68736f,1.35);scene.add(hemi);
+ const sun=new THREE.DirectionalLight(0xfff4e5,1.25);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x657d73,.98));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
  // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
  const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
