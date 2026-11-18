@@ -942,10 +942,10 @@ function addWeaponPickup(n,z=-48){
  g.position.set(laneX(n),0,z);scene.add(g);weaponPickups.push({mesh:g,lane:n});
 }
 function addEnemy(n,z=-76){
- const g=makePerson(true);g.scale.setScalar(.92);g.position.set(laneX(n),0,z);scene.add(g);
+ const g=makePerson(true);g.scale.setScalar(1.12);g.position.set(laneX(n),0,z);scene.add(g);
  enemies.push({mesh:g,lane:n,dead:false,phase:Math.random()*6});
 }
-function addZombieWave(){const lead=[-1,0,1][Math.floor(Math.random()*3)];addEnemy(lead,-27);const sides=lead===0?[-1,1]:[0,lead===-1?1:-1];addEnemy(sides[0],-33);addEnemy(sides[1],-39);showToast('🧟 ZOMBIES AHEAD');}
+function addZombieWave(){const lead=[-1,0,1][Math.floor(Math.random()*3)];addEnemy(lead,-21);const sides=lead===0?[-1,1]:[0,lead===-1?1:-1];addEnemy(sides[0],-27);addEnemy(sides[1],-33);showToast('🧟 ZOMBIES AHEAD');}
 function addGatePair(){const lanes=[-1,0,1].sort(()=>Math.random()-.5).slice(0,2);const rewards=[{kind:'ammo',amount:20,label:'AMMO +20',color:0x24a8ed},{kind:'coins',amount:25,label:'COINS +25',color:0xffc52f}].sort(()=>Math.random()-.5);lanes.forEach((ln,i)=>{const g=new THREE.Group(),c=rewards[i].color,pm=new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:.55});const a=new THREE.Mesh(new THREE.BoxGeometry(.16,2.5,.2),pm),b=a.clone(),top=new THREE.Mesh(new THREE.BoxGeometry(2,.16,.2),pm);a.position.set(-.86,1.25,0);b.position.set(.86,1.25,0);top.position.set(0,2.48,0);g.add(a,b,top);const cv=document.createElement('canvas');cv.width=512;cv.height=128;const cx=cv.getContext('2d');cx.fillStyle='#071321';cx.fillRect(0,0,512,128);cx.fillStyle='#fff';cx.font='bold 58px system-ui';cx.textAlign='center';cx.fillText(rewards[i].label,256,84);const tex=new THREE.CanvasTexture(cv),label=new THREE.Mesh(new THREE.PlaneGeometry(1.7,.43),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));label.position.set(0,2.1,.13);g.add(label);g.position.set(laneX(ln),0,-90);scene.add(g);gates.push({mesh:g,lane:ln,kind:rewards[i].kind,amount:rewards[i].amount,used:false});});}
 function shoot(){
  if(!running||paused)return;
@@ -976,7 +976,7 @@ function spawnWave(){
 }
 function buzz(pattern=12){try{if(navigator.vibrate)navigator.vibrate(pattern);}catch(e){}}
 function soundBeep(freq=660,duration=.07){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),gain=audioCtx.createGain();o.frequency.value=freq;o.type='sine';gain.gain.setValueAtTime(.055,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(gain);gain.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration);}catch(e){}}
-function startGame(){if(!worldReady)return;$('warning').classList.add('hidden');coinStreak=0;coinStreakTimer=0;comboFlashTimer=0;$('streak').textContent='0';if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));weaponPickups.forEach(o=>scene.remove(o.mesh));enemies.forEach(o=>scene.remove(o.mesh));bullets.forEach(o=>scene.remove(o.mesh));gates.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];weaponPickups=[];enemies=[];bullets=[];gates=[];if(weapon)player.remove(weapon);weapon=null;ammo=0;$('ammo').textContent='0';enemySpawnTimer=0;pickupSpawnTimer=2.5;gateSpawnTimer=6;autoFireTimer=.4;lastObstacleLane=null;lastObstacleKind=null;lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,Math.PI,0);distance=0;coinCount=0;speed=17;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;addZombieWave();$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
+function startGame(){if(!worldReady)return;$('warning').classList.add('hidden');coinStreak=0;coinStreakTimer=0;comboFlashTimer=0;$('streak').textContent='0';if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));weaponPickups.forEach(o=>scene.remove(o.mesh));enemies.forEach(o=>scene.remove(o.mesh));bullets.forEach(o=>scene.remove(o.mesh));gates.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];weaponPickups=[];enemies=[];bullets=[];gates=[];if(weapon)player.remove(weapon);weapon=null;ammo=0;$('ammo').textContent='0';enemySpawnTimer=0;pickupSpawnTimer=2.5;gateSpawnTimer=6;autoFireTimer=.4;lastObstacleLane=null;lastObstacleKind=null;lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,Math.PI,0);distance=0;coinCount=0;speed=4.8;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;equipWeapon();ammo=90;$('ammo').textContent=ammo;autoFireTimer=.2;addZombieWave();$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
 function showToast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');toastTimer=1.05;}
 function finishGame(){if(gameOver)return;buzz([35,25,60]);running=false;gameOver=true;best=Math.max(best,Math.floor(distance));try{localStorage.setItem('zcBest',String(best));}catch(e){console.warn('Best score could not be saved:',e);}$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
 function move(dir){if(!running||paused)return;const next=Math.max(-1,Math.min(1,lane+dir));if(next===lane)return;lane=next;buzz(8);soundBeep(420,.035);}
@@ -985,13 +985,13 @@ function slide(){if(!running||paused)return;slideTimer=.75;player.scale.y=.58;bu
 function togglePause(){if(!running&&!paused)return;paused=!paused;$('paused').classList.toggle('hidden',!paused);$('pause').textContent=paused?'▶ RESUME':'Ⅱ PAUSE';if(!paused)clock.getDelta();}
 function update(dt){
  if(!running||paused)return;
- const step=dt*speed;distance+=step*.72;speed=Math.min(9,7+distance*.002);$('score').textContent=Math.floor(distance);
+ const step=dt*speed;distance+=step*.72;speed=Math.min(5.8,4.8+distance*.0015);$('score').textContent=Math.floor(distance);
  if(distance-lastMilestone>100){lastMilestone=distance;soundBeep(880,.05);}
   pickupSpawnTimer+=dt;
   if(pickupSpawnTimer>13&&!weaponPickups.length&&!weapon){pickupSpawnTimer=0;addWeaponPickup([-1,0,1][Math.floor(Math.random()*3)],-48);}
   enemySpawnTimer+=dt;
-  if(enemySpawnTimer>4.2&&enemies.length===0){enemySpawnTimer=0;addZombieWave();}gateSpawnTimer+=dt;if(gateSpawnTimer>15){gateSpawnTimer=0;addGatePair();}
- spawnTimer+=dt;if(spawnTimer>Math.max(.82,1.42-(speed-17)*.025)){spawnTimer=0;spawnWave();}
+  if(enemySpawnTimer>5.5&&enemies.length===0){enemySpawnTimer=0;addZombieWave();}gateSpawnTimer+=dt;if(gateSpawnTimer>15){gateSpawnTimer=0;addGatePair();}
+ spawnTimer+=dt;if(spawnTimer>1.85){spawnTimer=0;spawnWave();}
  for(const o of obstacles){o.mesh.position.z+=step;if(o.kind==='train')o.mesh.rotation.y=Math.sin(distance*.03)*.008;
    // Trains are long: detect the full front-to-back collision window,
    // while road barriers can be cleared by jumping or sliding.
@@ -1034,7 +1034,7 @@ if(coinStreakTimer>0){coinStreakTimer-=dt;if(coinStreakTimer<=0){coinStreak=0;$(
  if(jumpV!==0||playerY>0){playerY+=jumpV*dt;jumpV-=21*dt;if(playerY<0){playerY=0;jumpV=0;}}
  if(slideTimer>0){slideTimer-=dt;if(slideTimer<=0)player.scale.y=1;}
  player.position.x=THREE.MathUtils.lerp(player.position.x,laneX(lane),Math.min(1,dt*12));player.position.y=playerY;
- const t=clock.elapsedTime;const crouch=slideTimer>0;player.rotation.z=THREE.MathUtils.lerp(player.rotation.z,(laneX(lane)-player.position.x)*-.08,.1);/* Backpedal gait: keep the chest and weapon aimed down the road at the zombies, while the legs cycle in reverse. */player.rotation.x=THREE.MathUtils.lerp(player.rotation.x,crouch?0:.055,.12);player.userData.legL.rotation.x=-Math.sin(t*12)*(crouch?.12:.8);player.userData.legR.rotation.x=Math.sin(t*12)*(crouch?.12:.8);player.userData.armL.rotation.x=Math.sin(t*12)*.18;player.userData.armR.rotation.x=-Math.sin(t*12)*.18;
+ const t=clock.elapsedTime;const crouch=slideTimer>0;const backpedalPhase=t*5.2;player.rotation.z=THREE.MathUtils.lerp(player.rotation.z,(laneX(lane)-player.position.x)*-.08,.1);/* Slow, deliberate backward steps while the torso and weapon stay aimed toward the zombies. */player.rotation.x=THREE.MathUtils.lerp(player.rotation.x,crouch?0:.025,.12);player.userData.legL.rotation.x=-Math.sin(backpedalPhase)*(crouch?.08:.42);player.userData.legR.rotation.x=Math.sin(backpedalPhase)*(crouch?.08:.42);player.userData.armL.rotation.x=Math.sin(backpedalPhase)*.07;player.userData.armR.rotation.x=-Math.sin(backpedalPhase)*.07;
  zombie.position.x=player.position.x;zombie.userData.legL.rotation.x=Math.sin(t*10)*.7;zombie.userData.legR.rotation.x=-Math.sin(t*10)*.7;zombie.userData.armL.rotation.x=Math.sin(t*10)*.55;zombie.userData.armR.rotation.x=-Math.sin(t*10)*.55;
  for(const d of decor){d.position.z-=step*.8;if(d.position.z< -120)d.position.z=20+Math.random()*20;
   if(d.userData.cityGlow){const pulse=1+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.12;d.userData.cityGlow.scale.setScalar(pulse);d.userData.cityGlow.material.emissiveIntensity=1.9+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.22;}
