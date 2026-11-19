@@ -1051,7 +1051,8 @@ function update(dt){
  monkey.userData.legs[0].rotation.x=Math.sin(t*10)*.72;monkey.userData.legs[1].rotation.x=-Math.sin(t*10)*.72;
  monkey.userData.arms[0].rotation.x=-Math.sin(t*10)*.65;monkey.userData.arms[1].rotation.x=Math.sin(t*10)*.65;
  // Move the ground, road markings and scenery TOWARD the camera: this is the visual motion of running forward.
- for(const d of decor){if(d.userData.staticLandmark)continue;d.position.z+=step*.8;if(d.position.z>22)d.position.z=-120-Math.random()*18;if(d.userData.baseDecorX===undefined)d.userData.baseDecorX=d.position.x;d.position.x=d.userData.baseDecorX+pathBend(d.position.z)*.72;}
+ // Keep scenery locked to its lane on the curved world path. Road and scenery share one world speed so objects do not drift sideways or appear to chase the runner.
+ for(const d of decor){if(d.userData.staticLandmark)continue;if(d.userData.baseDecorX===undefined)d.userData.baseDecorX=d.position.x-pathBend(d.position.z)*.72;d.position.z+=step;if(d.position.z>22){d.position.z=-120-Math.random()*18;d.userData.baseDecorX=d.position.x-pathBend(d.position.z)*.72;}d.position.x=d.userData.baseDecorX+pathBend(d.position.z)*.72;}
  for(const r of roadSegments){r.position.z+=step;if(r.position.z>18)r.position.z=-115;r.position.x=pathBend(r.position.z)+(r.userData.baseRoadX??(r.userData.baseRoadX=r.position.x-pathBend(r.position.z)));}
  const camX=player.position.x*.32+pathBend(2.3)*.68;camera.position.x=THREE.MathUtils.lerp(camera.position.x,camX,.14);camera.position.y=THREE.MathUtils.lerp(camera.position.y,4.25+playerY*.1,.08);camera.position.z=player.position.z+7.2;camera.lookAt(player.position.x*.2+pathBend(-5.2)*.8,1.35,player.position.z-7.2);
 }
