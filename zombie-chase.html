@@ -837,7 +837,7 @@ function makeAngkorTemple(x,z,scale=1){
  // Five lotus-bud towers in the classic quincunx arrangement. Each has tapered tiers,
  // projecting cornices, lotus petal courses, a neck ring and a pointed crown.
  const tower=(tx,tz,h,w)=>{
-  const baseY=4.45;
+  const baseY=4.45,firstTowerPart=g.children.length,heightFactor=h/8;
   const plinth=new THREE.Mesh(new THREE.CylinderGeometry(w*.88,w*1.18,.42,8),roof);
   plinth.position.set(tx,baseY,tz);plinth.castShadow=true;g.add(plinth);
   for(let k=0;k<7;k++){
@@ -874,8 +874,8 @@ function makeAngkorTemple(x,z,scale=1){
   }
  };
  tower(0,-.8,8,1.12);
- tower(-3.05,-.55,7,.83);tower(3.05,-.55,7,.83);
- tower(-1.72,-3.0,6,.76);tower(1.72,-3.0,6,.76);
+ tower(-3.05,-.55,6.6,.83);tower(3.05,-.55,6.6,.83);
+ tower(-1.72,-3.0,6.6,.76);tower(1.72,-3.0,6.6,.76);
  // Monumental west-facing stairway, balustrades and naga heads.
  addBox(6.1,.22,1.25,light,0,.16,5.45);
  for(let k=0;k<6;k++)addBox(5.7-k*.3,.16,.42,k%2?stone:light,0,.22+k*.15,4.45+k*.42);
