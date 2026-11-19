@@ -913,7 +913,8 @@ function createWorld(){
   roadSegments.push(joint);
  }
  // Angkor Wat's five lotus towers stand above the ancient sandstone galleries.
- makeAngkorTemple(0,-48,1.5);makeAngkorTemple(-15,-91,.9);makeAngkorTemple(15,-105,.9);
+ // Keep the main Angkor Wat silhouette far beyond the causeway so it stays on the horizon, never in the runner's lane.
+ makeAngkorTemple(0,-104,2.05);makeAngkorTemple(-19,-139,1.05);makeAngkorTemple(19,-151,1.05);
  for(let z=-12;z>-112;z-=22){makeKhmerPalm(-5.5,z,1);makeKhmerPalm(5.5,z-10,1.08);}
  for(let side of [-1,1])for(let z=-18;z>-110;z-=28){
   const col=mat(0x9b815b,.95);const pillar=box(scene,.42,2.9,.42,col,side*5.0,1.45,z);
