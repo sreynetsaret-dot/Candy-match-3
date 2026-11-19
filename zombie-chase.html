@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#101a2b">
-<title>Zombie Chase 3D</title>
+<title>Angkor Run 3D</title>
 <style>
 :root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101a2b;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;touch-action:none}#game{position:fixed;inset:0;width:100%;height:100%;display:block}.hud{position:fixed;z-index:3;top:calc(env(safe-area-inset-top) + 10px);left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.group{display:flex;gap:8px}.pill{padding:8px 12px;border:1px solid #ffffff55;border-radius:14px;background:#071321c9;box-shadow:0 4px 14px #0005;font-size:14px;font-weight:900;text-shadow:0 2px 4px #000}.back{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 66px);left:12px;padding:9px 13px;border-radius:12px;background:#101b2bcc;border:1px solid #ffffff55;color:#fff;text-decoration:none;font-weight:900}.tools{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 66px);right:12px;display:flex;gap:8px}.tools button{border:1px solid #ffffff55;border-radius:12px;padding:9px 12px;background:#101b2bcc;color:white;font-weight:900}.controls{position:fixed;z-index:4;bottom:calc(env(safe-area-inset-bottom) + 15px);left:0;right:0;display:flex;justify-content:center;gap:10px}.controls button{width:clamp(54px,15vw,68px);height:64px;border:2px solid #ffffffaa;border-radius:18px;background:linear-gradient(#ffe07b,#ef9234);color:#51260b;font-size:22px;font-weight:1000;box-shadow:0 5px 0 #9d4b1e;touch-action: manipulation}.controls button#shoot{background:linear-gradient(#9de7ff,#319bd0);color:#062b43;box-shadow:0 5px 0 #17658d}.overlay{position:fixed;z-index:8;inset:0;display:grid;place-items:center;padding:22px;background:#050b13a8;backdrop-filter:blur(5px)}.panel{width:min(92vw,390px);padding:25px 21px;border:1px solid #ffffff55;border-radius:26px;background:linear-gradient(150deg,#344d61,#101b2b 75%);text-align:center;box-shadow:0 22px 70px #000a}.panel h1{margin:0 0 8px;font-size:clamp(26px,7vw,34px);letter-spacing:.5px}.panel p{color:#d6e3ed;line-height:1.5}.panel button{width:100%;height:54px;border:0;border-radius:15px;background:linear-gradient(#ffe57d,#ff9a35);color:#51270d;font-weight:1000;font-size:17px}.hidden{display:none!important}.hint{font-size:12px!important;color:#c1d1dc!important}.brand{color:#ffd66b}.loading{font-size:13px;color:#d9e6ef}.toast{position:fixed;z-index:6;top:calc(env(safe-area-inset-top) + 154px);left:50%;transform:translateX(-50%);padding:10px 16px;border:1px solid #8ff0bd;border-radius:14px;background:#073b2bef;color:#baffd3;font-size:14px;font-weight:1000;box-shadow:0 6px 22px #0008;pointer-events:none;white-space:nowrap;animation:toastPop .22s ease-out}@keyframes toastPop{from{opacity:0;transform:translate(-50%,-8px) scale(.92)}to{opacity:1;transform:translate(-50%,0) scale(1)}}.warning{position:fixed;z-index:5;top:calc(env(safe-area-inset-top) + 112px);left:50%;transform:translateX(-50%);max-width:calc(100vw - 28px);padding:9px 14px;border:1px solid #ffd36a;border-radius:13px;background:#572b16eF;color:#ffe7a6;font-size:12px;font-weight:1000;letter-spacing:.5px;text-align:center;white-space:nowrap;box-shadow:0 5px 18px #0007;pointer-events:none;animation:warnPulse .65s ease-in-out infinite alternate}@keyframes warnPulse{from{opacity:.78;transform:translateX(-50%) scale(.98)}to{opacity:1;transform:translateX(-50%) scale(1.02)}}
 </style>
@@ -13,13 +13,13 @@
 <canvas id="game"></canvas>
 <a class="back" href="index.html">← HOME</a>
 <div class="tools"><button id="sound" aria-label="Toggle sound">🔊</button><button id="pause">Ⅱ PAUSE</button></div>
-<div class="hud"><div class="group"><div class="pill">🏃 <span id="score">0</span> m</div></div><div class="group"><div class="pill">🔫 <span id="ammo">0</span></div><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">🔥 <span id="streak">0</span>x</div><div class="pill">🏆 <span id="best">0</span></div></div></div>
+<div class="hud"><div class="group"><div class="pill">🏃 <span id="score">0</span> m</div></div><div class="group"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">🔥 <span id="streak">0</span>x</div><div class="pill">🏆 <span id="best">0</span></div></div></div>
 <div id="warning" class="warning hidden" role="status" aria-live="polite">⚠ OBSTACLE AHEAD</div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite">✨ CLEAN DODGE +2 COINS</div>
-<div class="controls"><button id="left" type="button" aria-label="Move left" title="Move left">◀</button><button id="jump" type="button" aria-label="Jump" title="Jump">⬆</button><button id="slide" type="button" aria-label="Slide" title="Slide">⬇</button><button id="right" type="button" aria-label="Move right" title="Move right">▶</button><button id="shoot" type="button" aria-label="Shoot" title="Shoot">🔫</button></div>
-<div class="overlay" id="start"><div class="panel"><h1>🧟 ZOMBIE <span class="brand">CHASE</span></h1><p>Run forward through a 3D city, face the road ahead, shoot zombies, dodge roadblocks and collect rewards!</p><button id="play">START RUN</button><p class="hint">Auto-run forward · Shoot zombies ahead · Swipe to dodge · Collect rewards</p><p class="loading" id="load">Preparing 3D world…</p></div></div>
-<div class="overlay hidden" id="over"><div class="panel"><h1>🧟 CAUGHT!</h1><p>Your run: <b id="final">0</b> m · Coins: <b id="earned">0</b></p><button id="again">RUN AGAIN</button><p class="hint">Keep running forward and beat your best distance!</p></div></div>
-<div class="overlay hidden" id="paused"><div class="panel"><h1>PAUSED</h1><p>Take a breath. The zombies are still coming from ahead!</p><button id="resume">RESUME RUN</button><p class="hint">Tap resume when you're ready.</p></div></div>
+<div class="controls"><button id="left" type="button" aria-label="Move left" title="Move left">◀</button><button id="jump" type="button" aria-label="Jump" title="Jump">⬆</button><button id="slide" type="button" aria-label="Slide" title="Slide">⬇</button><button id="right" type="button" aria-label="Move right" title="Move right">▶</button></div>
+<div class="overlay" id="start"><div class="panel"><h1>🏛️ ANGKOR <span class="brand">RUN</span></h1><p>រត់តាមផ្លូវថ្មនៅប្រាសាទអង្គរវត្ត! ប្រយ័ត្នសត្វស្វាដេញតាម ប្រមូលកាក់ និងគេចឧបសគ្គ។</p><button id="play">ចាប់ផ្តើមរត់</button><p class="hint">Run forward · Dodge obstacles · Collect coins · Escape the monkey!</p><p class="loading" id="load">Preparing 3D world…</p></div></div>
+<div class="overlay hidden" id="over"><div class="panel"><h1>🐒 CAUGHT!</h1><p>Your run: <b id="final">0</b> m · Coins: <b id="earned">0</b></p><button id="again">RUN AGAIN</button><p class="hint">Keep running forward and escape the monkey!</p></div></div>
+<div class="overlay hidden" id="paused"><div class="panel"><h1>PAUSED</h1><p>Take a breath. The monkey is still chasing you!</p><button id="resume">RESUME RUN</button><p class="hint">Tap resume when you're ready.</p></div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 
@@ -27,8 +27,8 @@ const $=id=>document.getElementById(id);
 const canvas=$('game');
 let scene,camera,renderer,clock,worldReady=false;
 let running=false,paused=false,gameOver=false;
-let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,coinStreak=0,coinStreakTimer=0,best=(()=>{try{return Number(localStorage.getItem('zcBest')||0)}catch{return 0}})(),speed=7,spawnTimer=0;
-let player,zombie,weapon=null,world=[],obstacles=[],coins=[],roadSegments=[],decor=[],weaponPickups=[],enemies=[],bullets=[],gates=[];
+let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,coinStreak=0,coinStreakTimer=0,best=(()=>{try{return Number(localStorage.getItem('arBest')||0)}catch{return 0}})(),speed=7,spawnTimer=0;
+let player,monkey,world=[],obstacles=[],coins=[],roadSegments=[],decor=[];
 let soundOn=true,audioCtx=null,lastMilestone=0,lastObstacleLane=null,lastObstacleKind=null;
 let comboFlashTimer=0,toastTimer=0,ammo=0,enemySpawnTimer=0,pickupSpawnTimer=2.5,autoFireTimer=0,gateSpawnTimer=6;
 $('best').textContent=best;
@@ -745,184 +745,82 @@ function makeSkyBackdrop(){
   const halo=new THREE.Mesh(new THREE.PlaneGeometry(38,38),new THREE.MeshBasicMaterial({map:glowTexture,transparent:true,depthWrite:false,fog:false}));
   halo.position.set(-25,24,-140);halo.renderOrder=-9;scene.add(halo);
 }
+function makeAngkorTemple(x,z,scale=1){
+ const g=new THREE.Group(),stone=mat(0xb99a68,.96),shadow=mat(0x806747,.98),dark=mat(0x5d4b37,.98);
+ // Central Khmer sanctuary with the iconic five lotus-bud towers.
+ const base=box(g,10,.65,5.4,stone,0,.35,0);
+ box(g,8.8,.32,4.7,shadow,0,.82,0);
+ for(let side=-1;side<=1;side+=2){
+  box(g,1.1,2.9,1.05,stone,side*2.65,2.35,-.25);
+  for(let tier=0;tier<3;tier++)box(g,1.35-tier*.2,.28,1.3-tier*.18,shadow,side*2.65,3.55+tier*.62,-.25);
+ }
+ const tower=(tx,tz,h)=>{
+  box(g,1.25,.55,1.25,shadow,tx,.95,tz);
+  for(let k=0;k<5;k++){const w=1.12-k*.17;box(g,w,.58,.98,stone,tx,.95+.34+k*.52,tz);}
+  const bud=new THREE.Mesh(new THREE.SphereGeometry(.34,12,10),stone);bud.scale.set(.85,1.55,.85);bud.position.set(tx,4.05,tz);g.add(bud);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(.24,.85,10),stone);tip.position.set(tx,4.72,tz);g.add(tip);
+ };
+ tower(0,-.45,5);tower(-2.15,-.45,4);tower(2.15,-.45,4);tower(-1.05,-1.65,4);tower(1.05,-1.65,4);
+ box(g,2.1,2.3,.35,dark,0,1.95,2.72);
+ for(let col=-4;col<=4;col++){if(Math.abs(col)>1)box(g,.28,2.3,.3,shadow,col*.92,1.92,2.75);}
+ for(let x2=-4.2;x2<=4.2;x2+=.7){const rail=box(g,.09,.09,.08,shadow,x2,1.05,2.82);}
+ g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeKhmerPalm(x,z,scale=1){
+ const g=new THREE.Group(),trunk=mat(0x795333,.98),leafMats=[mat(0x286b3e,.98),mat(0x3e8b4c,.98),mat(0x6b9e4d,.98)];
+ const stem=new THREE.Mesh(new THREE.CylinderGeometry(.13,.23,4.4,9),trunk);stem.position.y=2.2;g.add(stem);
+ for(let i=0;i<8;i++){const a=i*Math.PI/4,leaf=new THREE.Group();const branch=new THREE.Mesh(new THREE.CylinderGeometry(.025,.075,2.5,6),leafMats[i%3]);branch.rotation.z=-.52;branch.position.set(0,.45,0);leaf.add(branch);
+  for(let j=0;j<8;j++){const frond=new THREE.Mesh(new THREE.BoxGeometry(.13,.035,.62),leafMats[(i+j)%3]);frond.position.set(Math.cos(a)*(.38+j*.12),.9-j*.055,Math.sin(a)*(.38+j*.12));frond.rotation.y=-a;frond.rotation.z=-.25-j*.025;leaf.add(frond);}
+  leaf.rotation.y=a;leaf.position.y=4.15;g.add(leaf);}
+ g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+}
+function makeMonkey(){
+ const g=new THREE.Group(),fur=mat(0x795039,.94),light=mat(0xc99568,.94),dark=mat(0x30231d,.9);
+ const body=sphere(g,.42,fur,0,1.05,0);body.scale.set(.78,1.18,.72);
+ sphere(g,.29,fur,0,1.72,.03);sphere(g,.19,light,0,1.68,.24);
+ sphere(g,.055,dark,-.09,1.73,.39);sphere(g,.055,dark,.09,1.73,.39);
+ for(const x of [-.31,.31]){sphere(g,.13,light,x,1.76,.03);sphere(g,.07,dark,x,1.76,.11);}
+ const arms=[],legs=[];
+ for(const x of [-1,1]){const arm=new THREE.Group();arm.position.set(x*.29,1.32,0);box(arm,.16,.62,.17,fur,0,-.28,0);sphere(arm,.11,light,0,-.59,.02);g.add(arm);arms.push(arm);
+ const leg=new THREE.Group();leg.position.set(x*.16,.72,0);box(leg,.2,.58,.21,fur,0,-.27,0);sphere(leg,.12,light,0,-.58,.12);g.add(leg);legs.push(leg);}
+ const tailCurve=new THREE.CatmullRomCurve3([new THREE.Vector3(0,.85,-.25),new THREE.Vector3(.48,.55,-.65),new THREE.Vector3(.78,.95,-.85),new THREE.Vector3(.72,1.35,-.95)]);
+ g.add(new THREE.Mesh(new THREE.TubeGeometry(tailCurve,18,.07,7,false),fur));
+ g.userData={arms,legs};g.position.set(0,0,6.2);scene.add(g);return g;
+}
 function createWorld(){
- scene=new THREE.Scene();scene.background=new THREE.Color(0x91c5df);scene.fog=new THREE.Fog(0xc9dce0,48,132);
- makeSkyBackdrop();
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x9bc9dc);scene.fog=new THREE.Fog(0xc4d8c3,55,145);
  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.1,10.8);camera.lookAt(0,1.1,-7);
- const mobile=innerWidth<700;const gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,stencil:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.3:1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
- const hemi=new THREE.HemisphereLight(0xf4f8ff,0x718b79,1.68);scene.add(hemi);
- const sun=new THREE.DirectionalLight(0xffedcf,1.82);sun.position.set(-8,15,8);sun.castShadow=innerWidth>=700;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x788b7e,.98));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.position.z=-45;ground.receiveShadow=true;scene.add(ground);
- // A continuous asphalt track bed gives the three railway lanes a solid, readable surface.
- const trackBed=new THREE.Mesh(new THREE.PlaneGeometry(7.25,145),materials.road);trackBed.rotation.x=-Math.PI/2;trackBed.position.set(0,-.045,-52);trackBed.receiveShadow=true;scene.add(trackBed);
- const curbMat=mat(0xd0c9b9,.9);for(const x of [-3.68,3.68]){const curb=box(scene,.18,.24,145,curbMat,x,.03,-52);curb.receiveShadow=true;}
- // A faint cool atmospheric wash behind the skyline separates distant buildings from the bright morning sky.
- const horizonGlow=new THREE.Mesh(new THREE.PlaneGeometry(220,34),new THREE.MeshBasicMaterial({color:0xe4edf0,transparent:true,opacity:.12,depthWrite:false,fog:false}));
- horizonGlow.position.set(0,9,-132);horizonGlow.renderOrder=-7;scene.add(horizonGlow);
- // Warm sunrise and layered distant hills create a more cinematic city horizon.
- const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(7,48),new THREE.MeshBasicMaterial({color:0xffd58c}));sunDisc.position.set(-25,22,-105);scene.add(sunDisc);
- for(let i=0;i<5;i++){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),new THREE.MeshStandardMaterial({color:[0x769b91,0x64877f,0x8aa89a][i%3],roughness:1}));hill.scale.set(24+i*5,5+i%2*2,3);hill.position.set(-38+i*19,1.5,-116-i*2);scene.add(hill);}
- for(let i=0;i<11;i++){const cloud=new THREE.Group();const cloudMat=new THREE.MeshBasicMaterial({color:i%3===0?0xfff7ed:0xf7fbff,transparent:true,opacity:.86,depthWrite:false});const count=5+(i%3);for(let j=0;j<count;j++){const puff=new THREE.Mesh(new THREE.SphereGeometry(1.05+(j%3)*.28,12,8),cloudMat);puff.position.set(j*1.12,Math.sin(j*.9)*.28+(j%2)*.12,Math.cos(j*.7)*.18);puff.scale.y=.58+(j%2)*.12;cloud.add(puff);}cloud.position.set(-34+i*6.8,17+(i%4)*2.1,-68-(i%5)*13);cloud.scale.setScalar(.82+(i%3)*.15);scene.add(cloud);decor.push(cloud);}
- // Three-lane road, rails and repeating sleepers.
- for(let i=0;i<3;i++){const railL=-1.9+i*1.9;const rail1=box(scene,.12,.12,130,materials.rail,railL-.62,.05,-52);const rail2=box(scene,.12,.12,130,materials.rail,railL+.62,.05,-52);roadSegments.push(rail1,rail2);}
- for(let z=8;z>-115;z-=2.1){const s=box(scene,6.1,.12,.34,materials.sleeper,0,.02,z);roadSegments.push(s);}
- // Dashed lane guides make lane changes easier to read on small screens.
- const lanePaint=mat(0xe5d9a5,.55);for(const x of [-.95,.95])for(let z=7;z>-115;z-=7){const dash=box(scene,.055,.025,2.8,lanePaint,x,.095,z);roadSegments.push(dash);}
- // Repeating street lamps add depth and help frame the road.
- for(let z=-8;z>-105;z-=23){for(const x of [-4.4,4.4]){
-  const lamp=new THREE.Group();
-  box(lamp,.13,4.2,.13,materials.dark,0,2.1,0);
-  box(lamp,.9,.12,.14,materials.dark,x<0?.35:-.35,4.12,0);
-  const glow=new THREE.Mesh(new THREE.SphereGeometry(.24,12,10),new THREE.MeshStandardMaterial({color:0xfff0c4,emissive:0xffbd55,emissiveIntensity:2.2}));
-  glow.position.set(x<0?.72:-.72,3.98,0);lamp.add(glow);
-  // Small illustrated NYC district banner adds a polished, lived-in boulevard detail.
-  const bannerCanvas=document.createElement('canvas');bannerCanvas.width=256;bannerCanvas.height=384;
-  const bc=bannerCanvas.getContext('2d');
-  const bg=bc.createLinearGradient(0,0,256,384);bg.addColorStop(0,x<0?'#174f76':'#8d3442');bg.addColorStop(1,x<0?'#247f83':'#d17b48');
-  bc.fillStyle=bg;bc.fillRect(0,0,256,384);
-  bc.strokeStyle='#f4d89a';bc.lineWidth=9;bc.strokeRect(12,12,232,360);
-  bc.fillStyle='#fff3d7';bc.textAlign='center';bc.font='900 86px system-ui';bc.fillText('NYC',128,168);
-  bc.font='700 27px system-ui';bc.fillText('NEW YORK',128,220);bc.fillText('CITY',128,258);
-  bc.fillStyle='#f4d89a';bc.beginPath();bc.arc(128,310,13,0,Math.PI*2);bc.fill();
-  const bannerTex=new THREE.CanvasTexture(bannerCanvas);
-  const banner=new THREE.Mesh(new THREE.PlaneGeometry(.68,1.02),new THREE.MeshBasicMaterial({map:bannerTex,side:THREE.DoubleSide}));
-  const bx=x<0?.25:-.25;banner.position.set(bx,2.9,.1);lamp.add(banner);
-  box(lamp,.78,.055,.07,materials.dark,bx,3.43,.06);
-  lamp.userData.cityGlow=glow;lamp.userData.cityBanner=banner;lamp.userData.phase=(z*-.13)+(x*.7);
-  lamp.position.set(x,0,z);scene.add(lamp);decor.push(lamp);
-}}
- for(let z=-12;z>-108;z-=13.5){makeBuilding(-8-Math.random()*2.5,z,-1);makeBuilding(8+Math.random()*2.5,z-6.75,1);}
- // A second, taller row of varied Manhattan blocks fills empty skyline gaps and adds depth behind the street.
- for(let i=0;i<6;i++){
-  makeSkylineBlock(-14.2-(i%2)*3.2,-35-i*14, i);
-  makeSkylineBlock(14.2+(i%2)*3.2,-43-i*14, i+2);
+ const mobile=innerWidth<700,gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,stencil:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');
+ renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.3:1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+ scene.add(new THREE.HemisphereLight(0xf4f8ff,0x718b79,1.7));const sun=new THREE.DirectionalLight(0xffedcf,1.9);sun.position.set(-8,16,8);sun.castShadow=innerWidth>=700;scene.add(sun);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x527b45,.98));ground.rotation.x=-Math.PI/2;ground.position.set(0,-.16,-45);scene.add(ground);
+ const pathMat=mat(0xb9a17b,.98),edgeMat=mat(0x806b4d,.98),grassMat=mat(0x4d8047,.98);
+ const path=new THREE.Mesh(new THREE.PlaneGeometry(7.2,150),pathMat);path.rotation.x=-Math.PI/2;path.position.set(0,-.045,-52);scene.add(path);
+ for(const x of [-3.72,3.72])box(scene,.25,.24,150,edgeMat,x,.03,-52);
+ for(let z=8;z>-115;z-=2.3){const slab=box(scene,7,.035,.12,edgeMat,0,.01,z);roadSegments.push(slab);}
+ for(const x of [-.96,.96])for(let z=7;z>-115;z-=7){roadSegments.push(box(scene,.045,.025,2.7,mat(0xe2d1a6,.9),x,.025,z));}
+ // Angkor Wat's five lotus towers stand above the ancient sandstone galleries.
+ makeAngkorTemple(0,-48,1.5);makeAngkorTemple(-15,-91,.9);makeAngkorTemple(15,-105,.9);
+ for(let z=-12;z>-112;z-=22){makeKhmerPalm(-5.5,z,1);makeKhmerPalm(5.5,z-10,1.08);}
+ for(let side of [-1,1])for(let z=-18;z>-110;z-=28){
+  const col=mat(0x9b815b,.95);const pillar=box(scene,.42,2.9,.42,col,side*5.0,1.45,z);
+  box(scene,.72,.18,.68,edgeMat,side*5.0,2.95,z);
+  const top=box(scene,.6,.18,.6,col,side*5.0,3.12,z);
+  // Small naga-inspired stone finials along the processional walkway.
+  const naga=sphere(scene,.22,edgeMat,side*4.65,.55,z);naga.scale.set(1,.55,1.7);
  }
- // A softer outer skyline layer fills the far edges and gives Manhattan a deeper layered horizon.
- for(let i=0;i<5;i++){
-  const left=makeSkylineBlock(-21.5-(i%2)*2.4,-49-i*17,i+1);
-  const right=makeSkylineBlock(21.5+(i%2)*2.4,-57-i*17,i+3);
-  left.scale.setScalar(.78);right.scale.setScalar(.78);
- }
- // Finished pedestrian sidewalks, patterned paving and planted borders make the boulevard feel like a real city.
- const sidewalkMat=mat(0xc5bdad,.96),paverA=mat(0xd8cfbf,.96),paverB=mat(0xb3b8ad,.96),planterMat=mat(0x617366);
- for(const side of [-1,1]){
-  const sidewalk=new THREE.Mesh(new THREE.PlaneGeometry(2.45,145),sidewalkMat);
-  sidewalk.rotation.x=-Math.PI/2;sidewalk.position.set(side*5.05,-.105,-52);sidewalk.receiveShadow=true;scene.add(sidewalk);
-  const edge=box(scene,.12,.22,145,curbMat,side*3.82,.02,-52);roadSegments.push(edge);
-  for(let z=5;z>-115;z-=3.8){
-   const tile=box(scene,2.25,.035,.075,((Math.round(Math.abs(z)/3.8)%2)===0?paverA:paverB),side*5.05,-.075,z);
-   roadSegments.push(tile);
-  }
-  // Fine transverse joints break the sidewalk into believable stone slabs.
-  const jointMat=mat(0x8d8d84,.98),drainFrame=mat(0x465057,.72,.5),drainSlot=mat(0x202a30,.88);
-  for(let z=2;z>-114;z-=7.6){
-   const joint=box(scene,2.28,.012,.022,jointMat,side*5.05,-.047,z);
-   roadSegments.push(joint);
-  }
-  // Tactile yellow warning paving marks pedestrian crossing points on both sidewalks.
-  const tactileMat=mat(0xd8ad4d,.9);
-  for(let z=-12;z>-112;z-=25){
-   const panel=box(scene,.88,.025,.72,tactileMat,side*4.18,-.045,z);
-   roadSegments.push(panel);
-   for(let k=0;k<4;k++){
-    const rib=box(scene,.76,.018,.045,tactileMat,side*4.18,-.024,z-.25+k*.16);
-    roadSegments.push(rib);
-   }
-  }
-  // Iron storm drains sit beside the curb, safely away from the running lanes.
-  for(let z=-8;z>-111;z-=25.5){
-   const drain=box(scene,.52,.035,.78,drainFrame,side*3.98,-.035,z);
-   roadSegments.push(drain);
-   for(let k=0;k<5;k++){
-    const slot=box(scene,.045,.012,.62,drainSlot,side*3.98-.19+k*.095,-.012,z);
-    roadSegments.push(slot);
-   }
-  }
-  for(let z=-15;z>-108;z-=31){
-   const planter=new THREE.Group();
-   box(planter,1.25,.38,.72,planterMat,0,.19,0);
-   const soil=mat(0x493d30);box(planter,1.12,.07,.6,soil,0,.4,0);
-   for(let i=0;i<5;i++){
-    const flower=new THREE.Group();
-    const stem=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.42,6),mat(0x3d965b));stem.position.y=.61;flower.add(stem);
-    const bloom=new THREE.Mesh(new THREE.SphereGeometry(.15,9,7),mat([0xffcf58,0xf17d91,0xfff0d0,0x9e8bea][i%4]));bloom.position.set((i-2)*.19,.86,(i%2)*.16-.08);flower.add(bloom);
-    planter.add(flower);
-   }
-   planter.position.set(side*5.05,0,z);scene.add(planter);decor.push(planter);
-  }
- }
- // Short zebra-crossing marks at the distant boulevard entrance add familiar street detail.
- for(let i=0;i<7;i++){const stripe=box(scene,.62,.025,.16,materials.white,-2.7+i*.9,.105,-105);roadSegments.push(stripe);}
- // Repeating zebra crossings and detailed iron manhole covers enrich the NYC street surface.
- makeRoadCrossing(-35);makeRoadCrossing(-70);
- for(const p of [[-2.45,-18],[2.42,-27],[-.15,-47],[2.4,-59],[-2.4,-78],[.12,-96]])makeRoadManhole(p[0],p[1]);
- // Distant construction cranes and small bird flocks give the skyline more scale and everyday motion.
- makeSkylineCrane(-23.5,-91,.92);
- makeSkylineCrane(23.5,-108,.82);
- makeBirdFlock(-12,16,-58,5);
- makeBirdFlock(10,19,-87,6);
- // Manhattan-inspired skyline landmarks: stepped Art Deco towers rise above the street.
- makeNYCTower(-10.1,-76,0);
- makeNYCTower(10.4,-91,1);
- // A classic elevated subway segment enriches the distant Manhattan street scene.
- makeElevatedSubway(-13.1,-67);
- // Yellow cabs and green subway entrances bring unmistakable New York street character.
- for(let z=-32;z>-100;z-=64){
-  makeNYCTaxi(-5.12,z,-1);
-  makeSubwayEntrance(5.12,z-25);
- }
- // Two classic city buses add a strong Manhattan transit landmark to the sidewalks.
- makeNYCBus(5.18,-63,1);makeNYCBus(-5.18,-94,-1);
- // NYC bus shelters and curbside street furniture add scale and everyday city life.
- for(const z of [-27,-83]){makeBusShelter(-5.35,z,-1);makeBusShelter(5.35,z-15,1);}
- // A cheerful boulevard: trees, little kiosks and bright billboards add recognizable city life.
- // Small sidewalk pedestrians add life while staying clear of the three running lanes.
-  for(let i=0;i<8;i++){const z=-14-i*12;makeNYCPedestrian(i%2===0?-4.55:4.55,z,i%4);}
-  for(let z=-7;z>-105;z-=20){makeTree(-5.25,z,1.12+(Math.random()*.16));makeTree(5.25,z-9,1.08+(Math.random()*.18));}
- // Fresh landscaped grass pockets soften the sidewalks without entering the running lanes.
- for(let z=-12;z>-108;z-=18){makeGrassPatch(-6.35,z,1.08);makeGrassPatch(6.35,z-9,1.04);}
- for(let z=-22;z>-100;z-=42){makeStreetStand(-5.2,z,-1);makeStreetStand(5.2,z-13,1);}
- for(let z=-39;z>-105;z-=58){makeBillboard(-6.8,z,-1);makeBillboard(6.8,z-18,1);}
- // Classic black-metal fire escapes add fine-grained NYC character to the mid-distance facades.
- makeNYCFireEscape(-14.2,-60.95,1);
- makeNYCFireEscape(14.2,-69.0,-1);
- makeNYCFireEscape(-17.4,-89.0,1);
- // Signature New York skyline details: bridge silhouette, rooftop tanks and Times Square LEDs.
- makeNYCBridge(-108);
- for(let z=-28;z>-108;z-=38){makeWaterTower(-8.2,z);makeWaterTower(8.4,z-13);}
- for(let z=-20;z>-102;z-=32){
-  makeTrafficLight(-5.9,z,-1);makeStreetSign(5.9,z-9,1);
-  makeHydrant(-4.35,z-13);makeHydrant(4.35,z-25);
- }
- makeLEDPanel(-7.05,-48,-1,'BROADWAY',0xff477d);
- makeLEDPanel(7.05,-75,1,'TIMES SQ',0x28c7e8);
- // More authentic curbside details: litter bins, parking meters, bike racks and stoops.
- for(let z=-18;z>-110;z-=29){
-  makeNYCStreetFurniture(-5.85,z,-1);
-  makeNYCStreetFurniture(5.85,z-12,1);
-  makeNYCBrownstoneSteps(-6.05,z-17,-1);
- }
- // A few compact sidewalk cafe corners add human-scale detail to quieter blocks.
- makeSidewalkCafe(-5.05,-58,-1);
- makeSidewalkCafe(5.05,-74,1);
- // Everyday sidewalk life: benches, blue postal boxes and extra planted corners.
- // Flower garden and children's play area fill two quiet sidewalk gaps without entering the running lanes.
- makeFlowerGarden(5.12,-28,1);
- makeKidsPlayground(-5.12,-38,-1);
- for(let z=-34;z>-104;z-=35){
-  makeBench(-5.1,z,-1);
-  makeMailbox(5.55,z-16);
- }
-
-
-
+ for(let z=-25;z>-112;z-=35){const pool=new THREE.Mesh(new THREE.PlaneGeometry(2.2,15),new THREE.MeshStandardMaterial({color:0x4c9da0,roughness:.2,metalness:.15,transparent:true,opacity:.82}));pool.rotation.x=-Math.PI/2;pool.position.set(-6.5,-.04,z);scene.add(pool);}
+ // Khmer sandstone gate markers and tropical greenery frame the path.
+ for(let z=-15;z>-110;z-=38){for(let side of [-1,1]){const gate= new THREE.Group();box(gate,.3,3.6,.35,edgeMat,side*5.4,1.8,0);box(gate,.5,.35,.5,pathMat,side*5.4,3.65,0);gate.position.z=z;scene.add(gate);decor.push(gate);}}
  player=makePerson(false);player.position.set(0,0,2.3);player.rotation.y=Math.PI;scene.add(player);
- // Small backpack and bright shoe accents improve the runner silhouette at phone size.
- box(player,.42,.48,.2,materials.orange,0,1.12,-.25);
- for(const x of [-.18,.18])box(player,.29,.09,.42,materials.yellow,x,.08,.12);
- zombie=makePerson(true);zombie.scale.setScalar(1.05);zombie.position.set(0,0,5.1);zombie.visible=false;scene.add(zombie);
- const scar=new THREE.Mesh(new THREE.BoxGeometry(.045,.22,.025),mat(0x344a32));scar.position.set(.14,1.68,.235);zombie.add(scar);
+ // Traditional Khmer silk sampot, gold sash and checked krama scarf.
+ const silk=mat(0x9a3035,.82),gold=mat(0xd6aa50,.62),cream=mat(0xe8d8b5,.9);
+ const sampot=new THREE.Mesh(new THREE.BoxGeometry(.68,.7,.4),silk);sampot.position.set(0,.72,.02);player.add(sampot);
+ box(player,.72,.1,.44,gold,0,1.12,.02);box(player,.13,.7,.12,gold,.34,.98,.03);
+ const krama=box(player,.58,.16,.38,mat(0x244f73,.88),0,1.62,-.02);krama.rotation.z=.08;
+ const headband=box(player,.46,.09,.29,gold,0,1.94,0);
+ for(const x of [-.18,.18])box(player,.29,.09,.42,materials.dark,x,.08,.12);
+ monkey=makeMonkey();
 }
 function laneX(n){return n*1.9;}
 function equipWeapon(){
@@ -976,7 +874,15 @@ function spawnWave(){
 }
 function buzz(pattern=12){try{if(navigator.vibrate)navigator.vibrate(pattern);}catch(e){}}
 function soundBeep(freq=660,duration=.07){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),gain=audioCtx.createGain();o.frequency.value=freq;o.type='sine';gain.gain.setValueAtTime(.055,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(gain);gain.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration);}catch(e){}}
-function startGame(){if(!worldReady)return;$('warning').classList.add('hidden');coinStreak=0;coinStreakTimer=0;comboFlashTimer=0;$('streak').textContent='0';if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));weaponPickups.forEach(o=>scene.remove(o.mesh));enemies.forEach(o=>scene.remove(o.mesh));bullets.forEach(o=>scene.remove(o.mesh));gates.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];weaponPickups=[];enemies=[];bullets=[];gates=[];if(weapon)player.remove(weapon);weapon=null;ammo=0;$('ammo').textContent='0';enemySpawnTimer=0;pickupSpawnTimer=2.5;gateSpawnTimer=6;autoFireTimer=.4;lastObstacleLane=null;lastObstacleKind=null;lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,Math.PI,0);distance=0;coinCount=0;speed=4.8;spawnTimer=0;lastMilestone=0;running=true;paused=false;gameOver=false;equipWeapon();ammo=90;$('ammo').textContent=ammo;autoFireTimer=.2;addZombieWave();$('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);}
+function startGame(){
+ if(!worldReady)return;$('warning').classList.add('hidden');coinStreak=0;coinStreakTimer=0;comboFlashTimer=0;$('streak').textContent='0';
+ if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+ obstacles.forEach(o=>scene.remove(o.mesh));coins.forEach(o=>scene.remove(o.mesh));obstacles=[];coins=[];
+ lane=0;playerY=0;jumpV=0;slideTimer=0;player.scale.y=1;player.rotation.set(0,Math.PI,0);
+ distance=0;coinCount=0;speed=4.8;spawnTimer=0;lastMilestone=0;lastObstacleLane=null;
+ monkey.position.set(0,0,6.2);running=true;paused=false;gameOver=false;
+ $('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);
+}
 function showToast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');toastTimer=1.05;}
 function finishGame(){if(gameOver)return;buzz([35,25,60]);running=false;gameOver=true;best=Math.max(best,Math.floor(distance));try{localStorage.setItem('zcBest',String(best));}catch(e){console.warn('Best score could not be saved:',e);}$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
 function move(dir){if(!running||paused)return;const next=Math.max(-1,Math.min(1,lane+dir));if(next===lane)return;lane=next;buzz(8);soundBeep(420,.035);}
@@ -985,78 +891,55 @@ function slide(){if(!running||paused)return;slideTimer=.75;player.scale.y=.58;bu
 function togglePause(){if(!running&&!paused)return;paused=!paused;$('paused').classList.toggle('hidden',!paused);$('pause').textContent=paused?'▶ RESUME':'Ⅱ PAUSE';if(!paused)clock.getDelta();}
 function update(dt){
  if(!running||paused)return;
- const step=dt*speed;distance+=step*.72;speed=Math.min(5.8,4.8+distance*.0015);$('score').textContent=Math.floor(distance);
+ const step=dt*speed;distance+=step*.72;speed=Math.min(8.2,4.8+distance*.0015);$('score').textContent=Math.floor(distance);
  if(distance-lastMilestone>100){lastMilestone=distance;soundBeep(880,.05);}
-  pickupSpawnTimer+=dt;
-  if(pickupSpawnTimer>13&&!weaponPickups.length&&!weapon){pickupSpawnTimer=0;addWeaponPickup([-1,0,1][Math.floor(Math.random()*3)],-48);}
-  enemySpawnTimer+=dt;
-  if(enemySpawnTimer>5.5&&enemies.length===0){enemySpawnTimer=0;addZombieWave();}gateSpawnTimer+=dt;if(gateSpawnTimer>15){gateSpawnTimer=0;addGatePair();}
  spawnTimer+=dt;if(spawnTimer>1.85){spawnTimer=0;spawnWave();}
- for(const o of obstacles){o.mesh.position.z+=step;if(o.kind==='train')o.mesh.rotation.y=Math.sin(distance*.03)*.008;
-   // Trains are long: detect the full front-to-back collision window,
-   // while road barriers can be cleared by jumping or sliding.
-   const z=o.mesh.position.z;
-   const inCollisionWindow=o.kind==='train'?(z>-1.8&&z<6.3):(z>1.1&&z<3.5);
-   if(!o.hit&&!o.passed&&inCollisionWindow&&o.lane===lane){
-     const safeJump=playerY>.95,safeSlide=slideTimer>0;
-     if(o.kind==='barrier'&&!safeJump&&!safeSlide){o.hit=true;finishGame();}
-     if(o.kind==='train'){o.hit=true;finishGame();}
-   }
-   // Reward a clean jump or slide over a barrier with a satisfying near-miss bonus.
-   if(o.kind==='barrier'&&!o.hit&&!o.passed&&o.lane===lane&&z>3.8){o.passed=true;coinCount+=2;$('coins').textContent=coinCount;showToast('✨ CLEAN DODGE +2 COINS');soundBeep(1120,.09);buzz(7);}
+ for(const o of obstacles){
+  o.mesh.position.z+=step;const z=o.mesh.position.z;
+  if(!o.hit&&!o.passed&&z>1.1&&z<3.5&&o.lane===lane){
+   const safeJump=playerY>.95,safeSlide=slideTimer>0;
+   if(!safeJump&&!safeSlide){o.hit=true;finishGame();}
+  }
+  if(!o.hit&&!o.passed&&o.lane===lane&&z>3.8){o.passed=true;coinCount+=2;$('coins').textContent=coinCount;showToast('✨ CLEAN DODGE +2 COINS');soundBeep(1120,.09);}
  }
  const approaching=obstacles.filter(o=>o.mesh.position.z>-35&&o.mesh.position.z<-10).sort((a,b)=>b.mesh.position.z-a.mesh.position.z)[0];
- if(approaching){const laneName=approaching.lane===-1?'LEFT':approaching.lane===0?'MIDDLE':'RIGHT';$('warning').textContent=`⚠ ${approaching.kind==='train'?'TRAIN':'BARRIER'} AHEAD · ${laneName} LANE`;$('warning').classList.remove('hidden');}else{$('warning').classList.add('hidden');}
+ if(approaching){const laneName=approaching.lane===-1?'LEFT':approaching.lane===0?'MIDDLE':'RIGHT';$('warning').textContent='⚠ STONE BLOCK AHEAD · '+laneName+' LANE';$('warning').classList.remove('hidden');}else $('warning').classList.add('hidden');
  obstacles=obstacles.filter(o=>{if(o.mesh.position.z>13){scene.remove(o.mesh);return false;}return true;});
-   for(const p of weaponPickups){
-   p.mesh.position.z+=step;p.mesh.rotation.y+=dt*1.5;
-   if(p.mesh.position.z>1&&p.mesh.position.z<3.8&&p.lane===lane){equipWeapon();ammo=Math.min(60,ammo+30);$('ammo').textContent=ammo;scene.remove(p.mesh);p.collected=true;showToast('🔫 WEAPON COLLECTED · +30 AMMO');soundBeep(1040,.14);buzz(18);}
-  }
-  weaponPickups=weaponPickups.filter(p=>{if(p.collected||p.mesh.position.z>12){scene.remove(p.mesh);return false;}return true;});
-  for(const g of gates){g.mesh.position.z+=step;if(!g.used&&g.mesh.position.z>1&&g.mesh.position.z<4&&g.lane===lane){g.used=true;if(g.kind==='ammo'){equipWeapon();ammo=Math.min(90,ammo+g.amount);$('ammo').textContent=ammo;showToast('🔫 AMMO +20');}else{coinCount+=g.amount;$('coins').textContent=coinCount;showToast('🪙 COINS +25');}soundBeep(1050,.12);buzz(15);}}gates=gates.filter(g=>{if(g.used||g.mesh.position.z>13){scene.remove(g.mesh);return false;}return true;});
-   for(const e of enemies){
-   e.mesh.position.z+=step*.9;e.mesh.position.x=THREE.MathUtils.lerp(e.mesh.position.x,laneX(e.lane),dt*3);
-   const t=clock.elapsedTime*8+e.phase;e.mesh.userData.legL.rotation.x=Math.sin(t)*.55;e.mesh.userData.legR.rotation.x=-Math.sin(t)*.55;
-   if(e.mesh.position.z>1.0&&e.mesh.position.z<3.8&&e.lane===lane){scene.remove(e.mesh);e.dead=true;finishGame();}
-  }
-  enemies=enemies.filter(e=>{if(e.dead||e.mesh.position.z>12){scene.remove(e.mesh);return false;}return true;});
-  if(weapon&&ammo>0&&enemies.some(e=>!e.dead)){autoFireTimer-=dt;if(autoFireTimer<=0){autoFireTimer=.42;shoot();}}
- for(const b of bullets){
-   b.mesh.position.z-=dt*62;b.life-=dt;
-   for(const e of enemies){if(!e.dead&&Math.abs(b.mesh.position.x-e.mesh.position.x)<.72&&Math.abs(b.mesh.position.z-e.mesh.position.z)<1.15){e.dead=true;scene.remove(e.mesh);b.life=0;coinCount+=3;$('coins').textContent=coinCount;showToast('💥 ZOMBIE ELIMINATED · +3 COINS');soundBeep(260,.1);break;}}
-  }
-  bullets=bullets.filter(b=>{if(b.life<=0||b.mesh.position.z<-95){scene.remove(b.mesh);return false;}return true;});
-if(coinStreakTimer>0){coinStreakTimer-=dt;if(coinStreakTimer<=0){coinStreak=0;$('streak').textContent='0';}}
+ if(coinStreakTimer>0){coinStreakTimer-=dt;if(coinStreakTimer<=0){coinStreak=0;$('streak').textContent='0';}}
  if(comboFlashTimer>0){comboFlashTimer-=dt;if(comboFlashTimer<=0)$('streak').parentElement.style.borderColor='#ffffff55';}
  if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').classList.add('hidden');}
- for(const c of coins){c.mesh.position.z+=step;c.mesh.rotation.y+=dt*4;c.mesh.rotation.x=Math.sin(distance*.04)*.18;if(!c.hit&&c.mesh.position.z>1.0&&c.mesh.position.z<3.6&&c.lane===lane){c.hit=true;coinStreak=coinStreakTimer>0?coinStreak+1:1;coinStreakTimer=2.5;let bonus=0;if(coinStreak%5===0){bonus=2;comboFlashTimer=1.1;$('streak').parentElement.style.borderColor='#ffd45c';soundBeep(1250,.12);}coinCount+=1+bonus;$('coins').textContent=coinCount;$('streak').textContent=coinStreak;buzz(5);scene.remove(c.mesh);if(!bonus)soundBeep(980,.055);}}
+ for(const c of coins){c.mesh.position.z+=step;c.mesh.rotation.y+=dt*4;if(!c.hit&&c.mesh.position.z>1&&c.mesh.position.z<3.6&&c.lane===lane){
+  c.hit=true;coinStreak=coinStreakTimer>0?coinStreak+1:1;coinStreakTimer=2.5;let bonus=0;
+  if(coinStreak%5===0){bonus=2;comboFlashTimer=1.1;$('streak').parentElement.style.borderColor='#ffd45c';soundBeep(1250,.12);}
+  coinCount+=1+bonus;$('coins').textContent=coinCount;$('streak').textContent=coinStreak;buzz(5);scene.remove(c.mesh);if(!bonus)soundBeep(980,.055);
+ }}
  coins=coins.filter(c=>{if(c.hit||c.mesh.position.z>12){scene.remove(c.mesh);return false;}return true;});
  if(jumpV!==0||playerY>0){playerY+=jumpV*dt;jumpV-=21*dt;if(playerY<0){playerY=0;jumpV=0;}}
  if(slideTimer>0){slideTimer-=dt;if(slideTimer<=0)player.scale.y=1;}
  player.position.x=THREE.MathUtils.lerp(player.position.x,laneX(lane),Math.min(1,dt*12));player.position.y=playerY;
- const t=clock.elapsedTime;const crouch=slideTimer>0;const runPhase=t*9.2;player.rotation.z=THREE.MathUtils.lerp(player.rotation.z,(laneX(lane)-player.position.x)*-.08,.1);/* Natural forward-running gait with the character facing down the road. */player.rotation.x=THREE.MathUtils.lerp(player.rotation.x,crouch?0:.045,.12);player.userData.legL.rotation.x=Math.sin(runPhase)*(crouch?.08:.72);player.userData.legR.rotation.x=-Math.sin(runPhase)*(crouch?.08:.72);player.userData.armL.rotation.x=-Math.sin(runPhase)*.32;player.userData.armR.rotation.x=Math.sin(runPhase)*.32;
- zombie.position.x=player.position.x;zombie.userData.legL.rotation.x=Math.sin(t*10)*.7;zombie.userData.legR.rotation.x=-Math.sin(t*10)*.7;zombie.userData.armL.rotation.x=Math.sin(t*10)*.55;zombie.userData.armR.rotation.x=-Math.sin(t*10)*.55;
- for(const d of decor){d.position.z-=step*.8;if(d.position.z< -120)d.position.z=20+Math.random()*20;
-  if(d.userData.cityGlow){const pulse=1+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.12;d.userData.cityGlow.scale.setScalar(pulse);d.userData.cityGlow.material.emissiveIntensity=1.9+Math.sin(clock.elapsedTime*2.2+d.userData.phase)*.22;}
-  if(d.userData.cityBanner)d.userData.cityBanner.rotation.z=Math.sin(clock.elapsedTime*1.35+d.userData.phase)*.045;
-  if(d.userData.cityFoliage)d.userData.cityFoliage.rotation.z=Math.sin(clock.elapsedTime*1.05+d.userData.cityWindPhase)*.022;
-  if(d.userData.cityWalker){const w=d.userData.cityWalker,phase=clock.elapsedTime*5+w.phase;w.legL.rotation.x=Math.sin(phase)*.42;w.legR.rotation.x=-Math.sin(phase)*.42;w.armL.rotation.x=-Math.sin(phase)*.3;w.armR.rotation.x=Math.sin(phase)*.3;}
-  if(d.userData.citySignals){const phase=((clock.elapsedTime+d.userData.citySignalOffset)%12+12)%12,active=phase<5?0:phase<6?1:phase<11?2:1;for(let i=0;i<3;i++)d.userData.citySignals[i].visible=i===active;}
-  if(d.userData.cityWheels)for(const wheel of d.userData.cityWheels)wheel.rotation.x+=dt*5.5;
- }
+ const t=clock.elapsedTime,runPhase=t*9.2,crouch=slideTimer>0;
+ player.rotation.z=THREE.MathUtils.lerp(player.rotation.z,(laneX(lane)-player.position.x)*-.08,.1);
+ player.rotation.x=THREE.MathUtils.lerp(player.rotation.x,crouch?0:.045,.12);
+ player.userData.legL.rotation.x=Math.sin(runPhase)*(crouch?.08:.72);player.userData.legR.rotation.x=-Math.sin(runPhase)*(crouch?.08:.72);
+ player.userData.armL.rotation.x=-Math.sin(runPhase)*.32;player.userData.armR.rotation.x=Math.sin(runPhase)*.32;
+ monkey.position.x=THREE.MathUtils.lerp(monkey.position.x,player.position.x*.78,dt*2.2);
+ monkey.position.z=6.2+Math.sin(t*5)*.12;
+ monkey.userData.legs[0].rotation.x=Math.sin(t*10)*.72;monkey.userData.legs[1].rotation.x=-Math.sin(t*10)*.72;
+ monkey.userData.arms[0].rotation.x=-Math.sin(t*10)*.65;monkey.userData.arms[1].rotation.x=Math.sin(t*10)*.65;
+ for(const d of decor){d.position.z-=step*.8;if(d.position.z< -120)d.position.z=20+Math.random()*20;}
  for(const r of roadSegments){r.position.z-=step;if(r.position.z< -115)r.position.z=12;}
  camera.position.x=THREE.MathUtils.lerp(camera.position.x,player.position.x*.18,.04);camera.lookAt(player.position.x*.12,1.1,-7);
 }
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.045);update(dt);player.position.y=playerY;if(renderer&&scene&&camera)renderer.render(scene,camera);}
 function resize(){if(!camera||!renderer)return;camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<600?67:62;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.3:1.6));}
-$('left').onclick=()=>move(-1);$('right').onclick=()=>move(1);$('jump').onclick=jump;$('slide').onclick=slide;$('shoot').onclick=shoot;$('play').onclick=startGame;$('again').onclick=startGame;$('pause').onclick=togglePause;$('resume').onclick=togglePause;
+$('left').onclick=()=>move(-1);$('right').onclick=()=>move(1);$('jump').onclick=jump;$('slide').onclick=slide;$('play').onclick=startGame;$('again').onclick=startGame;$('pause').onclick=togglePause;$('resume').onclick=togglePause;
 $('sound').onclick=()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'🔊':'🔇';if(soundOn)soundBeep(600,.07);};
 let sx=0,sy=0;canvas.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY;},{passive:true});canvas.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<22)return;if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy<0)jump();else slide();},{passive:true});
 addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1);if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')slide();if(e.key==='Escape'||e.key.toLowerCase()==='p')togglePause();});
 addEventListener('resize',resize,{passive:true});
 addEventListener('blur',()=>{if(running&&!paused)togglePause();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused)togglePause();});
-try{createWorld();clock=new THREE.Clock();worldReady=true;$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){const detail=(err&&err.message)?err.message:String(err);$('load').textContent='3D startup error: '+detail.slice(0,150);$('play').disabled=true;$('play').textContent='3D NOT AVAILABLE';$('play').style.opacity='.55';console.error('Zombie Chase initialization failed:',err);}
+try{createWorld();clock=new THREE.Clock();worldReady=true;$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){const detail=(err&&err.message)?err.message:String(err);$('load').textContent='3D startup error: '+detail.slice(0,150);$('play').disabled=true;$('play').textContent='3D NOT AVAILABLE';$('play').style.opacity='.55';console.error('Angkor Run initialization failed:',err);}
 window.addEventListener('unhandledrejection',e=>{$('load').textContent='A 3D resource failed to load. Check your internet and reload.';console.error('Zombie Chase resource error:',e.reason);});
 </script>
 </body>
