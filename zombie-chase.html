@@ -924,7 +924,7 @@ function update(dt){
  // Move the ground, road markings and scenery TOWARD the camera: this is the visual motion of running forward.
  for(const d of decor){d.position.z+=step*.8;if(d.position.z>22)d.position.z=-120-Math.random()*18;if(d.userData.baseDecorX===undefined)d.userData.baseDecorX=d.position.x;d.position.x=d.userData.baseDecorX+pathBend(d.position.z)*.72;}
  for(const r of roadSegments){r.position.z+=step;if(r.position.z>18)r.position.z=-115;r.position.x=pathBend(r.position.z)+(r.userData.baseRoadX??(r.userData.baseRoadX=r.position.x-pathBend(r.position.z)));}
- const camX=player.position.x*.32+pathBend(2.3)*.68;camera.position.x=THREE.MathUtils.lerp(camera.position.x,camX,.14);camera.position.y=THREE.MathUtils.lerp(camera.position.y,3.35+playerY*.1,.08);camera.position.z=player.position.z+4.6;camera.lookAt(player.position.x*.2+pathBend(-3.8)*.8,1.3,player.position.z-5.4);
+ const camX=player.position.x*.32+pathBend(2.3)*.68;camera.position.x=THREE.MathUtils.lerp(camera.position.x,camX,.14);camera.position.y=THREE.MathUtils.lerp(camera.position.y,4.25+playerY*.1,.08);camera.position.z=player.position.z+7.2;camera.lookAt(player.position.x*.2+pathBend(-5.2)*.8,1.35,player.position.z-7.2);
 }
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.045);update(dt);if(renderer&&scene&&camera)renderer.render(scene,camera);}
 function resize(){if(!camera||!renderer)return;camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<600?67:62;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.3:1.6));}
