@@ -34,6 +34,11 @@ let comboFlashTimer=0,toastTimer=0;
 $('best').textContent=best;
 
 function mat(color,roughness=.78,metalness=0){return new THREE.MeshStandardMaterial({color,roughness,metalness});}
+function makeGrassTexture(){
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const ctx=canvas.getContext('2d');ctx.fillStyle='#527b45';ctx.fillRect(0,0,256,256);
+ for(let i=0;i<15000;i++){ctx.fillStyle=Math.random()>.5?'rgba(177,190,104,.16)':'rgba(20,61,34,.18)';const x=Math.random()*256,y=Math.random()*256;ctx.fillRect(x,y,1+Math.random()*2,2+Math.random()*5);}
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(9,9);tex.anisotropy=4;return tex;
+}
 function makeStoneTexture(){
  const canvas=document.createElement('canvas');canvas.width=canvas.height=256;
  const ctx=canvas.getContext('2d');ctx.fillStyle='#b9a17b';ctx.fillRect(0,0,256,256);
@@ -813,8 +818,8 @@ function createWorld(){
  const mobile=innerWidth<700,gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,stencil:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');
  renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.45:1.8));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
  scene.add(new THREE.HemisphereLight(0xeaf5ff,0x66513b,1.35));const sun=new THREE.DirectionalLight(0xffe2b0,mobile?2.15:2.4);sun.position.set(-8,18,10);sun.castShadow=true;sun.shadow.mapSize.set(mobile?768:1536,mobile?768:1536);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=24;sun.shadow.camera.bottom=-12;sun.shadow.camera.near=.5;sun.shadow.camera.far=65;sun.shadow.bias=-.00025;sun.shadow.normalBias=.025;sun.shadow.radius=mobile?3:4;scene.add(sun);
- const stoneMap=makeStoneTexture();
- const groundMat=mat(0x527b45,.98);groundMat.map=stoneMap;groundMat.bumpMap=stoneMap;groundMat.bumpScale=.035;
+ const stoneMap=makeStoneTexture(),grassMap=makeGrassTexture();
+ const groundMat=mat(0x527b45,.98);groundMat.map=grassMap;groundMat.bumpMap=grassMap;groundMat.bumpScale=.025;
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),groundMat);ground.rotation.x=-Math.PI/2;ground.position.set(0,-.16,-45);scene.add(ground);
  const pathMat=mat(0xb9a17b,.98),edgeMat=mat(0x806b4d,.98),grassMat=mat(0x4d8047,.98);
  pathMat.map=stoneMap;pathMat.bumpMap=stoneMap;pathMat.bumpScale=.075;edgeMat.map=stoneMap;edgeMat.bumpMap=stoneMap;edgeMat.bumpScale=.045;
