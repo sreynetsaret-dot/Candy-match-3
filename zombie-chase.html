@@ -926,25 +926,25 @@ function createWorld(){
  // The two long reflecting pools are a defining feature of Angkor Wat's western approach.
  for(let z=-24;z>-78;z-=27)for(const side of [-1,1]){
   const water=new THREE.Mesh(new THREE.PlaneGeometry(5.2,22),new THREE.MeshStandardMaterial({color:0x397f83,roughness:.16,metalness:.12,transparent:true,opacity:.88}));
-  water.rotation.x=-Math.PI/2;water.position.set(side*10.2,-.045,z);scene.add(water);
+  water.rotation.x=-Math.PI/2;water.position.set(side*10.2,-.045,z);scene.add(water);decor.push(water);
   const coping=mat(0xb9a17b,.94);
-  for(const edge of [-1,1])box(scene, .22,.22,22,coping,side*10.2+edge*2.72,.02,z);
+  for(const edge of [-1,1])decor.push(box(scene, .22,.22,22,coping,side*10.2+edge*2.72,.02,z));
  }
  // Naga balustrades line both sides of the long sandstone causeway.
  for(const side of [-1,1]){
   for(let z=-12;z>-43;z-=1.65){
    const post=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,.58,8),edgeMat);
-   post.position.set(side*4.12,.34,z);post.castShadow=true;scene.add(post);
-   const cap=sphere(scene,.13,edgeMat,side*4.12,.67,z);cap.scale.set(1,.55,1);
+   post.position.set(side*4.12,.34,z);post.castShadow=true;scene.add(post);decor.push(post);
+   const cap=sphere(scene,.13,edgeMat,side*4.12,.67,z);cap.scale.set(1,.55,1);decor.push(cap);
   }
-  const rail=box(scene,.2,.2,31,edgeMat,side*4.12,.62,-27.5);
+  const rail=box(scene,.2,.2,31,edgeMat,side*4.12,.62,-27.5);decor.push(rail);
   rail.rotation.x=0;
   // Stylized naga heads guard the entrance end of each balustrade.
-  const head=sphere(scene,.34,mat(0xc6aa7c,.9),side*4.12,.82,-12.2);
+  const head=sphere(scene,.34,mat(0xc6aa7c,.9),side*4.12,.82,-12.2);decor.push(head);
   head.scale.set(1.15,.9,1.3);
   for(let crest=0;crest<5;crest++){
    const hood=new THREE.Mesh(new THREE.ConeGeometry(.12,.42,7),mat(0xd2b98b,.9));
-   hood.position.set(side*4.12+(crest-2)*.16,1.12,-12.3);hood.rotation.z=(crest-2)*-.12;scene.add(hood);
+   hood.position.set(side*4.12+(crest-2)*.16,1.12,-12.3);hood.rotation.z=(crest-2)*-.12;scene.add(hood);decor.push(hood);
   }
  }
  // Paired library pavilions sit symmetrically beside the western approach.
