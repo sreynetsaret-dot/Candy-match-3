@@ -834,48 +834,53 @@ function makeAngkorTemple(x,z,scale=1){
  }
  const ped=new THREE.Mesh(new THREE.ConeGeometry(2.05,1.5,4),stone);
  ped.rotation.y=Math.PI/4;ped.position.set(0,5.72,1.78);ped.scale.set(1,.78,.5);ped.castShadow=true;g.add(ped);
- // Five lotus-bud towers in the classic quincunx arrangement. Each has tapered tiers,
- // projecting cornices, lotus petal courses, a neck ring and a pointed crown.
+ // Five towers in Angkor Wat's quincunx: stepped octagonal bases and lotus-bud crowns.
+ // Each tower is built locally so the four corner towers are truly lower than the central tower.
  const tower=(tx,tz,h,w)=>{
-  const baseY=4.45,firstTowerPart=g.children.length,heightFactor=h/8;
-  const plinth=new THREE.Mesh(new THREE.CylinderGeometry(w*.88,w*1.18,.42,8),roof);
-  plinth.position.set(tx,baseY,tz);plinth.castShadow=true;g.add(plinth);
-  for(let k=0;k<7;k++){
-   const t=k/7,ww=w*(1.02-t*.68),hh=.34;
-   const tier=new THREE.Mesh(new THREE.CylinderGeometry(ww*.83,ww,hh,8),k%2?light:stone);
-   tier.position.set(tx,baseY+.28+k*.38,tz);tier.castShadow=true;g.add(tier);
-   const cornice=new THREE.Mesh(new THREE.CylinderGeometry(ww*1.08,ww*1.08,.09,8),roof);
-   cornice.position.set(tx,baseY+.12+k*.38,tz);g.add(cornice);
-   // Small lotus-petal lobes around each receding roof course.
+  const baseY=4.45,tg=new THREE.Group();
+  const put=(mesh,px,py,pz)=>{mesh.position.set(px,py,pz);mesh.castShadow=true;mesh.receiveShadow=true;tg.add(mesh);return mesh;};
+  put(new THREE.Mesh(new THREE.CylinderGeometry(w*.92,w*1.22,.34,8),roof),0,.17,0);
+  put(new THREE.Mesh(new THREE.CylinderGeometry(w*1.08,w*1.08,.10,8),light),0,.36,0);
+  // Six receding octagonal roof courses form the characteristic stepped silhouette.
+  for(let k=0;k<6;k++){
+   const t=k/5,ww=w*(1.02-t*.61),y=.52+k*.34;
+   put(new THREE.Mesh(new THREE.CylinderGeometry(ww*.84,ww,.27,8),k%2?light:stone),0,y,0);
+   put(new THREE.Mesh(new THREE.CylinderGeometry(ww*1.09,ww*1.09,.085,8),roof),0,y-.17,0);
    for(let p=0;p<8;p++){
-    const ang=p*Math.PI/4;
-    const pet=new THREE.Mesh(new THREE.SphereGeometry(.105,8,7),light);
-    pet.scale.set(.72,1.65,.62);
-    pet.position.set(tx+Math.cos(ang)*ww*.91,baseY+.31+k*.38,tz+Math.sin(ang)*ww*.91);
-    pet.rotation.y=-ang;g.add(pet);
+    const ang=p*Math.PI/4,pet=new THREE.Mesh(new THREE.SphereGeometry(.09,8,7),light);
+    pet.scale.set(.72,1.55,.62);
+    put(pet,Math.cos(ang)*ww*.9,y+.12,Math.sin(ang)*ww*.9);
    }
   }
-  const neckY=baseY+3.05;
-  const neck=new THREE.Mesh(new THREE.CylinderGeometry(w*.19,w*.38,.48,10),light);
-  neck.position.set(tx,neckY,tz);g.add(neck);
-  for(let ring=0;ring<4;ring++){
-   const tor=new THREE.Mesh(new THREE.TorusGeometry(w*(.31-ring*.035),.055,7,20),carve);
-   tor.position.set(tx,neckY+.17+ring*.17,tz);tor.rotation.x=Math.PI/2;g.add(tor);
+  // Moulded neck rings below the lotus crown.
+  put(new THREE.Mesh(new THREE.CylinderGeometry(w*.25,w*.43,.42,10),stone),0,2.62,0);
+  for(let ring=0;ring<3;ring++){
+   const tor=new THREE.Mesh(new THREE.TorusGeometry(w*(.38-ring*.045),.045,7,20),carve);
+   tor.rotation.x=Math.PI/2;put(tor,0,2.79+ring*.14,0);
   }
-  const bud=new THREE.Mesh(new THREE.SphereGeometry(w*.43,16,14),stone);
-  bud.scale.set(.82,1.5,.82);bud.position.set(tx,neckY+.82,tz);bud.castShadow=true;g.add(bud);
-  const tip=new THREE.Mesh(new THREE.ConeGeometry(w*.2,.92,10),light);
-  tip.position.set(tx,neckY+1.62,tz);tip.castShadow=true;g.add(tip);
-  // Vertical ribs make the tower silhouette read as carved Khmer lotus architecture.
+  // Lathed lotus-bud profile, with a swelling body tapering to a pointed crown.
+  const profile=[[w*.25,2.98],[w*.34,3.10],[w*.43,3.30],[w*.49,3.55],[w*.47,3.78],[w*.39,4.02],[w*.29,4.24],[w*.19,4.43],[w*.10,4.62],[0,4.86]].map(([r,y])=>new THREE.Vector2(r,y));
+  put(new THREE.Mesh(new THREE.LatheGeometry(profile,16),light),0,0,0);
+  // Eight slender ribs follow the curved lotus-bud surface.
   for(let p=0;p<8;p++){
    const ang=p*Math.PI/4;
-   const rib=new THREE.Mesh(new THREE.CylinderGeometry(.025,.055,1.45,6),carve);
-   rib.position.set(tx+Math.cos(ang)*w*.31,neckY+.77,tz+Math.sin(ang)*w*.31);g.add(rib);
+   const curve=new THREE.CatmullRomCurve3([
+    new THREE.Vector3(Math.cos(ang)*w*.34,3.18,Math.sin(ang)*w*.34),
+    new THREE.Vector3(Math.cos(ang)*w*.46,3.52,Math.sin(ang)*w*.46),
+    new THREE.Vector3(Math.cos(ang)*w*.40,3.88,Math.sin(ang)*w*.40),
+    new THREE.Vector3(Math.cos(ang)*w*.25,4.22,Math.sin(ang)*w*.25),
+    new THREE.Vector3(Math.cos(ang)*w*.11,4.52,Math.sin(ang)*w*.11)
+   ]);
+   put(new THREE.Mesh(new THREE.TubeGeometry(curve,12,.018,5,false),carve),0,0,0);
   }
+  put(new THREE.Mesh(new THREE.SphereGeometry(w*.085,10,8),roof),0,4.83,0);
+  tg.scale.y=h/8;
+  tg.position.set(tx,baseY,tz);
+  g.add(tg);
  };
  tower(0,-.8,8,1.12);
- tower(-3.05,-.55,6.6,.83);tower(3.05,-.55,6.6,.83);
- tower(-1.72,-3.0,6.6,.76);tower(1.72,-3.0,6.6,.76);
+ tower(-3.05,-.55,6.35,.83);tower(3.05,-.55,6.35,.83);
+ tower(-1.72,-3.0,6.15,.76);tower(1.72,-3.0,6.15,.76);
  // Monumental west-facing stairway, balustrades and naga heads.
  addBox(6.1,.22,1.25,light,0,.16,5.45);
  for(let k=0;k<6;k++)addBox(5.7-k*.3,.16,.42,k%2?stone:light,0,.22+k*.15,4.45+k*.42);
