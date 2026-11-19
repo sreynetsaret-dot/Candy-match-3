@@ -34,6 +34,14 @@ let comboFlashTimer=0,toastTimer=0;
 $('best').textContent=best;
 
 function mat(color,roughness=.78,metalness=0){return new THREE.MeshStandardMaterial({color,roughness,metalness});}
+function makeStoneTexture(){
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=256;
+ const ctx=canvas.getContext('2d');ctx.fillStyle='#b9a17b';ctx.fillRect(0,0,256,256);
+ for(let i=0;i<10500;i++){const v=Math.random();ctx.fillStyle=v>.52?'rgba(255,239,205,.12)':'rgba(65,47,30,.10)';const s=.4+Math.random()*2.2;ctx.fillRect(Math.random()*256,Math.random()*256,s,s);}
+ ctx.strokeStyle='rgba(77,55,35,.16)';ctx.lineWidth=1;
+ for(let i=0;i<15;i++){let x=Math.random()*256,y=Math.random()*256;ctx.beginPath();ctx.moveTo(x,y);for(let j=0;j<4;j++){x+=(Math.random()-.5)*25;y+=Math.random()*12;ctx.lineTo(x,y);}ctx.stroke();}
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.anisotropy=4;return tex;
+}
 const materials={
  road:mat(0x46515a,.96),rail:mat(0xc2c9c8,.32,.58),sleeper:mat(0x66584a),yellow:mat(0xf5c84b,.48,.08),
  red:mat(0xc95d50),blue:mat(0x356f8b),dark:mat(0x26333a),skin:mat(0xe7b68d),shirt:mat(0x347a69),
@@ -803,12 +811,16 @@ function createWorld(){
  scene=new THREE.Scene();scene.background=new THREE.Color(0x9bc9dc);scene.fog=new THREE.Fog(0xc4d8c3,55,145);
  camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,180);camera.position.set(pathBend(2.3),3.65,5.5);camera.lookAt(pathBend(-2.2),1.2,-2.2);
  const mobile=innerWidth<700,gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,stencil:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});if(!gl)throw new Error('WebGL 2 is unavailable. Enable hardware acceleration or update iOS Safari.');
- renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.3:1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
- scene.add(new THREE.HemisphereLight(0xf4f8ff,0x718b79,1.7));const sun=new THREE.DirectionalLight(0xffedcf,1.9);sun.position.set(-8,16,8);sun.castShadow=innerWidth>=700;scene.add(sun);
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat(0x527b45,.98));ground.rotation.x=-Math.PI/2;ground.position.set(0,-.16,-45);scene.add(ground);
+ renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.45:1.8));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
+ scene.add(new THREE.HemisphereLight(0xeaf5ff,0x66513b,1.35));const sun=new THREE.DirectionalLight(0xffe2b0,mobile?2.15:2.4);sun.position.set(-8,18,10);sun.castShadow=true;sun.shadow.mapSize.set(mobile?768:1536,mobile?768:1536);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=24;sun.shadow.camera.bottom=-12;sun.shadow.camera.near=.5;sun.shadow.camera.far=65;sun.shadow.bias=-.00025;sun.shadow.normalBias=.025;sun.shadow.radius=mobile?3:4;scene.add(sun);
+ const stoneMap=makeStoneTexture();
+ const groundMat=mat(0x527b45,.98);groundMat.map=stoneMap;groundMat.bumpMap=stoneMap;groundMat.bumpScale=.035;
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),groundMat);ground.rotation.x=-Math.PI/2;ground.position.set(0,-.16,-45);scene.add(ground);
  const pathMat=mat(0xb9a17b,.98),edgeMat=mat(0x806b4d,.98),grassMat=mat(0x4d8047,.98);
- // Continuous-feeling sandstone causeway: individual paving slabs follow the bend and scroll with the runner.
+ pathMat.map=stoneMap;pathMat.bumpMap=stoneMap;pathMat.bumpScale=.075;edgeMat.map=stoneMap;edgeMat.bumpMap=stoneMap;edgeMat.bumpScale=.045;
+ // Varied sandstone slabs with a subtle weathered surface texture.
  const stoneMats=[pathMat,mat(0xc2aa83,.98),mat(0xad936d,.98),mat(0xb49a74,.98)];
+ for(const stone of stoneMats){stone.map=stoneMap;stone.bumpMap=stoneMap;stone.bumpScale=.065;}
  for(let z=8;z>-115;z-=2.3){
   const cx=pathBend(z),tile=box(scene,7.25,.13,2.34,stoneMats[Math.floor(Math.abs(z/2.3))%stoneMats.length],cx,-.055,z);
   roadSegments.push(tile);
