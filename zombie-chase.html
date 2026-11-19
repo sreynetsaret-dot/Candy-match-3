@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#101a2b">
 <title>Angkor Run 3D</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101a2b;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;touch-action:none}#game{position:fixed;inset:0;width:100%;height:100%;display:block}.hud{position:fixed;z-index:3;top:calc(env(safe-area-inset-top) + 10px);left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.group{display:flex;gap:8px}.pill{padding:8px 12px;border:1px solid #ffffff55;border-radius:14px;background:#071321c9;box-shadow:0 4px 14px #0005;font-size:14px;font-weight:900;text-shadow:0 2px 4px #000}.back{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 66px);left:12px;padding:9px 13px;border-radius:12px;background:#101b2bcc;border:1px solid #ffffff55;color:#fff;text-decoration:none;font-weight:900}.tools{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 66px);right:12px;display:flex;gap:8px}.tools button{border:1px solid #ffffff55;border-radius:12px;padding:9px 12px;background:#101b2bcc;color:white;font-weight:900}.controls{position:fixed;z-index:4;bottom:calc(env(safe-area-inset-bottom) + 15px);left:0;right:0;display:flex;justify-content:center;gap:10px}.controls button{width:clamp(54px,15vw,68px);height:64px;border:2px solid #ffffffaa;border-radius:18px;background:linear-gradient(#ffe07b,#ef9234);color:#51260b;font-size:22px;font-weight:1000;box-shadow:0 5px 0 #9d4b1e;touch-action: manipulation}.controls button#shoot{background:linear-gradient(#9de7ff,#319bd0);color:#062b43;box-shadow:0 5px 0 #17658d}.overlay{position:fixed;z-index:8;inset:0;display:grid;place-items:center;padding:22px;background:#050b13a8;backdrop-filter:blur(5px)}.panel{width:min(92vw,390px);padding:25px 21px;border:1px solid #ffffff55;border-radius:26px;background:linear-gradient(150deg,#344d61,#101b2b 75%);text-align:center;box-shadow:0 22px 70px #000a}.panel h1{margin:0 0 8px;font-size:clamp(26px,7vw,34px);letter-spacing:.5px}.panel p{color:#d6e3ed;line-height:1.5}.panel button{width:100%;height:54px;border:0;border-radius:15px;background:linear-gradient(#ffe57d,#ff9a35);color:#51270d;font-weight:1000;font-size:17px}.hidden{display:none!important}.hint{font-size:12px!important;color:#c1d1dc!important}.brand{color:#ffd66b}.loading{font-size:13px;color:#d9e6ef}.toast{position:fixed;z-index:6;top:calc(env(safe-area-inset-top) + 154px);left:50%;transform:translateX(-50%);padding:10px 16px;border:1px solid #8ff0bd;border-radius:14px;background:#073b2bef;color:#baffd3;font-size:14px;font-weight:1000;box-shadow:0 6px 22px #0008;pointer-events:none;white-space:nowrap;animation:toastPop .22s ease-out}@keyframes toastPop{from{opacity:0;transform:translate(-50%,-8px) scale(.92)}to{opacity:1;transform:translate(-50%,0) scale(1)}}.warning{position:fixed;z-index:5;top:calc(env(safe-area-inset-top) + 112px);left:50%;transform:translateX(-50%);max-width:calc(100vw - 28px);padding:9px 14px;border:1px solid #ffd36a;border-radius:13px;background:#572b16eF;color:#ffe7a6;font-size:12px;font-weight:1000;letter-spacing:.5px;text-align:center;white-space:nowrap;box-shadow:0 5px 18px #0007;pointer-events:none;animation:warnPulse .65s ease-in-out infinite alternate}@keyframes warnPulse{from{opacity:.78;transform:translateX(-50%) scale(.98)}to{opacity:1;transform:translateX(-50%) scale(1.02)}}
+:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101a2b;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;touch-action:none}#game{position:fixed;inset:0;width:100%;height:100%;display:block}.hud{position:fixed;z-index:3;top:calc(env(safe-area-inset-top) + 10px);left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.group{display:flex;gap:8px}.pill{padding:8px 12px;border:1px solid #ffffff55;border-radius:14px;background:#071321c9;box-shadow:0 4px 14px #0005;font-size:14px;font-weight:900;text-shadow:0 2px 4px #000}.back{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 66px);left:12px;padding:9px 13px;border-radius:12px;background:#101b2bcc;border:1px solid #ffffff55;color:#fff;text-decoration:none;font-weight:900}.tools{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 66px);right:12px;display:flex;gap:8px}.tools button{border:1px solid #ffffff55;border-radius:12px;padding:9px 12px;background:#101b2bcc;color:white;font-weight:900}.controls{position:fixed;z-index:4;bottom:calc(env(safe-area-inset-bottom) + 15px);left:0;right:0;display:flex;justify-content:center;gap:10px}.controls button{width:clamp(54px,15vw,68px);height:64px;border:2px solid #ffffffaa;border-radius:18px;background:linear-gradient(#ffe07b,#ef9234);color:#51260b;font-size:22px;font-weight:1000;box-shadow:0 5px 0 #9d4b1e;touch-action: manipulation}.overlay{position:fixed;z-index:8;inset:0;display:grid;place-items:center;padding:22px;background:#050b13a8;backdrop-filter:blur(5px)}.panel{width:min(92vw,390px);padding:25px 21px;border:1px solid #ffffff55;border-radius:26px;background:linear-gradient(150deg,#344d61,#101b2b 75%);text-align:center;box-shadow:0 22px 70px #000a}.panel h1{margin:0 0 8px;font-size:clamp(26px,7vw,34px);letter-spacing:.5px}.panel p{color:#d6e3ed;line-height:1.5}.panel button{width:100%;height:54px;border:0;border-radius:15px;background:linear-gradient(#ffe57d,#ff9a35);color:#51270d;font-weight:1000;font-size:17px}.hidden{display:none!important}.hint{font-size:12px!important;color:#c1d1dc!important}.brand{color:#ffd66b}.loading{font-size:13px;color:#d9e6ef}.toast{position:fixed;z-index:6;top:calc(env(safe-area-inset-top) + 154px);left:50%;transform:translateX(-50%);padding:10px 16px;border:1px solid #8ff0bd;border-radius:14px;background:#073b2bef;color:#baffd3;font-size:14px;font-weight:1000;box-shadow:0 6px 22px #0008;pointer-events:none;white-space:nowrap;animation:toastPop .22s ease-out}@keyframes toastPop{from{opacity:0;transform:translate(-50%,-8px) scale(.92)}to{opacity:1;transform:translate(-50%,0) scale(1)}}.warning{position:fixed;z-index:5;top:calc(env(safe-area-inset-top) + 112px);left:50%;transform:translateX(-50%);max-width:calc(100vw - 28px);padding:9px 14px;border:1px solid #ffd36a;border-radius:13px;background:#572b16eF;color:#ffe7a6;font-size:12px;font-weight:1000;letter-spacing:.5px;text-align:center;white-space:nowrap;box-shadow:0 5px 18px #0007;pointer-events:none;animation:warnPulse .65s ease-in-out infinite alternate}@keyframes warnPulse{from{opacity:.78;transform:translateX(-50%) scale(.98)}to{opacity:1;transform:translateX(-50%) scale(1.02)}}
 </style>
 </head>
 <body>
@@ -14,7 +14,7 @@
 <a class="back" href="index.html">← HOME</a>
 <div class="tools"><button id="sound" aria-label="Toggle sound">🔊</button><button id="pause">Ⅱ PAUSE</button></div>
 <div class="hud"><div class="group"><div class="pill">🏃 <span id="score">0</span> m</div></div><div class="group"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">🔥 <span id="streak">0</span>x</div><div class="pill">🏆 <span id="best">0</span></div></div></div>
-<div id="warning" class="warning hidden" role="status" aria-live="polite">⚠ OBSTACLE AHEAD</div>
+<div id="warning" class="warning hidden" role="status" aria-live="polite">⚠ STONE BLOCK AHEAD</div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite">✨ CLEAN DODGE +2 COINS</div>
 <div class="controls"><button id="left" type="button" aria-label="Move left" title="Move left">◀</button><button id="jump" type="button" aria-label="Jump" title="Jump">⬆</button><button id="slide" type="button" aria-label="Slide" title="Slide">⬇</button><button id="right" type="button" aria-label="Move right" title="Move right">▶</button></div>
 <div class="overlay" id="start"><div class="panel"><h1>🏛️ ANGKOR <span class="brand">RUN</span></h1><p>រត់តាមផ្លូវថ្មនៅប្រាសាទអង្គរវត្ត! ប្រយ័ត្នសត្វស្វាដេញតាម ប្រមូលកាក់ និងគេចឧបសគ្គ។</p><button id="play">ចាប់ផ្តើមរត់</button><p class="hint">Run forward · Dodge obstacles · Collect coins · Escape the monkey!</p><p class="loading" id="load">Preparing 3D world…</p></div></div>
@@ -28,9 +28,9 @@ const canvas=$('game');
 let scene,camera,renderer,clock,worldReady=false;
 let running=false,paused=false,gameOver=false;
 let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,coinStreak=0,coinStreakTimer=0,best=(()=>{try{return Number(localStorage.getItem('arBest')||0)}catch{return 0}})(),speed=7,spawnTimer=0;
-let player,monkey,world=[],obstacles=[],coins=[],roadSegments=[],decor=[];
-let soundOn=true,audioCtx=null,lastMilestone=0,lastObstacleLane=null,lastObstacleKind=null;
-let comboFlashTimer=0,toastTimer=0,ammo=0,enemySpawnTimer=0,pickupSpawnTimer=2.5,autoFireTimer=0,gateSpawnTimer=6;
+let player,monkey,obstacles=[],coins=[],roadSegments=[],decor=[];
+let soundOn=true,audioCtx=null,lastMilestone=0,lastObstacleLane=null;
+let comboFlashTimer=0,toastTimer=0;
 $('best').textContent=best;
 
 function mat(color,roughness=.78,metalness=0){return new THREE.MeshStandardMaterial({color,roughness,metalness});}
@@ -44,11 +44,10 @@ const materials={
 function box(parent,w,h,d,material,x=0,y=0,z=0){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 function sphere(parent,r,material,x=0,y=0,z=0){const m=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),material);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m;}
 function makePerson(isZombie=false){
- const g=new THREE.Group(),skin=isZombie?materials.zskin:materials.skin,top=isZombie?materials.zshirt:materials.shirt;
+ const g=new THREE.Group(),skin=isZombie?materials.skin,top=materials.shirt;
  box(g,.62,.78,.34,top,0,1.15,0);
  sphere(g,.25,skin,0,1.72,0);
- if(!isZombie){box(g,.42,.12,.25,materials.dark,0,1.96,-.02);box(g,.1,.12,.28,materials.red,0,1.79,.12);}
- else {sphere(g,.055,mat(0xff3027),-.09,1.76,.22);sphere(g,.055,mat(0xff3027),.09,1.76,.22);box(g,.22,.06,.04,materials.dark,0,1.57,.23);}
+ box(g,.42,.12,.25,materials.dark,0,1.96,-.02);box(g,.1,.12,.28,materials.red,0,1.79,.12);
  const armL=new THREE.Group(),armR=new THREE.Group();armL.position.set(-.39,1.42,0);armR.position.set(.39,1.42,0);g.add(armL,armR);
  box(armL,.18,.62,.2,top,0,-.27,0);box(armR,.18,.62,.2,top,0,-.27,0);
  const legL=new THREE.Group(),legR=new THREE.Group();legL.position.set(-.18,.78,0);legR.position.set(.18,.78,0);g.add(legL,legR);
@@ -823,37 +822,6 @@ function createWorld(){
  monkey=makeMonkey();
 }
 function laneX(n){return n*1.9;}
-function equipWeapon(){
- if(weapon)return;
- weapon=new THREE.Group();
- box(weapon,.16,.13,.58,materials.dark,.2,1.13,.02);
- box(weapon,.13,.2,.16,materials.dark,.2,1.01,.13);
- box(weapon,.07,.07,.34,materials.rail,.2,1.16,-.39);
- box(weapon,.09,.19,.1,materials.orange,.2,1.02,-.02);
- weapon.rotation.y=Math.PI;player.add(weapon);
-}
-function addWeaponPickup(n,z=-48){
- const g=new THREE.Group();
- box(g,.78,.48,.58,materials.blue,0,.38,0);
- box(g,.84,.08,.64,materials.yellow,0,.62,0);
- box(g,.14,.1,.48,materials.rail,0,.83,0);
- g.position.set(laneX(n),0,z);scene.add(g);weaponPickups.push({mesh:g,lane:n});
-}
-function addEnemy(n,z=-76){
- const g=makePerson(true);g.scale.setScalar(1.12);g.position.set(laneX(n),0,z);scene.add(g);
- enemies.push({mesh:g,lane:n,dead:false,phase:Math.random()*6});
-}
-function addZombieWave(){const lead=[-1,0,1][Math.floor(Math.random()*3)];addEnemy(lead,-21);const sides=lead===0?[-1,1]:[0,lead===-1?1:-1];addEnemy(sides[0],-27);addEnemy(sides[1],-33);showToast('🧟 ZOMBIES AHEAD');}
-function addGatePair(){const lanes=[-1,0,1].sort(()=>Math.random()-.5).slice(0,2);const rewards=[{kind:'ammo',amount:20,label:'AMMO +20',color:0x24a8ed},{kind:'coins',amount:25,label:'COINS +25',color:0xffc52f}].sort(()=>Math.random()-.5);lanes.forEach((ln,i)=>{const g=new THREE.Group(),c=rewards[i].color,pm=new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:.55});const a=new THREE.Mesh(new THREE.BoxGeometry(.16,2.5,.2),pm),b=a.clone(),top=new THREE.Mesh(new THREE.BoxGeometry(2,.16,.2),pm);a.position.set(-.86,1.25,0);b.position.set(.86,1.25,0);top.position.set(0,2.48,0);g.add(a,b,top);const cv=document.createElement('canvas');cv.width=512;cv.height=128;const cx=cv.getContext('2d');cx.fillStyle='#071321';cx.fillRect(0,0,512,128);cx.fillStyle='#fff';cx.font='bold 58px system-ui';cx.textAlign='center';cx.fillText(rewards[i].label,256,84);const tex=new THREE.CanvasTexture(cv),label=new THREE.Mesh(new THREE.PlaneGeometry(1.7,.43),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));label.position.set(0,2.1,.13);g.add(label);g.position.set(laneX(ln),0,-90);scene.add(g);gates.push({mesh:g,lane:ln,kind:rewards[i].kind,amount:rewards[i].amount,used:false});});}
-function shoot(){
- if(!running||paused)return;
- if(!weapon){showToast('🔫 FIND A WEAPON FIRST');soundBeep(190,.07);return;}
- if(ammo<=0){showToast('⚠ OUT OF AMMO');soundBeep(170,.08);return;}
- ammo--; $('ammo').textContent=ammo;
- const b=new THREE.Mesh(new THREE.SphereGeometry(.105,8,6),new THREE.MeshBasicMaterial({color:0xffdf70}));
- const target=enemies.filter(e=>!e.dead).sort((a,c)=>Math.abs(a.mesh.position.z-player.position.z)-Math.abs(c.mesh.position.z-player.position.z))[0];b.position.set(target?target.mesh.position.x:player.position.x,player.position.y+1.16,player.position.z-.72);scene.add(b);bullets.push({mesh:b,life:1.5});
- soundBeep(820,.035);buzz(5);
-}
 function addObstacle(kind,n,z=-75){
  const g=kind==='train'?makeTrain():makeBarrier();g.position.set(laneX(n),0,z);scene.add(g);obstacles.push({mesh:g,kind,lane:n,hit:false,passed:false});
 }
@@ -940,7 +908,7 @@ addEventListener('resize',resize,{passive:true});
 addEventListener('blur',()=>{if(running&&!paused)togglePause();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused)togglePause();});
 try{createWorld();clock=new THREE.Clock();worldReady=true;$('load').textContent='3D world ready · Swipe or use the buttons';animate();}catch(err){const detail=(err&&err.message)?err.message:String(err);$('load').textContent='3D startup error: '+detail.slice(0,150);$('play').disabled=true;$('play').textContent='3D NOT AVAILABLE';$('play').style.opacity='.55';console.error('Angkor Run initialization failed:',err);}
-window.addEventListener('unhandledrejection',e=>{$('load').textContent='A 3D resource failed to load. Check your internet and reload.';console.error('Zombie Chase resource error:',e.reason);});
+window.addEventListener('unhandledrejection',e=>{$('load').textContent='A 3D resource failed to load. Check your internet and reload.';console.error('Angkor Run resource error:',e.reason);});
 </script>
 </body>
 </html>
