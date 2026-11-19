@@ -978,7 +978,7 @@ function createWorld(){
 }
 function laneX(n){return n*1.9;}
 // A winding sandstone trail gives the run the sweeping, temple-runner feel.
-function pathBend(z){return Math.sin((z+8)*0.027)*3.05 + Math.sin((z+8)*0.010)*1.15;}
+function pathBend(z){return 0;} // Straight road for the current Angkor scene; keep all lanes, camera, obstacles and scenery aligned.
 function addObstacle(kind,n,z=-75){
  const g=kind==='train'?makeTrain():makeBarrier();g.position.set(pathBend(z)+laneX(n),0,z);scene.add(g);obstacles.push({mesh:g,kind,lane:n,hit:false,passed:false});
 }
