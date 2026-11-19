@@ -771,24 +771,95 @@ function makeSkyBackdrop(){
   halo.position.set(-25,24,-140);halo.renderOrder=-9;scene.add(halo);
 }
 function makeAngkorTemple(x,z,scale=1){
- const g=new THREE.Group(),stone=mat(0xb99a68,.96),shadow=mat(0x806747,.98),dark=mat(0x5d4b37,.98);
- // Central Khmer sanctuary with the iconic five lotus-bud towers.
- const base=box(g,10,.65,5.4,stone,0,.35,0);
- box(g,8.8,.32,4.7,shadow,0,.82,0);
- for(let side=-1;side<=1;side+=2){
-  box(g,1.1,2.9,1.05,stone,side*2.65,2.35,-.25);
-  for(let tier=0;tier<3;tier++)box(g,1.35-tier*.2,.28,1.3-tier*.18,shadow,side*2.65,3.55+tier*.62,-.25);
+ const g=new THREE.Group(),stone=mat(0xb99a68,.96),sunStone=mat(0xd0b88c,.94),shadow=mat(0x806747,.98),dark=mat(0x5d4b37,.98),relief=mat(0x9b8059,.98);
+ // West-facing Angkor Wat silhouette: broad galleries, a raised central sanctuary and five lotus towers.
+ // The entrance facade faces +Z, directly toward the approaching runner.
+ box(g,15,.62,8.2,shadow,0,.34,0);
+ box(g,14.2,.38,7.55,stone,0,.82,0);
+ box(g,12.6,.48,6.5,sunStone,0,1.22,-.1);
+ box(g,10.8,.42,5.5,shadow,0,1.65,-.25);
+ box(g,9.8,.32,4.8,stone,0,2.02,-.35);
+ // Long, low galleries create the recognizable horizontal temple mass.
+ for(const side of [-1,1]){
+  box(g,1.05,2.45,5.1,stone,side*5.35,3.25,-.3);
+  box(g,1.22,.22,5.35,sunStone,side*5.35,4.48,-.3);
+  for(let zz=-2.35;zz<=2.1;zz+=.72){
+   const col=new THREE.Mesh(new THREE.CylinderGeometry(.095,.12,1.75,8),relief);
+   col.position.set(side*4.72,2.85,zz);col.castShadow=true;g.add(col);
+   box(g,.28,.12,.28,sunStone,side*4.72,3.78,zz);
+   box(g,.25,.12,.25,shadow,side*4.72,1.95,zz);
+  }
+  // Carved gallery panels and repeating sandstone pilasters.
+  for(let zz=-2.1;zz<=2.1;zz+=.7){
+   box(g,.075,1.2,.12,relief,side*5.91,3.12,zz);
+  }
  }
- const tower=(tx,tz,h)=>{
-  box(g,1.25,.55,1.25,shadow,tx,.95,tz);
-  for(let k=0;k<5;k++){const w=1.12-k*.17;box(g,w,.58,.98,stone,tx,.95+.34+k*.52,tz);}
-  const bud=new THREE.Mesh(new THREE.SphereGeometry(.34,12,10),stone);bud.scale.set(.85,1.55,.85);bud.position.set(tx,4.05,tz);g.add(bud);
-  const tip=new THREE.Mesh(new THREE.ConeGeometry(.24,.85,10),stone);tip.position.set(tx,4.72,tz);g.add(tip);
+ // Central western entrance pavilion with three deep doorways and a layered pediment.
+ box(g,4.25,2.55,.72,stone,0,3.12,2.45);
+ box(g,4.55,.24,.9,sunStone,0,4.42,2.45);
+ box(g,4.05,.18,.78,shadow,0,4.62,2.45);
+ for(const dx of [-1.35,0,1.35]){
+  box(g,.92,1.9,.22,dark,dx,2.95,2.88);
+  box(g,1.12,.16,.32,sunStone,dx,3.98,2.91);
+  for(const px of [-.52,.52]){
+   const c=new THREE.Mesh(new THREE.CylinderGeometry(.075,.105,1.78,8),relief);
+   c.position.set(dx+px,2.95,3.0);c.castShadow=true;g.add(c);
+  }
+ }
+ // Stepped Khmer pediment above the central entrance.
+ for(let tier=0;tier<4;tier++){
+  const w=4.5-tier*.72;
+  const beam=box(g,w,.22,.52,sunStone,0,4.86+tier*.25,2.62);
+  beam.rotation.x=-.12;
+ }
+ const pediment=new THREE.Mesh(new THREE.ConeGeometry(1.55,.95,4),stone);
+ pediment.rotation.y=Math.PI/4;pediment.position.set(0,5.55,2.62);pediment.scale.set(1,.72,.42);g.add(pediment);
+ // Five towers in the classic quincunx arrangement, with tapered lotus-bud tiers.
+ const tower=(tx,tz,height,wide)=>{
+  box(g,wide*1.55,.34,wide*1.55,shadow,tx,2.25,tz);
+  for(let k=0;k<6;k++){
+   const w=wide*(1.42-k*.15),d=wide*(1.3-k*.13);
+   const tier=box(g,w,.42,d, k%2?sunStone:stone,tx,2.48+k*.39,tz);
+   tier.rotation.y=(k%2)*.035;
+  }
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(wide*.34,wide*.58,.52,10),sunStone);
+  neck.position.set(tx,4.95,tz);g.add(neck);
+  const bud=new THREE.Mesh(new THREE.SphereGeometry(wide*.48,14,12),stone);
+  bud.scale.set(.82,1.55,.82);bud.position.set(tx,5.42,tz);g.add(bud);
+  for(let ring=0;ring<3;ring++){
+   const tor=new THREE.Mesh(new THREE.TorusGeometry(wide*(.31-ring*.035),.045,6,16),relief);
+   tor.position.set(tx,5.05+ring*.19,tz);tor.rotation.x=Math.PI/2;g.add(tor);
+  }
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(wide*.22,.82,10),sunStone);
+  tip.position.set(tx,6.22,tz);g.add(tip);
  };
- tower(0,-.45,5);tower(-2.15,-.45,4);tower(2.15,-.45,4);tower(-1.05,-1.65,4);tower(1.05,-1.65,4);
- box(g,2.1,2.3,.35,dark,0,1.95,2.72);
- for(let col=-4;col<=4;col++){if(Math.abs(col)>1)box(g,.28,2.3,.3,shadow,col*.92,1.92,2.75);}
- for(let x2=-4.2;x2<=4.2;x2+=.7){const rail=box(g,.09,.09,.08,shadow,x2,1.05,2.82);}
+ tower(0,-1.45,7,1.12);
+ tower(-2.55,-1.35,6,.83);tower(2.55,-1.35,6,.83);
+ tower(-1.35,-3.05,5,.76);tower(1.35,-3.05,5,.76);
+ // Broad front stairs and naga balustrades lead from the causeway to the west entrance.
+ box(g,5.3,.18,1.15,sunStone,0,.16,4.25);
+ for(let step=0;step<5;step++)box(g,4.9-step*.28,.16,.42,step%2?stone:sunStone,0,.22+step*.15,3.55+step*.42);
+ for(const side of [-1,1]){
+  const rail=box(g,.2,.48,2.65,relief,side*3.05,.42,4.0);
+  rail.rotation.x=-.08;
+  for(let fin=0;fin<5;fin++){
+   const post=new THREE.Mesh(new THREE.ConeGeometry(.16,.42,7),sunStone);
+   post.position.set(side*3.05,.75,2.95+fin*.48);g.add(post);
+  }
+  const nagaHead=sphere(g,.24,sunStone,side*3.05,.75,2.62);
+  nagaHead.scale.set(1,.8,1.25);
+ }
+ // Repeated stone balusters and carved bands make the front read as an ancient Khmer monument.
+ for(let px=-4.2;px<=4.2;px+=.42){
+  if(Math.abs(px)>.8){
+   const bal=new THREE.Mesh(new THREE.CylinderGeometry(.045,.065,.55,7),relief);
+   bal.position.set(px,1.03,3.45);g.add(bal);
+  }
+ }
+ box(g,10.8,.12,.18,relief,0,2.22,2.58);
+ for(let px=-4.7;px<=4.7;px+=.48){
+  box(g,.08,.22,.12,sunStone,px,2.38,2.68);
+ }
  g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
 }
 function makeKhmerPalm(x,z,scale=1){
