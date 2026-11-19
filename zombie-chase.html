@@ -860,7 +860,7 @@ function makeAngkorTemple(x,z,scale=1){
  for(let px=-4.7;px<=4.7;px+=.48){
   box(g,.08,.22,.12,sunStone,px,2.38,2.68);
  }
- g.scale.setScalar(scale);g.position.set(x,0,z);scene.add(g);decor.push(g);return g;
+ g.scale.setScalar(scale);g.position.set(x,0,z);g.userData.staticLandmark=true;scene.add(g);decor.push(g);return g;
 }
 function makeKhmerPalm(x,z,scale=1){
  const g=new THREE.Group(),trunk=mat(0x795333,.98),leafMats=[mat(0x286b3e,.98),mat(0x3e8b4c,.98),mat(0x6b9e4d,.98)];
@@ -1050,7 +1050,7 @@ function update(dt){
  monkey.userData.legs[0].rotation.x=Math.sin(t*10)*.72;monkey.userData.legs[1].rotation.x=-Math.sin(t*10)*.72;
  monkey.userData.arms[0].rotation.x=-Math.sin(t*10)*.65;monkey.userData.arms[1].rotation.x=Math.sin(t*10)*.65;
  // Move the ground, road markings and scenery TOWARD the camera: this is the visual motion of running forward.
- for(const d of decor){d.position.z+=step*.8;if(d.position.z>22)d.position.z=-120-Math.random()*18;if(d.userData.baseDecorX===undefined)d.userData.baseDecorX=d.position.x;d.position.x=d.userData.baseDecorX+pathBend(d.position.z)*.72;}
+ for(const d of decor){if(d.userData.staticLandmark)continue;d.position.z+=step*.8;if(d.position.z>22)d.position.z=-120-Math.random()*18;if(d.userData.baseDecorX===undefined)d.userData.baseDecorX=d.position.x;d.position.x=d.userData.baseDecorX+pathBend(d.position.z)*.72;}
  for(const r of roadSegments){r.position.z+=step;if(r.position.z>18)r.position.z=-115;r.position.x=pathBend(r.position.z)+(r.userData.baseRoadX??(r.userData.baseRoadX=r.position.x-pathBend(r.position.z)));}
  const camX=player.position.x*.32+pathBend(2.3)*.68;camera.position.x=THREE.MathUtils.lerp(camera.position.x,camX,.14);camera.position.y=THREE.MathUtils.lerp(camera.position.y,4.25+playerY*.1,.08);camera.position.z=player.position.z+7.2;camera.lookAt(player.position.x*.2+pathBend(-5.2)*.8,1.35,player.position.z-7.2);
 }
