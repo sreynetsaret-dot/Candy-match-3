@@ -836,7 +836,7 @@ function createWorld(){
 }
 function laneX(n){return n*1.9;}
 // A winding sandstone trail gives the run the sweeping, temple-runner feel.
-function pathBend(z){return Math.sin((z+8)*0.018)*2.05 + Math.sin((z+8)*0.007)*.75;}
+function pathBend(z){return Math.sin((z+8)*0.027)*3.05 + Math.sin((z+8)*0.010)*1.15;}
 function addObstacle(kind,n,z=-75){
  const g=kind==='train'?makeTrain():makeBarrier();g.position.set(pathBend(z)+laneX(n),0,z);scene.add(g);obstacles.push({mesh:g,kind,lane:n,hit:false,passed:false});
 }
@@ -899,9 +899,9 @@ function update(dt){
  coins=coins.filter(c=>{if(c.hit||c.mesh.position.z>12){scene.remove(c.mesh);return false;}return true;});
  if(jumpV!==0||playerY>0){playerY+=jumpV*dt;jumpV-=21*dt;if(playerY<0){playerY=0;jumpV=0;}}
  if(slideTimer>0){slideTimer-=dt;if(slideTimer<=0)player.scale.y=1;}
- player.position.x=THREE.MathUtils.lerp(player.position.x,pathBend(2.3)+laneX(lane),Math.min(1,dt*12));player.position.y=playerY;
+ player.position.x=THREE.MathUtils.lerp(player.position.x,pathBend(2.3)+laneX(lane),Math.min(1,dt*12));player.position.y=playerY+(playerY===0&&!crouch?Math.abs(Math.sin(runPhase*2))*.045:0);
  const t=clock.elapsedTime,runPhase=t*9.2,crouch=slideTimer>0;
- player.rotation.z=THREE.MathUtils.lerp(player.rotation.z,(laneX(lane)-player.position.x)*-.08,.1);
+ player.rotation.z=THREE.MathUtils.lerp(player.rotation.z,(laneX(lane)-player.position.x)*-.08-Math.sin(runPhase)*.025,.1);
  player.rotation.x=THREE.MathUtils.lerp(player.rotation.x,crouch?0:.045,.12);
  player.userData.legL.rotation.x=Math.sin(runPhase)*(crouch?.08:.72);player.userData.legR.rotation.x=-Math.sin(runPhase)*(crouch?.08:.72);
  player.userData.armL.rotation.x=-Math.sin(runPhase)*.32;player.userData.armR.rotation.x=Math.sin(runPhase)*.32;
@@ -911,9 +911,9 @@ function update(dt){
  monkey.userData.arms[0].rotation.x=-Math.sin(t*10)*.65;monkey.userData.arms[1].rotation.x=Math.sin(t*10)*.65;
  for(const d of decor){d.position.z-=step*.8;if(d.position.z< -120)d.position.z=20+Math.random()*20;if(d.userData.baseDecorX===undefined)d.userData.baseDecorX=d.position.x;d.position.x=d.userData.baseDecorX+pathBend(d.position.z)*.72;}
  for(const r of roadSegments){r.position.z-=step;if(r.position.z< -115)r.position.z=12;r.position.x=pathBend(r.position.z)+(r.userData.baseRoadX??(r.userData.baseRoadX=r.position.x-pathBend(r.position.z)));}
- const camX=player.position.x*.22+pathBend(2.3)*.78;camera.position.x=THREE.MathUtils.lerp(camera.position.x,camX,.12);camera.position.y=THREE.MathUtils.lerp(camera.position.y,3.65+playerY*.1,.08);camera.position.z=player.position.z+3.2;camera.lookAt(player.position.x*.18+pathBend(-2.2)*.82,1.18,player.position.z-4.5);
+ const camX=player.position.x*.32+pathBend(2.3)*.68;camera.position.x=THREE.MathUtils.lerp(camera.position.x,camX,.14);camera.position.y=THREE.MathUtils.lerp(camera.position.y,3.85+playerY*.1,.08);camera.position.z=player.position.z+3.8;camera.lookAt(player.position.x*.2+pathBend(-3.8)*.8,1.2,player.position.z-5.8);
 }
-function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.045);update(dt);player.position.y=playerY;if(renderer&&scene&&camera)renderer.render(scene,camera);}
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.045);update(dt);if(renderer&&scene&&camera)renderer.render(scene,camera);}
 function resize(){if(!camera||!renderer)return;camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<600?67:62;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.3:1.6));}
 $('left').onclick=()=>move(-1);$('right').onclick=()=>move(1);$('jump').onclick=jump;$('slide').onclick=slide;$('play').onclick=startGame;$('again').onclick=startGame;$('pause').onclick=togglePause;$('resume').onclick=togglePause;
 $('sound').onclick=()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'🔊':'🔇';if(soundOn)soundBeep(600,.07);};
