@@ -43,8 +43,8 @@ const materials={
 
 function box(parent,w,h,d,material,x=0,y=0,z=0){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 function sphere(parent,r,material,x=0,y=0,z=0){const m=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),material);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m;}
-function makePerson(isZombie=false){
- const g=new THREE.Group(),skin=isZombie?materials.skin,top=materials.shirt;
+function makePerson(){
+ const g=new THREE.Group(),skin=materials.skin,top=materials.shirt;
  box(g,.62,.78,.34,top,0,1.15,0);
  sphere(g,.25,skin,0,1.72,0);
  box(g,.42,.12,.25,materials.dark,0,1.96,-.02);box(g,.1,.12,.28,materials.red,0,1.79,.12);
@@ -53,7 +53,7 @@ function makePerson(isZombie=false){
  const legL=new THREE.Group(),legR=new THREE.Group();legL.position.set(-.18,.78,0);legR.position.set(.18,.78,0);g.add(legL,legR);
  box(legL,.23,.72,.25,materials.pants,0,-.34,0);box(legR,.23,.72,.25,materials.pants,0,-.34,0);
  box(legL,.27,.15,.4,materials.dark,0,-.7,.07);box(legR,.27,.15,.4,materials.dark,0,-.7,.07);
- g.userData={armL,armR,legL,legR,isZombie};
+ g.userData={armL,armR,legL,legR};
  return g;
 }
 function makeTrain(){
