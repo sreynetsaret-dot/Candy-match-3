@@ -1,14 +1,14 @@
 {
-  "name": "Candy Match 3",
-  "short_name": "Candy Match 3",
+  "name": "ANGKOR WAT RUN",
+  "short_name": "ANGKOR RUN",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#170d32",
-  "theme_color": "#24134b",
-  "description": "A colorful match-3 candy puzzle game.",
+  "background_color": "#142d4b",
+  "theme_color": "#142d4b",
+  "description": "An original Cambodian 3D endless runner adventure.",
   "icons": [
     {
-      "src": "assets/candy-match-3-icon.svg",
+      "src": "assets/angkor-run-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

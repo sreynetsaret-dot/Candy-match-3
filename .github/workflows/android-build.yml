@@ -1,4 +1,4 @@
-name: Build Candy Match 3 Android
+name: Build ANGKOR WAT RUN Android
 
 on:
   workflow_dispatch:
@@ -34,14 +34,14 @@ jobs:
         run: npx cap add android
       - name: Sync Capacitor
         run: npx cap sync android
-      - name: Apply Candy Match 3 Android launcher icon
+      - name: Apply ANGKOR WAT RUN Android launcher icon
         run: |
           npm install --no-save sharp
           node <<'NODE'
           const sharp = require('sharp');
           const fs = require('fs');
           const path = require('path');
-          const svg = fs.readFileSync('assets/candy-match-3-icon.svg');
+          const svg = fs.readFileSync('assets/angkor-run-icon.svg');
           const root = 'android/app/src/main/res';
           const sizes = { mdpi:48, hdpi:72, xhdpi:96, xxhdpi:144, xxxhdpi:192 };
           (async () => {
@@ -52,7 +52,6 @@ jobs:
               fs.writeFileSync(path.join(dir,'ic_launcher.png'),png);
               fs.writeFileSync(path.join(dir,'ic_launcher_round.png'),png);
             }
-            // Android 8+ uses adaptive icon XML, so replace both adaptive layers too.
             const drawable = path.join(root,'drawable-nodpi');
             fs.mkdirSync(drawable, {recursive:true});
             const foreground = await sharp({create:{width:432,height:432,channels:4,background:{r:0,g:0,b:0,alpha:0}}})
@@ -63,7 +62,7 @@ jobs:
             fs.mkdirSync(anydpi, {recursive:true});
             const adaptive = `<?xml version="1.0" encoding="utf-8"?>
           <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-              <background><color android:color="#3522a3"/></background>
+              <background><color android:color="#142d4b"/></background>
               <foreground><bitmap android:src="@drawable/ic_launcher_foreground" android:gravity="center"/></foreground>
           </adaptive-icon>`;
             fs.writeFileSync(path.join(anydpi,'ic_launcher.xml'),adaptive);
@@ -78,7 +77,7 @@ jobs:
       - name: Upload Android build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: candy-match-3-android-build
+          name: angkor-wat-run-android-build
           path: |
             android/app/build/outputs/apk/debug/app-debug.apk
             android/app/build/outputs/bundle/release/app-release.aab

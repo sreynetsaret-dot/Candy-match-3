@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#142d4b"/><stop offset="1" stop-color="#d18a45"/></linearGradient><linearGradient id="stone" x2="0" y2="1"><stop stop-color="#f4d69b"/><stop offset="1" stop-color="#9a6338"/></linearGradient></defs>
+<rect x="12" y="12" width="488" height="488" rx="104" fill="url(#sky)" stroke="#e8c17a" stroke-width="12"/>
+<circle cx="256" cy="154" r="65" fill="#ffd88a" opacity=".9"/>
+<path d="M60 385h392v55H60z" fill="#d8b17a"/>
+<path d="M82 385V321h26v-34h28v-30h26v30h28v34h26v64M304 385V321h26v-34h28v-30h26v30h28v34h26v64" fill="url(#stone)" stroke="#6d482f" stroke-width="8" stroke-linejoin="round"/>
+<path d="M158 385V294h26v-38h28v-42h28v42h28v38h26v91" fill="url(#stone)" stroke="#6d482f" stroke-width="8" stroke-linejoin="round"/>
+<path d="M207 385V247h18v-39h18v-46h26v46h18v39h18v138" fill="url(#stone)" stroke="#6d482f" stroke-width="8" stroke-linejoin="round"/>
+<path d="M58 385h396v22H58z" fill="#f1d39c" stroke="#6d482f" stroke-width="7"/>
+<path d="M100 300h24v85h-24zm288 0h24v85h-24zM182 267h22v118h-22zm126 0h22v118h-22z" fill="#5d4637" opacity=".6"/>
+<path d="M244 312h24v73h-24z" fill="#4c382b"/>
+<text x="256" y="474" fill="#fff1c9" font-family="Arial,sans-serif" font-size="31" font-weight="900" text-anchor="middle" letter-spacing="3">ANGKOR RUN</text>
+</svg>
