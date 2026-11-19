@@ -904,9 +904,11 @@ function makeAngkorTemple(x,z,scale=1){
   tg.position.set(tx,baseY,tz);
   g.add(tg);
  };
- tower(0,-.8,8,1.12);
- tower(-3.05,-.55,6.35,.83);tower(3.05,-.55,6.35,.83);
- tower(-1.72,-3.0,6.15,.76);tower(1.72,-3.0,6.15,.76);
+ // Correct quincunx plan: one dominant central tower surrounded by four corner towers.
+ // The four smaller towers occupy the four corners of the same upper sanctuary terrace.
+ tower(0,-.75,8.6,1.08);
+ tower(-2.35,-2.30,6.45,.76);tower(2.35,-2.30,6.45,.76);
+ tower(-2.35,.80,6.45,.76);tower(2.35,.80,6.45,.76);
  // Monumental west-facing stairway, balustrades and naga heads.
  addBox(6.1,.22,1.25,light,0,.16,5.45);
  for(let k=0;k<6;k++)addBox(5.7-k*.3,.16,.42,k%2?stone:light,0,.22+k*.15,4.45+k*.42);
