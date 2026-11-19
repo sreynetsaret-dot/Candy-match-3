@@ -810,30 +810,53 @@ function makeAngkorTemple(x,z,scale=1){
    if(Math.abs(xx)>1.15)addBox(.11,1.08,.16,recess,xx,2.67,zz+front*.34);
   }
  }
- // Central sanctuary rises in several carefully stepped sandstone terraces.
- addBox(10.8,.52,7.5,roof,0,1.82,-.45);
- addBox(10.1,.35,6.9,light,0,2.22,-.45);
- addBox(8.9,.5,5.8,stone,0,2.62,-.55);
- addBox(8.25,.22,5.3,light,0,2.98,-.55);
- addBox(6.9,1.35,4.25,stone,0,3.72,-.7);
- addBox(7.25,.2,4.55,light,0,4.43,-.7);
- // Three shadowed western doorways and stone jambs.
- for(const dx of [-2.15,0,2.15]){
-  addBox(1.22,1.9,.12,recess,dx,3.55,1.48);
-  addBox(1.42,.16,.24,light,dx,4.55,1.5);
-  for(const px of [-.72,.72]){
-   column(dx+px,3.5,1.56,1.85,.09,carve);
-   addBox(.24,.13,.25,light,dx+px,4.47,1.56);
+ // Three monumental receding terraces form the stepped central temple-mountain.
+ // Broad horizontal tiers are essential to Angkor Wat's silhouette; avoid a single blocky tower.
+ const terrace=(w,d,y,h,material)=>{
+  addBox(w,h,d,material,0,y,-.75);
+  addBox(w+.28,.10,d+.28,light,0,y+h/2+.045,-.75);
+  addBox(w+.48,.09,d+.48,roof,0,y-h/2-.045,-.75);
+ };
+ terrace(12.4,8.9,1.83,.42,stone);
+ terrace(10.7,7.65,2.35,.40,light);
+ terrace(9.15,6.55,2.84,.38,stone);
+ terrace(7.65,5.65,3.30,.34,light);
+ terrace(6.55,5.05,3.72,.28,stone);
+ // Repeated horizontal mouldings and recessed courses give the terraces a carved sandstone edge.
+ for(let level=0;level<4;level++){
+  const w=12.25-level*1.18,d=8.75-level*.82,y=2.08+level*.49;
+  addBox(w,.075,.12,carve,0,y,-.75+d/2);
+  addBox(w,.075,.12,carve,0,y,-.75-d/2);
+  addBox(.12,.075,d,carve,-w/2,y,-.75);
+  addBox(.12,.075,d,carve,w/2,y,-.75);
+ }
+ // Upper sanctuary enclosure: a compact central chamber, not a massive rectangular tower.
+ addBox(3.9,1.12,3.25,stone,0,4.05,-.82);
+ addBox(4.18,.16,3.48,light,0,4.64,-.82);
+ addBox(4.42,.12,3.72,roof,0,4.77,-.82);
+ // West-facing dark doorway and its stone jambs.
+ addBox(1.18,1.48,.10,recess,0,4.05,.84);
+ addBox(1.42,.14,.22,light,0,4.84,.86);
+ for(const dx of [-.78,.78]){
+  column(dx,4.02,.93,1.48,.085,carve);
+  addBox(.22,.12,.24,light,dx,4.79,.93);
+ }
+ // Khmer stepped pediment above the entrance.
+ for(let tier=0;tier<4;tier++){
+  const width=2.65-tier*.43;
+  const beam=addBox(width,.13,.28,tier%2?roof:light,0,4.91+tier*.16,1.02);
+  beam.rotation.x=-.10;
+ }
+ // Four short stair flights connect the terrace levels; the west flight faces the approach.
+ for(let k=0;k<6;k++){
+  const width=5.2-k*.35;
+  addBox(width,.13,.36,k%2?stone:light,0,1.04+k*.13,4.55+k*.28);
+ }
+ for(const side of [-1,1]){
+  for(let k=0;k<5;k++){
+   addBox(.34,.13,.38,k%2?stone:light,side*(4.85-k*.22),1.04+k*.13,-.75);
   }
  }
- // Richly layered Khmer pediments above the central entrance.
- for(let tier=0;tier<5;tier++){
-  const w=5.9-tier*.78;
-  const beam=addBox(w,.2,.46,tier%2?roof:light,0,4.66+tier*.23,1.72);
-  beam.rotation.x=-.12;
- }
- const ped=new THREE.Mesh(new THREE.ConeGeometry(2.05,1.5,4),stone);
- ped.rotation.y=Math.PI/4;ped.position.set(0,5.72,1.78);ped.scale.set(1,.78,.5);ped.castShadow=true;g.add(ped);
  // Five towers in Angkor Wat's quincunx: stepped octagonal bases and lotus-bud crowns.
  // Each tower is built locally so the four corner towers are truly lower than the central tower.
  const tower=(tx,tz,h,w)=>{
