@@ -27,7 +27,7 @@ const $=id=>document.getElementById(id);
 const canvas=$('game');
 let scene,camera,renderer,clock,worldReady=false;
 let running=false,paused=false,gameOver=false;
-let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,coinStreak=0,coinStreakTimer=0,best=(()=>{try{return Number(localStorage.getItem('arBest')||0)}catch{return 0}})(),speed=7,spawnTimer=0;
+let lane=0,playerY=0,jumpV=0,slideTimer=0,distance=0,coinCount=0,coinStreak=0,coinStreakTimer=0,best=(()=>{try{return Number(localStorage.getItem('zcBest')||0)}catch{return 0}})(),speed=7,spawnTimer=0;
 let player,monkey,obstacles=[],coins=[],roadSegments=[],decor=[];
 let soundOn=true,audioCtx=null,lastMilestone=0,lastObstacleLane=null;
 let comboFlashTimer=0,toastTimer=0;
@@ -73,7 +73,13 @@ function makePerson(){
  const pack=mat(0x283d48,.88),strap=mat(0xd6aa50,.65);
  box(g,.43,.53,.2,pack,0,1.18,-.255);
  box(g,.09,.57,.075,strap,-.2,1.18,-.365);box(g,.09,.57,.075,strap,.2,1.18,-.365);
- const scarf=box(g,.58,.16,.38,mat(0x244f73,.88),0,1.62,-.22);scarf.rotation.z=.08;
+ // Red Cambodian krama scarf with a woven check pattern on the visible back.
+ const kramaCanvas=document.createElement('canvas');kramaCanvas.width=kramaCanvas.height=128;
+ const kctx=kramaCanvas.getContext('2d');kctx.fillStyle='#a8202b';kctx.fillRect(0,0,128,128);
+ for(let q=0;q<8;q++){kctx.fillStyle=q%2?'rgba(255,218,170,.72)':'rgba(45,28,26,.55)';kctx.fillRect(q*16,0,5,128);kctx.fillRect(0,q*16,128,5);}
+ const kramaTex=new THREE.CanvasTexture(kramaCanvas);kramaTex.colorSpace=THREE.SRGBColorSpace;
+ const scarfMat=new THREE.MeshStandardMaterial({map:kramaTex,color:0xffffff,roughness:.9});
+ const scarf=box(g,.58,.17,.39,scarfMat,0,1.62,-.22);scarf.rotation.z=.08;
  const armL=new THREE.Group(),armR=new THREE.Group();armL.position.set(-.39,1.42,0);armR.position.set(.39,1.42,0);g.add(armL,armR);
  box(armL,.18,.62,.2,top,0,-.27,0);box(armR,.18,.62,.2,top,0,-.27,0);
  const legL=new THREE.Group(),legR=new THREE.Group();legL.position.set(-.18,.78,0);legR.position.set(.18,.78,0);g.add(legL,legR);
@@ -89,6 +95,25 @@ function makeTrain(){
  return g;
 }
 function makeBarrier(){const g=new THREE.Group();box(g,1.5,.82,.45,materials.orange,0,.45,0);box(g,1.58,.15,.49,materials.white,0,.55,.02);for(let x of [-.5,.5])box(g,.13,.35,.15,materials.dark,x,.17,0);return g;}
+function makeFallenPillar(){
+ const g=new THREE.Group(),stone=mat(0xb9a17c,.96),edge=mat(0x806b4d,.98);
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.34,.38,2.35,10),stone);shaft.rotation.z=Math.PI/2;shaft.position.y=.42;g.add(shaft);
+ for(const x of [-1.05,1.05]){const ring=new THREE.Mesh(new THREE.CylinderGeometry(.43,.43,.18,10),edge);ring.rotation.z=Math.PI/2;ring.position.set(x,.42,0);g.add(ring);}
+ return g;
+}
+function makeLowBeam(){
+ const g=new THREE.Group(),stone=mat(0x9e8866,.94);
+ box(g,1.8,.18,.32,stone,0,1.05,0);
+ for(const x of [-.78,.78])box(g,.18,1.15,.22,stone,x,.56,0);
+ return g;
+}
+function makePit(){
+ const g=new THREE.Group(),rim=mat(0x66523d,.98),black=new THREE.MeshStandardMaterial({color:0x090b0c,roughness:1});
+ const hole=new THREE.Mesh(new THREE.BoxGeometry(1.55,.035,1.45),black);hole.position.y=-.08;g.add(hole);
+ for(const x of [-.86,.86])box(g,.18,.16,1.7,rim,x,-.015,0);
+ for(const z of [-.76,.76])box(g,1.75,.16,.18,rim,0,-.015,z);
+ return g;
+}
 function makeCoin(){const g=new THREE.Group();const tor=new THREE.Mesh(new THREE.TorusGeometry(.36,.11,10,24),materials.yellow);g.add(tor);const core=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.08,24),materials.yellow);core.rotation.x=Math.PI/2;g.add(core);return g;}
 function makeBuilding(x,z,side){
  const g=new THREE.Group(),width=3+Math.random()*3,height=5+Math.random()*12,depth=3+Math.random()*4;
@@ -1055,15 +1080,18 @@ function laneX(n){return n*1.9;}
 // A winding sandstone trail gives the run the sweeping, temple-runner feel.
 function pathBend(z){return 0;} // Straight road for the current Angkor scene; keep all lanes, camera, obstacles and scenery aligned.
 function addObstacle(kind,n,z=-75){
- const g=kind==='train'?makeTrain():makeBarrier();g.position.set(pathBend(z)+laneX(n),0,z);scene.add(g);obstacles.push({mesh:g,kind,lane:n,hit:false,passed:false});
+ const makers={train:makeTrain,barrier:makeBarrier,pillar:makeFallenPillar,beam:makeLowBeam,pit:makePit};
+ const g=(makers[kind]||makeBarrier)();g.position.set(pathBend(z)+laneX(n),0,z);scene.add(g);obstacles.push({mesh:g,kind,lane:n,hit:false,passed:false});
 }
 function addCoinLine(n,z=-42,count=6){for(let i=0;i<count;i++){const cz=z-i*2.2,g=makeCoin();g.position.set(pathBend(cz)+laneX(n),1.25,cz);scene.add(g);coins.push({mesh:g,lane:n,hit:false});}}
 function spawnWave(){
  // Never place two consecutive obstacles in the same lane: keep an escape route open.
  const lanes=[-1,0,1].filter(v=>v!==lastObstacleLane);
  const obstacleLane=lanes[Math.floor(Math.random()*lanes.length)];
- // Avoid long, repetitive train sequences while keeping obstacle variety.
- const kind='barrier';
+ // Rotate through original Angkor-trail hazards. Each type has its own action:
+ // fallen pillar / pit = jump, low crossbeam = slide, stone barricade = change lane.
+ const pool=distance<180?['barrier','pillar','beam']:['barrier','pillar','beam','pit','train'];
+ const kind=pool[Math.floor(Math.random()*pool.length)];
  addObstacle(kind,obstacleLane,-78);
  lastObstacleLane=obstacleLane;
  // Put coins on a different, reachable lane so collecting them never requires hitting an obstacle.
@@ -1083,7 +1111,7 @@ function startGame(){
  $('score').textContent='0';$('coins').textContent='0';$('start').classList.add('hidden');$('over').classList.add('hidden');$('paused').classList.add('hidden');$('pause').textContent='Ⅱ PAUSE';clock.start();soundBeep(520,.1);
 }
 function showToast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');toastTimer=1.05;}
-function finishGame(){if(gameOver)return;buzz([35,25,60]);running=false;gameOver=true;best=Math.max(best,Math.floor(distance));try{localStorage.setItem('zcBest',String(best));}catch(e){console.warn('Best score could not be saved:',e);}$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
+function finishGame(){if(gameOver)return;buzz([35,25,60]);running=false;gameOver=true;best=Math.max(best,Math.floor(distance));let bank=0;try{bank=Number(localStorage.getItem('angkorCoins')||0)+coinCount;localStorage.setItem('zcBest',String(best));localStorage.setItem('angkorCoins',String(bank));}catch(e){console.warn('Progress could not be saved:',e);}$('best').textContent=best;$('final').textContent=Math.floor(distance);$('earned').textContent=coinCount;$('over').classList.remove('hidden');soundBeep(150,.3);}
 function move(dir){if(!running||paused)return;const next=Math.max(-1,Math.min(1,lane+dir));if(next===lane)return;lane=next;buzz(8);soundBeep(420,.035);}
 function jump(){if(!running||paused||playerY>0.02)return;jumpV=8.2;slideTimer=0;buzz(14);soundBeep(740,.08);}
 function slide(){if(!running||paused)return;slideTimer=.75;player.scale.y=.58;buzz(10);soundBeep(300,.06);}
@@ -1097,7 +1125,8 @@ function update(dt){
   o.mesh.position.z+=step;const z=o.mesh.position.z;o.mesh.position.x=pathBend(z)+laneX(o.lane);
   if(!o.hit&&!o.passed&&z>1.1&&z<3.5&&o.lane===lane){
    const safeJump=playerY>.95,safeSlide=slideTimer>0;
-   if(!safeJump&&!safeSlide){o.hit=true;finishGame();}
+   const cleared=o.kind==='beam'?safeSlide:(o.kind==='pillar'||o.kind==='pit')?safeJump:false;
+   if(!cleared){o.hit=true;finishGame();}
   }
   if(!o.hit&&!o.passed&&o.lane===lane&&z>3.8){o.passed=true;coinCount+=2;$('coins').textContent=coinCount;showToast('✨ CLEAN DODGE +2 COINS');soundBeep(1120,.09);}
  }
