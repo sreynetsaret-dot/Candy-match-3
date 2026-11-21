@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081426">
+<title>Multi Tab Browser</title>
+<style>
+:root{color-scheme:dark;--bg:#081426;--panel:#10233b;--line:#29435f;--text:#edf6ff;--muted:#9bb0c7;--accent:#36d6c3}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#081426,#102b43);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+main{max-width:1100px;margin:auto;padding:24px 16px 60px}.head{margin-bottom:20px}.head h1{font-size:clamp(26px,5vw,38px);margin:0 0 5px}.head p{color:var(--muted);margin:0}
+.controls{background:#0d1d31;border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 150px auto auto;gap:10px;align-items:end;box-shadow:0 12px 36px #0003}
+label{display:block;color:var(--muted);font-size:12px;margin:0 0 6px}input,select,button{font:inherit;border-radius:11px;min-height:44px}input,select{width:100%;padding:10px 12px;background:#071426;border:1px solid var(--line);color:var(--text)}button{padding:10px 16px;border:0;background:var(--accent);color:#05202a;font-weight:750;cursor:pointer}button.secondary{background:#1a3450;color:var(--text);border:1px solid var(--line)}
+.status{color:var(--muted);font-size:13px;margin:12px 2px 16px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}.tilehead{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;color:var(--muted);font-size:12px}.tilehead a{color:var(--accent);text-decoration:none;font-weight:700}.framebox{height:250px;background:#07111f;position:relative}.framebox iframe{width:100%;height:100%;border:0;background:white}.placeholder{height:100%;display:grid;place-items:center;color:var(--muted);padding:18px;text-align:center;font-size:13px}.note{margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;color:var(--muted);font-size:13px}
+@media(max-width:650px){main{padding:18px 10px 40px}.controls{grid-template-columns:1fr 1fr}.urlwrap{grid-column:1/-1}.controls button{width:100%}.framebox{height:210px}}
+</style>
+</head>
+<body><main>
+<header class="head"><h1>Multi Tab Browser</h1><p>View one website in multiple panels. Two columns with lazy loading.</p></header>
+<section class="controls" aria-label="Browser controls">
+<div class="urlwrap"><label for="url">Website URL</label><input id="url" type="url" inputmode="url" placeholder="https://example.com" autocomplete="url"></div>
+<div><label for="count">Number of panels</label><select id="count"><option>5</option><option>15</option><option>50</option><option>100</option><option>150</option><option>200</option></select></div>
+<button id="load">Load panels</button><button id="clear" class="secondary">Clear</button>
+</section>
+<div id="status" class="status" aria-live="polite">Enter a website address and choose how many panels to display.</div>
+<section id="grid" class="grid" aria-label="Website panels"></section>
+<div class="note"><strong>Note:</strong> Some websites block embedding in other pages. If a panel stays blank or shows an error, use its “Open ↗” link to view that website directly. Panels load as you scroll to reduce initial data usage. This tool does not auto-refresh pages or generate ad views or clicks.</div>
+</main>
+<script>
+(()=> {
+const urlInput=document.getElementById('url'),countInput=document.getElementById('count'),grid=document.getElementById('grid'),status=document.getElementById('status');
+let observer=null;
+function normalize(value){let raw=value.trim();if(!raw)return null;if(!/^https?:\/\//i.test(raw))raw='https://'+raw;try{const u=new URL(raw);if(!['http:','https:'].includes(u.protocol))return null;return u.href}catch{return null}}
+function clear(){if(observer)observer.disconnect();observer=null;grid.replaceChildren();status.textContent='Panels cleared.'}
+function load(){const target=normalize(urlInput.value);if(!target){status.textContent='Please enter a valid website URL (http or https).';urlInput.focus();return}urlInput.value=target;clear();const total=Number(countInput.value);const frag=document.createDocumentFragment();observer=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){const box=entry.target;const frame=document.createElement('iframe');frame.src=target;frame.loading='lazy';frame.referrerPolicy='no-referrer-when-downgrade';frame.title='Website panel';box.replaceChildren(frame);observer.unobserve(box)}}},{rootMargin:'350px 0px'});for(let i=1;i<=total;i++){const tile=document.createElement('article');tile.className='tile';const bar=document.createElement('div');bar.className='tilehead';const name=document.createElement('span');name.textContent='Panel '+i;const link=document.createElement('a');link.href=target;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open ↗';bar.append(name,link);const box=document.createElement('div');box.className='framebox';const ph=document.createElement('div');ph.className='placeholder';ph.textContent='Loads when this panel is near the screen';box.append(ph);tile.append(bar,box);frag.append(tile);observer.observe(box)}grid.append(frag);status.textContent=total+' panels ready. Scroll down to load more.'}
+document.getElementById('load').addEventListener('click',load);document.getElementById('clear').addEventListener('click',clear);urlInput.addEventListener('keydown',e=>{if(e.key==='Enter')load()});
+})();
+</script></body></html>
